@@ -28,6 +28,10 @@ AppDispatcher.register(action => {
         grants = action.rawGrants;
         GrantStore.emitChange();
         break;
+    case ActionTypes.RECIEVED_ONE_GRANT:
+        grants.unshift(action.rawGrant);
+        GrantStore.emitChange();
+        break;
     default:
     }
 });

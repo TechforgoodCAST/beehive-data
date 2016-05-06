@@ -8,4 +8,10 @@ export default {
             rawGrants,
         });
     },
+    receivedOneGrant(rawGrant) {
+        AppDispatcher.dispatch({
+            actionType: ActionTypes.RECIEVED_ONE_GRANT,
+            rawGrant,
+        });
+    },
 };

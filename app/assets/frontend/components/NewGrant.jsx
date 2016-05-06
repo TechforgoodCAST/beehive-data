@@ -1,14 +1,16 @@
+import GrantActions from '../actions/GrantActions';
+
 export default class NewGrant extends React.Component {
     submitGrant(event) {
         event.preventDefault();
-        this.props.submitGrant({
+        GrantActions.submitGrant({
             grant_identifier: this.refs.grant_grant_identifier.value,
             funder_identifier: this.refs.grant_funder_identifier.value,
             recipient_identifier: this.refs.grant_recipient_identifier.value,
         });
-        this.refs.grantgrant_identifier.value = '';
-        this.refs.grantfunder_identifier.value = '';
-        this.refs.grantrecipient_identifier.value = '';
+        this.refs.grant_grant_identifier.value = '';
+        this.refs.grant_funder_identifier.value = '';
+        this.refs.grant_recipient_identifier.value = '';
     }
 
     render() {
@@ -46,7 +48,3 @@ export default class NewGrant extends React.Component {
         );
     }
 }
-
-NewGrant.propTypes = {
-    submitGrant: React.PropTypes.func.isRequired,
-};

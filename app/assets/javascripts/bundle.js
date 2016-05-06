@@ -139,7 +139,7 @@
 /*!*****************************************************!*\
   !*** ./app/assets/frontend/components/NewGrant.jsx ***!
   \*****************************************************/
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -148,6 +148,12 @@
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _GrantActions = __webpack_require__(/*! ../actions/GrantActions */ 4);
+	
+	var _GrantActions2 = _interopRequireDefault(_GrantActions);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -168,14 +174,14 @@
 	    key: 'submitGrant',
 	    value: function submitGrant(event) {
 	      event.preventDefault();
-	      this.props.submitGrant({
+	      _GrantActions2.default.submitGrant({
 	        grant_identifier: this.refs.grant_grant_identifier.value,
 	        funder_identifier: this.refs.grant_funder_identifier.value,
 	        recipient_identifier: this.refs.grant_recipient_identifier.value
 	      });
-	      this.refs.grantgrant_identifier.value = '';
-	      this.refs.grantfunder_identifier.value = '';
-	      this.refs.grantrecipient_identifier.value = '';
+	      this.refs.grant_grant_identifier.value = '';
+	      this.refs.grant_funder_identifier.value = '';
+	      this.refs.grant_recipient_identifier.value = '';
 	    }
 	  }, {
 	    key: 'render',
@@ -245,11 +251,6 @@
 	}(React.Component);
 	
 	exports.default = NewGrant;
-	
-	
-	NewGrant.propTypes = {
-	  submitGrant: React.PropTypes.func.isRequired
-	};
 
 /***/ },
 /* 2 */
@@ -370,6 +371,9 @@
 	exports.default = {
 	    getAllGrants: function getAllGrants() {
 	        _API2.default.getAllGrants();
+	    },
+	    submitGrant: function submitGrant(formData) {
+	        _API2.default.createGrant(formData);
 	    }
 	};
 
@@ -396,6 +400,13 @@
 	    getAllGrants: function getAllGrants() {
 	        $.get('/grants').success(function (rawGrants) {
 	            return _ServerActions2.default.receivedGrants(rawGrants);
+	        }).error(function (error) {
+	            return console.log(error);
+	        });
+	    },
+	    createGrant: function createGrant(formData) {
+	        $.post('/grants', formData).success(function (rawGrant) {
+	            return _ServerActions2.default.receivedOneGrant(rawGrant);
 	        }).error(function (error) {
 	            return console.log(error);
 	        });
@@ -430,6 +441,12 @@
 	        _dispatcher2.default.dispatch({
 	            actionType: _constants2.default.RECIEVED_GRANTS,
 	            rawGrants: rawGrants
+	        });
+	    },
+	    receivedOneGrant: function receivedOneGrant(rawGrant) {
+	        _dispatcher2.default.dispatch({
+	            actionType: _constants2.default.RECIEVED_ONE_GRANT,
+	            rawGrant: rawGrant
 	        });
 	    }
 	};
@@ -885,7 +902,8 @@
 	    value: true
 	});
 	exports.default = {
-	    RECIEVED_GRANTS: 'RECIEVED_GRANTS'
+	    RECIEVED_GRANTS: 'RECIEVED_GRANTS',
+	    RECIEVED_ONE_GRANT: 'RECIEVED_ONE_GRANT'
 	};
 
 /***/ },
@@ -967,6 +985,10 @@
 	    switch (action.actionType) {
 	        case _constants2.default.RECIEVED_GRANTS:
 	            grants = action.rawGrants;
+	            GrantStore.emitChange();
+	            break;
+	        case _constants2.default.RECIEVED_ONE_GRANT:
+	            grants.unshift(action.rawGrant);
 	            GrantStore.emitChange();
 	            break;
 	        default:
