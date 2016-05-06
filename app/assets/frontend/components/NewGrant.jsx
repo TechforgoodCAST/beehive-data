@@ -2,13 +2,13 @@ export default class NewGrant extends React.Component {
     submitGrant(event) {
         event.preventDefault();
         this.props.submitGrant({
-            grantIdentifier: this.refs.grantGrantIdentifier.value,
-            funderIdentifier: this.refs.grantFunderIdentifier.value,
-            recipientIdentifier: this.refs.grantRecipientIdentifier.value,
+            grant_identifier: this.refs.grant_grant_identifier.value,
+            funder_identifier: this.refs.grant_funder_identifier.value,
+            recipient_identifier: this.refs.grant_recipient_identifier.value,
         });
-        this.refs.grantGrantIdentifier.value = '';
-        this.refs.grantFunderIdentifier.value = '';
-        this.refs.grantRecipientIdentifier.value = '';
+        this.refs.grantgrant_identifier.value = '';
+        this.refs.grantfunder_identifier.value = '';
+        this.refs.grantrecipient_identifier.value = '';
     }
 
     render() {
@@ -18,14 +18,14 @@ export default class NewGrant extends React.Component {
               <div className="row">
                 <div className="input-field col s4">
                   <input
-                    ref="grantGrantIdentifier"
+                    ref="grant_grant_identifier"
                     type="text" className="validate"
                   />
                   <label>Grant Identifier</label>
                 </div>
                 <div className="input-field col s4">
                   <input
-                    ref="grantFunderIdentifier"
+                    ref="grant_funder_identifier"
                     type="text"
                     className="validate"
                   />
@@ -33,11 +33,11 @@ export default class NewGrant extends React.Component {
                 </div>
                 <div className="input-field col s4">
                   <input
-                    ref="grantRecipientIdentifier"
+                    ref="grant_recipient_identifier"
                     type="text"
                     className="validate"
                   />
-                  <label>recipient Identifier</label>
+                  <label>Recipient Identifier</label>
                 </div>
                 <button className="btn right">Add grant</button>
               </div>

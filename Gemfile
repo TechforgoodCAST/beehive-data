@@ -16,6 +16,7 @@ gem 'haml'
 # gem 'therubyracer', platforms: :ruby
 
 gem 'react-rails', '~> 1.7.0'
+gem 'devise'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -39,6 +40,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'quiet_assets'
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
 

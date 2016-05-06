@@ -1,15 +1,17 @@
 const Grant = (props) =>
   <li className="collection-item avatar">
     <i className="material-icons circle green">insert_chart</i>
-    <span className="title">{props.grantIdentifier}</span>
-    <p>Funder: {props.funderIdentifier}</p>
-    <p>Recipient: {props.recipientIdentifier}</p>
+    <span className="title">{props.grant_identifier}</span>
+    <p>Funder: {props.funder_identifier}</p>
+    <p>Recipient: {props.recipient_identifier}</p>
+    <p>Beneficiaries: {props.beneficiary}</p>
   </li>;
 
 Grant.propTypes = {
-    grantIdentifier: React.PropTypes.string.isRequired,
-    funderIdentifier: React.PropTypes.string.isRequired,
-    recipientIdentifier: React.PropTypes.string.isRequired,
+    grant_identifier: React.PropTypes.string.isRequired,
+    funder_identifier: React.PropTypes.string.isRequired,
+    recipient_identifier: React.PropTypes.string.isRequired,
+    beneficiary: React.PropTypes.array.isRequired,
 };
 
 export default Grant;

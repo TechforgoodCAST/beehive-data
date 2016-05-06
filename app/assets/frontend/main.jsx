@@ -1,24 +1,38 @@
 import NewGrant from './components/NewGrant';
 import GrantsList from './components/GrantsList';
+import GrantStore from './stores/GrantStore';
+
+import GrantActions from './actions/GrantActions';
+GrantActions.getAllGrants();
+
+const getAppState = () => {
+    const grants = { grantsList: GrantStore.getAll() };
+    return grants;
+};
 
 class Main extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { grantsList: [] };
+        this.state = getAppState();
+        this.onChange = this.onChange.bind(this);
     }
 
-    addGrant(grantToAdd) {
-        const newGrantsList = this.state.grantsList;
-        newGrantsList.unshift({ grantIdentifier: grantToAdd.grantIdentifier,
-                                funderIdentifier: grantToAdd.funderIdentifier,
-                                recipientIdentifier: grantToAdd.recipientIdentifier });
-        this.setState({ grantsList: newGrantsList });
+    componentDidMount() {
+        GrantStore.addChangeListener(this.onChange);
+    }
+
+    componentWillUnmount() {
+        GrantStore.removeChangeListener(this.onChange);
+    }
+
+    onChange() {
+        this.setState(getAppState());
     }
 
     render() {
         return (
           <div className="container">
-            <NewGrant submitGrant={this.addGrant.bind(this)} />
+            <NewGrant />
             <GrantsList grants={this.state.grantsList} />
           </div>
         );
@@ -26,10 +40,10 @@ class Main extends React.Component {
 }
 
 const documentReady = () => {
-    ReactDOM.render(
-      <Main />,
-    document.getElementById('app')
-  );
+    const reactNode = document.getElementById('app');
+    if (reactNode) {
+        ReactDOM.render(<Main />, reactNode);
+    }
 };
 
 $(documentReady);

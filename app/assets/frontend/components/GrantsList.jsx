@@ -1,10 +1,9 @@
-import React from 'react';
 import Grant from './Grant';
 
 const GrantsList = (props) =>
   <div>
     <ul className="collection">
-      {props.grants.map(grant => <Grant key={grant.grantIdentifier} {...grant} />)}
+      {props.grants.map(grant => <Grant key={grant.grant_identifier} {...grant} />)}
     </ul>
   </div>;
 

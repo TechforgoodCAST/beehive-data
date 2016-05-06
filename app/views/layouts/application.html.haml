@@ -1,0 +1,27 @@
+!!!
+%html
+  %head
+    %title BeehiveData
+    = stylesheet_link_tag    'application', media: 'all'
+    = javascript_include_tag 'application'
+    %link{:href => "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css", :rel => "stylesheet"}
+      %link{:href => "https://fonts.googleapis.com/icon?family=Material+Icons", :rel => "stylesheet"}
+        %script{:src => "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"}
+        = csrf_meta_tags
+  %body
+
+    .right
+      - if user_signed_in?
+        Welcome
+        = current_user.email
+        = surround '(', ')' do
+          = link_to 'Logout', destroy_user_session_path, method: :delete
+      - else
+        Please
+        = link_to 'login', new_user_session_path
+        or
+        = link_to 'signup', new_user_registration_path
+
+    %p.notice= notice
+    %p.alert= alert
+    = yield

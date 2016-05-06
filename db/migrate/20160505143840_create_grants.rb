@@ -11,8 +11,8 @@ class CreateGrants < ActiveRecord::Migration
     end
 
     create_table :beneficiaries_grants do |t|
-      t.references :beneficiary
-      t.references :grant
+      t.references :beneficiary, index: true
+      t.references :grant, index: true
     end
 
     add_index :grants, :grant_identifier, unique: true
