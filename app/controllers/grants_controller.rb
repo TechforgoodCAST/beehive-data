@@ -6,15 +6,15 @@ class GrantsController < ApplicationController
 
   def create
     grant = Grant.create( grant_identifier: params[:grant_identifier],
-                          funder_identifier: params[:funder_identifier],
-                          recipient_identifier: params[:recipient_identifier])
+                          funder_id: params[:funder_id],
+                          recipient_id: params[:recipient_id])
     render json: grant
   end
 
   private
 
   def grant_params
-    params.require(:grant).permit(:grant_identifier, :funder_identifier, :recipient_identifier)
+    params.require(:grant).permit(:grant_identifier, :funder_id, :recipient_id)
   end
 
 end

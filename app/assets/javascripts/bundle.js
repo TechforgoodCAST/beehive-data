@@ -176,12 +176,12 @@
 	      event.preventDefault();
 	      _GrantActions2.default.submitGrant({
 	        grant_identifier: this.refs.grant_grant_identifier.value,
-	        funder_identifier: this.refs.grant_funder_identifier.value,
-	        recipient_identifier: this.refs.grant_recipient_identifier.value
+	        funder_id: this.refs.grant_funder_id.value,
+	        recipient_id: this.refs.grant_recipient_id.value
 	      });
 	      this.refs.grant_grant_identifier.value = '';
-	      this.refs.grant_funder_identifier.value = '';
-	      this.refs.grant_recipient_identifier.value = '';
+	      this.refs.grant_funder_id.value = '';
+	      this.refs.grant_recipient_id.value = '';
 	    }
 	  }, {
 	    key: 'render',
@@ -212,7 +212,7 @@
 	              'div',
 	              { className: 'input-field col s4' },
 	              React.createElement('input', {
-	                ref: 'grant_funder_identifier',
+	                ref: 'grant_funder_id',
 	                type: 'text',
 	                className: 'validate'
 	              }),
@@ -226,7 +226,7 @@
 	              'div',
 	              { className: 'input-field col s4' },
 	              React.createElement('input', {
-	                ref: 'grant_recipient_identifier',
+	                ref: 'grant_recipient_id',
 	                type: 'text',
 	                className: 'validate'
 	              }),
@@ -323,13 +323,13 @@
 	      "p",
 	      null,
 	      "Funder: ",
-	      props.funder_identifier
+	      props.funder_name
 	    ),
 	    React.createElement(
 	      "p",
 	      null,
 	      "Recipient: ",
-	      props.recipient_identifier
+	      props.recipient_name
 	    ),
 	    React.createElement(
 	      "p",
@@ -342,8 +342,8 @@
 	
 	Grant.propTypes = {
 	  grant_identifier: React.PropTypes.string.isRequired,
-	  funder_identifier: React.PropTypes.string.isRequired,
-	  recipient_identifier: React.PropTypes.string.isRequired,
+	  funder_name: React.PropTypes.string.isRequired,
+	  recipient_name: React.PropTypes.string.isRequired,
 	  beneficiary: React.PropTypes.array.isRequired
 	};
 	

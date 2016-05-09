@@ -5,12 +5,12 @@ export default class NewGrant extends React.Component {
         event.preventDefault();
         GrantActions.submitGrant({
             grant_identifier: this.refs.grant_grant_identifier.value,
-            funder_identifier: this.refs.grant_funder_identifier.value,
-            recipient_identifier: this.refs.grant_recipient_identifier.value,
+            funder_id: this.refs.grant_funder_id.value,
+            recipient_id: this.refs.grant_recipient_id.value,
         });
         this.refs.grant_grant_identifier.value = '';
-        this.refs.grant_funder_identifier.value = '';
-        this.refs.grant_recipient_identifier.value = '';
+        this.refs.grant_funder_id.value = '';
+        this.refs.grant_recipient_id.value = '';
     }
 
     render() {
@@ -27,7 +27,7 @@ export default class NewGrant extends React.Component {
                 </div>
                 <div className="input-field col s4">
                   <input
-                    ref="grant_funder_identifier"
+                    ref="grant_funder_id"
                     type="text"
                     className="validate"
                   />
@@ -35,7 +35,7 @@ export default class NewGrant extends React.Component {
                 </div>
                 <div className="input-field col s4">
                   <input
-                    ref="grant_recipient_identifier"
+                    ref="grant_recipient_id"
                     type="text"
                     className="validate"
                   />
