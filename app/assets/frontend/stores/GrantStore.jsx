@@ -1,22 +1,12 @@
 import AppDispatcher from '../dispatcher';
 import ActionTypes from '../constants';
-import EventEmmiter from 'events';
+import AppEventEmitter from './AppEventEmitter';
 
 let grants = [];
-const CHANGE_EVENT = 'CHANGED';
 
-class GrantEventEmmiter extends EventEmmiter {
+class GrantEventEmmiter extends AppEventEmitter {
     getAll() {
         return grants;
-    }
-    emitChange() {
-        this.emit(CHANGE_EVENT);
-    }
-    addChangeListener(callback) {
-        this.on(CHANGE_EVENT, callback);
-    }
-    removeChangeListener(callback) {
-        this.removeListener(CHANGE_EVENT, callback);
     }
 }
 

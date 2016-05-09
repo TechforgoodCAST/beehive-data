@@ -11,4 +11,9 @@ export default {
           .success(rawGrant => ServerActions.receivedOneGrant(rawGrant))
           .error(error => console.log(error));
     },
+    getAllOrganisations() {
+        $.get('/organisations')
+          .success(rawOrganisations => ServerActions.receivedOrganisations(rawOrganisations))
+          .error(error => console.log(error));
+    },
 };

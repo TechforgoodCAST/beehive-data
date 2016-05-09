@@ -15,7 +15,6 @@ gem 'haml'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
-gem 'react-rails', '~> 1.7.0'
 gem 'devise'
 
 # Use jquery as the JavaScript library

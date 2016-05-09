@@ -6,6 +6,7 @@ class Organisation < ActiveRecord::Base
 
   validates :organisation_identifier, :name, presence: true
 
-  scope :publishers, -> { where(publisher: true) }
+  scope :funders, -> { where(publisher: true) }
+  scope :recipients, -> { where(publisher: false) }
 
 end

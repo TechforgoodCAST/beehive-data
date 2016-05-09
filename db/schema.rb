@@ -132,12 +132,12 @@ ActiveRecord::Schema.define(version: 20160506115639) do
     t.integer  "spending"
     t.integer  "employees"
     t.integer  "volunteers"
-    t.boolean  "publisher"
+    t.boolean  "publisher",               default: false
     t.boolean  "multi_national"
     t.float    "latitude"
     t.float    "longitude"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
   end
 
   add_index "organisations", ["country_id"], name: "index_organisations_on_country_id", using: :btree

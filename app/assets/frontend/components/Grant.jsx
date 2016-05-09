@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Grant = (props) =>
   <li className="collection-item avatar">
     <i className="material-icons circle green">insert_chart</i>

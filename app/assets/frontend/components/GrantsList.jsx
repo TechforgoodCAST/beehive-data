@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Grant from './Grant';
 
 const GrantsList = (props) =>

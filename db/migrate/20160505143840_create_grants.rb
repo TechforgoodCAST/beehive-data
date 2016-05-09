@@ -64,7 +64,8 @@ class CreateGrants < ActiveRecord::Migration
       t.string :name, :charity_number, :company_number, required: true
       t.string :street_address, :city, :region, :postal_code, :website, :registered_name, :company_type
       t.integer :org_type, :operating_for, :income, :spending, :employees, :volunteers, required: true
-      t.boolean :publisher, :multi_national
+      t.boolean :publisher, default: false
+      t.boolean :multi_national
       t.float :latitude, :longitude
       t.timestamps null: false
     end

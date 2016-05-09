@@ -1,3 +1,5 @@
+import React from 'react';
+
 import GrantActions from '../actions/GrantActions';
 
 export default class NewGrant extends React.Component {

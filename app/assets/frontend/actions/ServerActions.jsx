@@ -14,4 +14,10 @@ export default {
             rawGrant,
         });
     },
+    receivedOrganisations(rawOrganisations) {
+        AppDispatcher.dispatch({
+            actionType: ActionTypes.RECIEVED_ORGANISATIONS,
+            rawOrganisations,
+        });
+    },
 };
