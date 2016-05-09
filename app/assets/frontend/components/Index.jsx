@@ -6,7 +6,6 @@ import GrantsList from './GrantsList';
 
 import GrantStore from '../stores/GrantStore';
 import GrantActions from '../actions/GrantActions';
-GrantActions.getAllGrants();
 
 const getAppState = () => {
     const grants = { grantsList: GrantStore.getAll() };
@@ -21,6 +20,7 @@ export default class Index extends React.Component {
     }
 
     componentDidMount() {
+        GrantActions.getAllGrants();
         GrantStore.addChangeListener(this.onChange);
     }
 

@@ -63,7 +63,7 @@
 	
 	var _Index2 = _interopRequireDefault(_Index);
 	
-	var _OrganisationList = __webpack_require__(/*! ./components/OrganisationList */ 245);
+	var _OrganisationList = __webpack_require__(/*! ./components/OrganisationList */ 244);
 	
 	var _OrganisationList2 = _interopRequireDefault(_OrganisationList);
 	
@@ -26417,8 +26417,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	_GrantActions2.default.getAllGrants();
-	
 	var getAppState = function getAppState() {
 	    var grants = { grantsList: _GrantStore2.default.getAll() };
 	    return grants;
@@ -26440,6 +26438,7 @@
 	    _createClass(Index, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
+	            _GrantActions2.default.getAllGrants();
 	            _GrantStore2.default.addChangeListener(this.onChange);
 	        }
 	    }, {
@@ -27618,53 +27617,6 @@
 
 /***/ },
 /* 244 */
-/*!*********************************************************!*\
-  !*** ./app/assets/frontend/components/Organisation.jsx ***!
-  \*********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var Organisation = function Organisation(props) {
-	  return _react2.default.createElement(
-	    "li",
-	    { className: "collection-item avatar" },
-	    _react2.default.createElement(
-	      "i",
-	      { className: "material-icons circle green" },
-	      "insert_chart"
-	    ),
-	    _react2.default.createElement(
-	      "span",
-	      { className: "title" },
-	      props.name
-	    ),
-	    _react2.default.createElement(
-	      "p",
-	      null,
-	      "No. of grants: "
-	    )
-	  );
-	};
-	
-	Organisation.propTypes = {
-	  name: _react2.default.PropTypes.string.isRequired
-	};
-	
-	exports.default = Organisation;
-
-/***/ },
-/* 245 */
 /*!*************************************************************!*\
   !*** ./app/assets/frontend/components/OrganisationList.jsx ***!
   \*************************************************************/
@@ -27686,15 +27638,15 @@
 	
 	var _reactRouter = __webpack_require__(/*! react-router */ 168);
 	
-	var _OrganisationStore = __webpack_require__(/*! ../stores/OrganisationStore */ 246);
+	var _OrganisationStore = __webpack_require__(/*! ../stores/OrganisationStore */ 245);
 	
 	var _OrganisationStore2 = _interopRequireDefault(_OrganisationStore);
 	
-	var _OrganisationActions = __webpack_require__(/*! ../actions/OrganisationActions */ 247);
+	var _OrganisationActions = __webpack_require__(/*! ../actions/OrganisationActions */ 246);
 	
 	var _OrganisationActions2 = _interopRequireDefault(_OrganisationActions);
 	
-	var _Organisation = __webpack_require__(/*! ./Organisation */ 244);
+	var _Organisation = __webpack_require__(/*! ./Organisation */ 247);
 	
 	var _Organisation2 = _interopRequireDefault(_Organisation);
 	
@@ -27773,7 +27725,7 @@
 	exports.default = OrganisationList;
 
 /***/ },
-/* 246 */
+/* 245 */
 /*!**********************************************************!*\
   !*** ./app/assets/frontend/stores/OrganisationStore.jsx ***!
   \**********************************************************/
@@ -27847,7 +27799,7 @@
 	exports.default = OrganisationStore;
 
 /***/ },
-/* 247 */
+/* 246 */
 /*!*************************************************************!*\
   !*** ./app/assets/frontend/actions/OrganisationActions.jsx ***!
   \*************************************************************/
@@ -27870,6 +27822,62 @@
 	        _API2.default.getAllOrganisations();
 	    }
 	};
+
+/***/ },
+/* 247 */
+/*!*********************************************************!*\
+  !*** ./app/assets/frontend/components/Organisation.jsx ***!
+  \*********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Organisation = function Organisation(props) {
+	  return _react2.default.createElement(
+	    "li",
+	    { className: "collection-item avatar" },
+	    _react2.default.createElement(
+	      "i",
+	      { className: "material-icons circle green" },
+	      "insert_chart"
+	    ),
+	    _react2.default.createElement(
+	      "span",
+	      { className: "title" },
+	      props.name
+	    ),
+	    _react2.default.createElement(
+	      "p",
+	      null,
+	      "Grants funded: ",
+	      props.grant_count_as_funder
+	    ),
+	    _react2.default.createElement(
+	      "p",
+	      null,
+	      "Grants received: ",
+	      props.grant_count_as_recipient
+	    )
+	  );
+	};
+	
+	Organisation.propTypes = {
+	  name: _react2.default.PropTypes.string.isRequired,
+	  grant_count_as_funder: _react2.default.PropTypes.number.isRequired,
+	  grant_count_as_recipient: _react2.default.PropTypes.number.isRequired
+	};
+	
+	exports.default = Organisation;
 
 /***/ }
 /******/ ]);

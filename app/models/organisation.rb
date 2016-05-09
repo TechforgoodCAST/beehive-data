@@ -9,4 +9,16 @@ class Organisation < ActiveRecord::Base
   scope :funders, -> { where(publisher: true) }
   scope :recipients, -> { where(publisher: false) }
 
+  def as_json(options={})
+    super(methods: [:grant_count_as_funder, :grant_count_as_recipient])
+  end
+
+  def grant_count_as_funder
+    grants_as_funder.count
+  end
+
+  def grant_count_as_recipient
+    grants_as_recipient.count
+  end
+
 end

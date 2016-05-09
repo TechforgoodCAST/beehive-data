@@ -16,6 +16,7 @@ class CreateGrants < ActiveRecord::Migration
 
     create_table :beneficiaries do |t|
       t.string :label, :sort, required: true, index: true, uniqe: true
+      t.string :group, required: true
       t.timestamps null: false
     end
 
@@ -26,7 +27,8 @@ class CreateGrants < ActiveRecord::Migration
     end
 
     create_table :age_groups do |t|
-      t.string :label, :age_from, :age_to, required: true, index: true, uniqe: true
+      t.string :label, required: true, index: true, uniqe: true
+      t.integer :age_from, :age_to, required: true
       t.timestamps null: false
     end
 

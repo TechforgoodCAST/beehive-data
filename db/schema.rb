@@ -18,14 +18,12 @@ ActiveRecord::Schema.define(version: 20160506115639) do
 
   create_table "age_groups", force: :cascade do |t|
     t.string   "label"
-    t.string   "age_from"
-    t.string   "age_to"
+    t.integer  "age_from"
+    t.integer  "age_to"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "age_groups", ["age_from"], name: "index_age_groups_on_age_from", using: :btree
-  add_index "age_groups", ["age_to"], name: "index_age_groups_on_age_to", using: :btree
   add_index "age_groups", ["label"], name: "index_age_groups_on_label", using: :btree
 
   create_table "age_groups_grants", force: :cascade do |t|
@@ -36,6 +34,7 @@ ActiveRecord::Schema.define(version: 20160506115639) do
   create_table "beneficiaries", force: :cascade do |t|
     t.string   "label"
     t.string   "sort"
+    t.string   "group"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
