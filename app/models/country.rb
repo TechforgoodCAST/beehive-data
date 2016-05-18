@@ -1,7 +1,8 @@
 class Country < ActiveRecord::Base
 
   has_many :districts
-  has_and_belongs_to_many :grants
+  has_many :locations
+  has_many :grants, through: :locations
 
   validates :name, :alpha2, presence: true, uniqueness: true
 

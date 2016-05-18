@@ -22,7 +22,7 @@ class CreateGrants < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    create_table :beneficiaries_grants do |t|
+    create_table :stakeholders do |t|
       t.references :beneficiary, required: true, index: true
       t.references :grant, required: true, index: true
       t.timestamps null: false
@@ -34,7 +34,7 @@ class CreateGrants < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    create_table :age_groups_grants do |t|
+    create_table :ages do |t|
       t.references :age_group
       t.references :grant
     end
@@ -45,7 +45,7 @@ class CreateGrants < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    create_table :countries_grants do |t|
+    create_table :locations do |t|
       t.references :country
       t.references :grant
     end
@@ -57,7 +57,7 @@ class CreateGrants < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    create_table :districts_grants do |t|
+    create_table :regions do |t|
       t.references :district
       t.references :grant
     end

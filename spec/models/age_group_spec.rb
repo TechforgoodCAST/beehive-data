@@ -7,9 +7,9 @@ RSpec.describe AgeGroup, type: :model do
 
   it 'is valid' do
     8.times do |i|
-      expect(@age_groups[i].label).to    eq(AgeGroup::AGE_GROUPS[i][:label])
-      expect(@age_groups[i].age_from).to eq(AgeGroup::AGE_GROUPS[i][:age_from])
-      expect(@age_groups[i].age_to).to   eq(AgeGroup::AGE_GROUPS[i][:age_to])
+      %w[label age_from age_to].each do |field|
+        expect(@age_groups[i][field]).to eq(AgeGroup::AGE_GROUPS[i][field.to_sym])
+      end
     end
   end
 

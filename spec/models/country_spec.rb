@@ -6,10 +6,10 @@ RSpec.describe Country, type: :model do
   end
 
   it 'has many districts' do
-    expect(@country.districts).to eq(@districts)
+    expect(@countries[0].districts).to eq(@uk_districts)
   end
 
   it 'is valid' do
-    expect(@country).to be_valid
+    expect(@countries[0]).to be_valid
   end
 end

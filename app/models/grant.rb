@@ -2,17 +2,24 @@ class Grant < ActiveRecord::Base
 
   belongs_to :funder, class_name: 'Organisation'
   belongs_to :recipient, class_name: 'Organisation'
-  has_and_belongs_to_many :age_groups
-  has_and_belongs_to_many :beneficiaries
-  has_and_belongs_to_many :countries
-  has_and_belongs_to_many :districts
 
+  has_many :locations
+  has_many :countries, through: :locations
+  has_many :regions
+  has_many :districts, through: :regions
+
+  has_many :ages
+  has_many :age_groups, through: :ages
+  has_many :stakeholders
+  has_many :beneficiaries, through: :stakeholders
+
+  validates :grant_identifier, uniqueness: true
   validates :grant_identifier, :funder, :recipient, :state, :title, :description,
             :currency, :funding_programme, :amount_awarded, :award_date,
               presence: true
-  validates :grant_identifier, uniqueness: true
 
-  validates :age_groups, presence: true, if: 'review? || approved?'
+  validates :age_groups, :beneficiaries, :countries, :districts,
+              presence: true, if: 'review? || approved?'
 
   include Workflow
   workflow_column :state

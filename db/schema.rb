@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 20160506115639) do
 
   add_index "age_groups", ["label"], name: "index_age_groups_on_label", using: :btree
 
-  create_table "age_groups_grants", force: :cascade do |t|
+  create_table "ages", force: :cascade do |t|
     t.integer "age_group_id"
     t.integer "grant_id"
   end
@@ -42,16 +42,6 @@ ActiveRecord::Schema.define(version: 20160506115639) do
   add_index "beneficiaries", ["label"], name: "index_beneficiaries_on_label", using: :btree
   add_index "beneficiaries", ["sort"], name: "index_beneficiaries_on_sort", using: :btree
 
-  create_table "beneficiaries_grants", force: :cascade do |t|
-    t.integer  "beneficiary_id"
-    t.integer  "grant_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "beneficiaries_grants", ["beneficiary_id"], name: "index_beneficiaries_grants_on_beneficiary_id", using: :btree
-  add_index "beneficiaries_grants", ["grant_id"], name: "index_beneficiaries_grants_on_grant_id", using: :btree
-
   create_table "countries", force: :cascade do |t|
     t.string   "name"
     t.string   "alpha2"
@@ -63,11 +53,6 @@ ActiveRecord::Schema.define(version: 20160506115639) do
   add_index "countries", ["alpha2"], name: "index_countries_on_alpha2", using: :btree
   add_index "countries", ["currency_code"], name: "index_countries_on_currency_code", using: :btree
   add_index "countries", ["name"], name: "index_countries_on_name", using: :btree
-
-  create_table "countries_grants", force: :cascade do |t|
-    t.integer "country_id"
-    t.integer "grant_id"
-  end
 
   create_table "districts", force: :cascade do |t|
     t.integer  "country_id"
@@ -81,11 +66,6 @@ ActiveRecord::Schema.define(version: 20160506115639) do
 
   add_index "districts", ["country_id"], name: "index_districts_on_country_id", using: :btree
   add_index "districts", ["name"], name: "index_districts_on_name", using: :btree
-
-  create_table "districts_grants", force: :cascade do |t|
-    t.integer "district_id"
-    t.integer "grant_id"
-  end
 
   create_table "grants", force: :cascade do |t|
     t.integer  "funder_id"
@@ -118,6 +98,11 @@ ActiveRecord::Schema.define(version: 20160506115639) do
   add_index "grants", ["funder_id"], name: "index_grants_on_funder_id", using: :btree
   add_index "grants", ["grant_identifier"], name: "index_grants_on_grant_identifier", using: :btree
   add_index "grants", ["recipient_id"], name: "index_grants_on_recipient_id", using: :btree
+
+  create_table "locations", force: :cascade do |t|
+    t.integer "country_id"
+    t.integer "grant_id"
+  end
 
   create_table "organisations", force: :cascade do |t|
     t.integer  "country_id"
@@ -152,6 +137,21 @@ ActiveRecord::Schema.define(version: 20160506115639) do
   add_index "organisations", ["organisation_identifier"], name: "index_organisations_on_organisation_identifier", using: :btree
   add_index "organisations", ["organisation_number"], name: "index_organisations_on_organisation_number", using: :btree
   add_index "organisations", ["slug"], name: "index_organisations_on_slug", using: :btree
+
+  create_table "regions", force: :cascade do |t|
+    t.integer "district_id"
+    t.integer "grant_id"
+  end
+
+  create_table "stakeholders", force: :cascade do |t|
+    t.integer  "beneficiary_id"
+    t.integer  "grant_id"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "stakeholders", ["beneficiary_id"], name: "index_stakeholders_on_beneficiary_id", using: :btree
+  add_index "stakeholders", ["grant_id"], name: "index_stakeholders_on_grant_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false

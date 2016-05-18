@@ -1,8 +1,10 @@
 class District < ActiveRecord::Base
 
   belongs_to :country
-  has_and_belongs_to_many :grants
+  has_many :regions
+  has_many :grants, through: :regions
 
-  validates :country, :name, presence: true, uniqueness: { scope: :id }
+  validates :name, presence: true, uniqueness: { scope: :country }
+  validates :country, :subdivision, presence: true
 
 end

@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe Organisation, type: :model do
   before(:each) do
     seed_test_db
-    @funder    = create(:funder, country: @country)
-    @recipient = create(:recipient, country: @country)
-    @grants    = Array.new(2) { |i| create(:grants, funder: @funder, recipient: @recipient) }
+    @funder    = create(:funder, country: @countries[0])
+    @recipient = create(:recipient, country: @countries[0])
+    @grants    = Array.new(2) { |i| create(:grant, funder: @funder, recipient: @recipient) }
   end
 
   it 'belongs to a country' do
@@ -36,14 +36,14 @@ RSpec.describe Organisation, type: :model do
   it 'has unique charity number' do
     duplicate_org = build(:recipient,
                           charity_number: @recipient.charity_number,
-                          country: @country)
+                          country: @countries[0])
     expect(duplicate_org).not_to be_valid
   end
 
   it 'has unique company number' do
     duplicate_org = build(:recipient,
                           company_number: @recipient.company_number,
-                          country: @country)
+                          country: @countries[0])
     expect(duplicate_org).not_to be_valid
   end
 
@@ -52,7 +52,7 @@ RSpec.describe Organisation, type: :model do
     @recipient.save
     duplicate_org = build(:recipient,
                           organisation_number: @recipient.organisation_number,
-                          country: @country)
+                          country: @countries[0])
     expect(duplicate_org).not_to be_valid
   end
 
@@ -101,19 +101,17 @@ RSpec.describe Organisation, type: :model do
   end
 
   it 'is valid when in review' do
-    review = create(:review_org, country: @country)
+    review = create(:review_org, country: @countries[0])
     expect(review).to be_valid
   end
 
   it 'is valid when approved' do
-    approved = create(:approved_org, country: @country)
+    approved = create(:approved_org, country: @countries[0])
     expect(approved).to be_valid
   end
 
   it 'sets identifier if none present'
-
   it 'that is individual has appropriate org type'
-
   it 'geocoded if street address or postal code present'
 
 end

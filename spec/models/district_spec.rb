@@ -6,10 +6,10 @@ RSpec.describe District, type: :model do
   end
 
   it 'belongs to a country' do
-    2.times { |i| expect(@districts[i].country).to eq(@country) }
+    3.times { |i| expect(@uk_districts[i].country).to eq(@countries[0]) }
   end
 
   it 'is valid' do
-    2.times { |i| expect(@districts[i].country).to be_valid }
+    3.times { |i| expect(@uk_districts[i].country).to be_valid }
   end
 end

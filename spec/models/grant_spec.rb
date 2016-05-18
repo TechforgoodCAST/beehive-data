@@ -3,15 +3,15 @@ require 'rails_helper'
 RSpec.describe Grant, type: :model do
   before(:each) do
     seed_test_db
-    @funder    = create(:funder, country: @country)
-    @recipient = create(:recipient, country: @country)
-    @grant     = create(:grants,
+    @funder    = create(:funder, country: @countries[0])
+    @recipient = create(:recipient, country: @countries[0])
+    @grant     = create(:grant,
                         funder: @funder,
                         recipient: @recipient,
                         age_groups: @age_groups,
                         beneficiaries: @beneficiaries,
-                        countries: [@country, @country],
-                        districts: @districts)
+                        countries: @countries,
+                        districts: @uk_districts)
   end
 
   it 'belongs to funder' do
@@ -33,10 +33,15 @@ RSpec.describe Grant, type: :model do
   it 'has many countries' do
     expect(@grant.countries.count).to eq(2)
   end
-  # it 'has many districts'
-  # it 'has many activites'
-  # it 'is valid when imported'
-  # it 'is valid when in review'
-  # it 'is valid when approved'
-  # it 'beneficiaries generated from scrape'
+
+  it 'has many districts' do
+    expect(@grant.districts.count).to eq(3)
+  end
+
+  it 'has many activites'
+  it 'is valid when imported'
+  it 'is valid when in review'
+  it 'is valid when approved'
+  it 'beneficiaries generated from scrape'
+  
 end

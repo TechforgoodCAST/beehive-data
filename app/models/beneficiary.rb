@@ -123,7 +123,8 @@ class Beneficiary < ActiveRecord::Base
     }
   ]
 
-  has_and_belongs_to_many :grants
+  has_many :stakeholders
+  has_many :grants, through: :stakeholders
 
   validates :label, :sort, :group, presence: true
   validates :label, :sort, uniqueness: true

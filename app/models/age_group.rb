@@ -11,7 +11,8 @@ class AgeGroup < ActiveRecord::Base
     { label: 'Older adults (80+)',          age_from: 80, age_to: 15  }
   ]
 
-  has_and_belongs_to_many :grants
+  has_many :ages
+  has_many :grants, through: :ages
 
   validates :label, :age_from, :age_to, presence: true
   validates :label, uniqueness: true
