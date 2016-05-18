@@ -6,11 +6,13 @@ class CreateGrants < ActiveRecord::Migration
       t.string :grant_identifier, required: true, index: true, uniqe: true
       t.string :title, :description, :currency, :funding_programme, required: true
       t.string :gender
+      t.string :state, default: 'import', required: true
       t.decimal :amount_awarded, required: true
       t.decimal :amount_applied_for, :amount_disbursed
       t.date :award_date, required: true
       t.date :planned_start_date, :planned_end_date
       t.boolean :open_call, :affect_people, :affect_other
+      t.integer :operating_for, :income, :spending, :employees, :volunteers
       t.timestamps null: false
     end
 
@@ -39,6 +41,7 @@ class CreateGrants < ActiveRecord::Migration
 
     create_table :countries do |t|
       t.string :name, :alpha2, required: true, index: true, uniqe: true
+      t.string :currency_code, index: true
       t.timestamps null: false
     end
 
@@ -61,14 +64,16 @@ class CreateGrants < ActiveRecord::Migration
 
     create_table :organisations do |t|
       t.references :country, required: true, index: true
-      t.string :organisation_identifier, required: true, index: true, uniqe: true
-      t.string :slug, required: true, index: true, uniqe: true
-      t.string :name, :charity_number, :company_number, required: true
-      t.string :street_address, :city, :region, :postal_code, :website, :registered_name, :company_type
-      t.integer :org_type, :operating_for, :income, :spending, :employees, :volunteers, required: true
+      t.string :organisation_identifier, :slug, required: true, index: true, uniqe: true
+      t.string :charity_number, :company_number, :organisation_number, index: true, uniqe: true
+      t.string :name, required: true
+      t.string :state, default: 'import', required: true
+      t.string :street_address, :city, :region, :postal_code, :website, :legal_name, :company_type
+      t.integer :org_type, required: true
       t.boolean :publisher, default: false
-      t.boolean :multi_national
+      t.boolean :multi_national, :registered
       t.float :latitude, :longitude
+      t.datetime :scraped_at
       t.timestamps null: false
     end
   end

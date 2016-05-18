@@ -1,6 +1,5 @@
 class Country < ActiveRecord::Base
 
-  belongs_to :organisation
   has_many :districts
   has_and_belongs_to_many :grants
 

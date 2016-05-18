@@ -7,11 +7,30 @@ class Grant < ActiveRecord::Base
   has_and_belongs_to_many :countries
   has_and_belongs_to_many :districts
 
-  validates :grant_identifier, :funder, :recipient, presence: true
+  validates :grant_identifier, :funder, :recipient, :state, :title, :description,
+            :currency, :funding_programme, :amount_awarded, :award_date,
+              presence: true
+  validates :grant_identifier, uniqueness: true
+
+  validates :age_groups, presence: true, if: 'review? || approved?'
+
+  include Workflow
+  workflow_column :state
+  workflow do
+    state :import do
+      event :next_step, transitions_to: :review
+    end
+    state :review do
+      event :next_step, transitions_to: :approved
+    end
+    state :approved
+  end
 
   def as_json(options={})
     super(methods: [:funder_name, :recipient_name, :beneficiary])
   end
+
+  private
 
   def funder_name
     funder.name

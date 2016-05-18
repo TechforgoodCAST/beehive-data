@@ -55,11 +55,13 @@ ActiveRecord::Schema.define(version: 20160506115639) do
   create_table "countries", force: :cascade do |t|
     t.string   "name"
     t.string   "alpha2"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "currency_code"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   add_index "countries", ["alpha2"], name: "index_countries_on_alpha2", using: :btree
+  add_index "countries", ["currency_code"], name: "index_countries_on_currency_code", using: :btree
   add_index "countries", ["name"], name: "index_countries_on_name", using: :btree
 
   create_table "countries_grants", force: :cascade do |t|
@@ -94,6 +96,7 @@ ActiveRecord::Schema.define(version: 20160506115639) do
     t.string   "currency"
     t.string   "funding_programme"
     t.string   "gender"
+    t.string   "state",              default: "import"
     t.decimal  "amount_awarded"
     t.decimal  "amount_applied_for"
     t.decimal  "amount_disbursed"
@@ -103,8 +106,13 @@ ActiveRecord::Schema.define(version: 20160506115639) do
     t.boolean  "open_call"
     t.boolean  "affect_people"
     t.boolean  "affect_other"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.integer  "operating_for"
+    t.integer  "income"
+    t.integer  "spending"
+    t.integer  "employees"
+    t.integer  "volunteers"
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
   end
 
   add_index "grants", ["funder_id"], name: "index_grants_on_funder_id", using: :btree
@@ -115,32 +123,34 @@ ActiveRecord::Schema.define(version: 20160506115639) do
     t.integer  "country_id"
     t.string   "organisation_identifier"
     t.string   "slug"
-    t.string   "name"
     t.string   "charity_number"
     t.string   "company_number"
+    t.string   "organisation_number"
+    t.string   "name"
+    t.string   "state",                   default: "import"
     t.string   "street_address"
     t.string   "city"
     t.string   "region"
     t.string   "postal_code"
     t.string   "website"
-    t.string   "registered_name"
+    t.string   "legal_name"
     t.string   "company_type"
     t.integer  "org_type"
-    t.integer  "operating_for"
-    t.integer  "income"
-    t.integer  "spending"
-    t.integer  "employees"
-    t.integer  "volunteers"
     t.boolean  "publisher",               default: false
     t.boolean  "multi_national"
+    t.boolean  "registered"
     t.float    "latitude"
     t.float    "longitude"
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
+    t.datetime "scraped_at"
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
   end
 
+  add_index "organisations", ["charity_number"], name: "index_organisations_on_charity_number", using: :btree
+  add_index "organisations", ["company_number"], name: "index_organisations_on_company_number", using: :btree
   add_index "organisations", ["country_id"], name: "index_organisations_on_country_id", using: :btree
   add_index "organisations", ["organisation_identifier"], name: "index_organisations_on_organisation_identifier", using: :btree
+  add_index "organisations", ["organisation_number"], name: "index_organisations_on_organisation_number", using: :btree
   add_index "organisations", ["slug"], name: "index_organisations_on_slug", using: :btree
 
   create_table "users", force: :cascade do |t|
