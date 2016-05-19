@@ -52,14 +52,6 @@ class Organisation < ActiveRecord::Base
 
   private
 
-  def grant_count_as_funder
-    grants_as_funder.count
-  end
-
-  def grant_count_as_recipient
-    grants_as_recipient.count
-  end
-
   def to_param
     self.slug
   end
@@ -92,6 +84,15 @@ class Organisation < ActiveRecord::Base
 
   def set_registered
     self.org_type > 0 ? self.registered = true : self.registered = false
+    return true
+  end
+
+  def grant_count_as_funder
+    grants_as_funder.count
+  end
+
+  def grant_count_as_recipient
+    grants_as_recipient.count
   end
 
 end

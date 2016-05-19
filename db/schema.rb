@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 20160506115639) do
     t.boolean  "open_call"
     t.boolean  "affect_people"
     t.boolean  "affect_other"
+    t.integer  "year"
     t.integer  "operating_for"
     t.integer  "income"
     t.integer  "spending"

@@ -12,6 +12,7 @@ class CreateGrants < ActiveRecord::Migration
       t.date :award_date, required: true
       t.date :planned_start_date, :planned_end_date
       t.boolean :open_call, :affect_people, :affect_other
+      t.integer :year, required: true
       t.integer :operating_for, :income, :spending, :employees, :volunteers
       t.timestamps null: false
     end

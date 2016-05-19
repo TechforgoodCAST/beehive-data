@@ -14,12 +14,15 @@ class Grant < ActiveRecord::Base
   has_many :beneficiaries, through: :stakeholders
 
   validates :grant_identifier, uniqueness: true
-  validates :grant_identifier, :funder, :recipient, :state, :title, :description,
-            :currency, :funding_programme, :amount_awarded, :award_date,
+  validates :grant_identifier, :funder, :recipient, :state, :year,
+            :title, :description, :currency, :funding_programme,
+            :amount_awarded, :award_date,
               presence: true
 
   validates :age_groups, :beneficiaries, :countries, :districts,
               presence: true, if: 'review? || approved?'
+
+  before_validation :set_year, unless: :year
 
   include Workflow
   workflow_column :state
@@ -38,6 +41,10 @@ class Grant < ActiveRecord::Base
   end
 
   private
+
+  def set_year
+    self.year = self.award_date.year
+  end
 
   def funder_name
     funder.name

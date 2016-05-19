@@ -38,6 +38,10 @@ RSpec.describe Grant, type: :model do
     expect(@grant.districts.count).to eq(3)
   end
 
+  it 'year set from award date' do
+    expect(@grant.year).to eq(@grant.award_date.year)
+  end
+
   it 'has many activites'
   it 'is valid when imported'
   it 'is valid when in review'
