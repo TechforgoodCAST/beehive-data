@@ -9,10 +9,10 @@ class Region < ActiveRecord::Base
 
   private
 
-  def ensure_districts_for_country
-    unless self.grant.country_ids.include?(self.district.country_id)
-      errors.add(:district, 'Not a district of grant')
+    def ensure_districts_for_country
+      unless self.grant.country_ids.include?(self.district.country_id)
+        errors.add(:district, 'Not a district of grant')
+      end
     end
-  end
 
 end

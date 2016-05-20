@@ -31,5 +31,14 @@ Organisation.create!(
   organisation_identifier: 'GB-CHC-200051',
   charity_number:          '200051',
   name:                    'Esmee Fairbairn Foundation',
-  country:                 Country.find_by_alpha2('GB')
+  country:                 Country.find_by_alpha2('GB'),
+  publisher:               true
+)
+Organisation.where(organisation_identifier: 'GB-CHC-327114').destroy_all
+Organisation.create!(
+  organisation_identifier: 'GB-CHC-327114',
+  charity_number:          '327114',
+  name:                    'Lloyds Bank Foundation for England and Wales',
+  country:                 Country.find_by_alpha2('GB'),
+  publisher:               true
 )

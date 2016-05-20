@@ -1,5 +1,7 @@
 class GrantsController < ApplicationController
 
+  before_action :authenticate_user!
+
   def index
     render json: Grant.includes(:beneficiaries).order(created_at: :desc).all
   end

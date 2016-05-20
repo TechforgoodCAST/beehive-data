@@ -1,29 +1,29 @@
 require 'rails_helper'
 
-RSpec.describe Organisation, type: :model do
+describe Organisation do
   before(:each) do
     seed_test_db
-    @funder    = create(:funder, country: @countries[0])
-    @recipient = create(:recipient, country: @countries[0])
+    @funder    = create(:funder, country: @countries.first)
+    @recipient = create(:recipient, country: @countries.first)
     @grants    = Array.new(2) { |i| create(:grant, funder: @funder, recipient: @recipient) }
   end
 
   it 'belongs to a country' do
-    expect(@funder.country.alpha2).to    eq('GB')
-    expect(@recipient.country.alpha2).to eq('GB')
+    expect(@funder.country.alpha2).to    eq 'GB'
+    expect(@recipient.country.alpha2).to eq 'GB'
   end
 
   it 'has many grants as funder' do
-    expect(@funder.grants_as_funder.count).to eq(2)
+    expect(@funder.grants_as_funder.count).to eq 2
   end
 
   it 'has many grants as recipient' do
-    expect(@recipient.grants_as_recipient.count).to eq(2)
+    expect(@recipient.grants_as_recipient.count).to eq 2
   end
 
   it 'has slug' do
-    expect(@funder.slug).to    eq('esmee-fairbairn-foundation')
-    expect(@recipient.slug).to eq('charity-projects')
+    expect(@funder.slug).to    eq 'esmee-fairbairn-foundation'
+    expect(@recipient.slug).to eq 'charity-projects'
   end
 
   it 'has uniqe identifier' do
@@ -36,14 +36,14 @@ RSpec.describe Organisation, type: :model do
   it 'has unique charity number' do
     duplicate_org = build(:recipient,
                           charity_number: @recipient.charity_number,
-                          country: @countries[0])
+                          country: @countries.first)
     expect(duplicate_org).not_to be_valid
   end
 
   it 'has unique company number' do
     duplicate_org = build(:recipient,
                           company_number: @recipient.company_number,
-                          country: @countries[0])
+                          country: @countries.first)
     expect(duplicate_org).not_to be_valid
   end
 
@@ -52,33 +52,33 @@ RSpec.describe Organisation, type: :model do
     @recipient.save
     duplicate_org = build(:recipient,
                           organisation_number: @recipient.organisation_number,
-                          country: @countries[0])
+                          country: @countries.first)
     expect(duplicate_org).not_to be_valid
   end
 
   it 'sets registered as truthy if organisational numbers present' do
-    expect(@recipient.registered).to eq(true)
-    expect(@funder.registered).to    eq(true)
+    expect(@recipient.registered).to eq true
+    expect(@funder.registered).to    eq true
   end
 
   it 'unsets registered if no organiational numbers present' do
     @funder.charity_number = nil
     @funder.save
-    expect(@funder.registered).to eq(false)
+    expect(@funder.registered).to eq false
   end
 
   it 'that is charity has appropriate org type' do
-    expect(@funder.org_type).to eq(1)
+    expect(@funder.org_type).to eq 1
   end
 
   it 'that is company has appropriate org type' do
     @recipient.charity_number = nil
     @recipient.save
-    expect(@recipient.org_type).to eq(2)
+    expect(@recipient.org_type).to eq 2
   end
 
   it 'that is both a charity and company has appropriate org type' do
-    expect(@recipient.org_type).to eq(3)
+    expect(@recipient.org_type).to eq 3
   end
 
   it 'that is another type of organisation has appropriate org type' do
@@ -86,13 +86,13 @@ RSpec.describe Organisation, type: :model do
     @recipient.company_number = nil
     @recipient.organisation_number = 'ABC123'
     @recipient.save
-    expect(@recipient.org_type).to eq(4)
+    expect(@recipient.org_type).to eq 4
   end
 
   it 'that is unregistered has appropriate org type' do
     @funder.charity_number = nil
     @funder.save
-    expect(@funder.org_type).to eq(0)
+    expect(@funder.org_type).to eq 0
   end
 
   it 'is valid when imported' do
@@ -101,12 +101,12 @@ RSpec.describe Organisation, type: :model do
   end
 
   it 'is valid when in review' do
-    review = create(:review_org, country: @countries[0])
+    review = create(:review_org, country: @countries.first)
     expect(review).to be_valid
   end
 
   it 'is valid when approved' do
-    approved = create(:approved_org, country: @countries[0])
+    approved = create(:approved_org, country: @countries.first)
     expect(approved).to be_valid
   end
 

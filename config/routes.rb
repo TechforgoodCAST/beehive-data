@@ -6,8 +6,8 @@ Rails.application.routes.draw do
   get '/grants', to: 'grants#index'
   post '/grants', to: 'grants#create'
 
-  resources :organisations, :funders, :recipients, shallow: true do
-    resources :grants
+  namespace :v1 do
+    get '/funders', to: 'funders#index'
   end
 
 end

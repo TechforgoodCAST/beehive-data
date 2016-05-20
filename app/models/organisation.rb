@@ -1,7 +1,8 @@
 class Organisation < ActiveRecord::Base
 
-  scope :funders, -> { where(publisher: true) }
-  scope :recipients, -> { where(publisher: false) }
+  scope :funder,    -> { where(publisher: true) }
+  scope :recipient, -> { where(publisher: false) }
+  scope :approved,   -> { where(state: 'approved') }
 
   ORG_TYPE = [
     ['An individual', -1],
@@ -29,7 +30,6 @@ class Organisation < ActiveRecord::Base
   validates :website, format: { with: URI::regexp(%w(http https)),
               message: 'enter a valid website address e.g. http://www.example.com'},
               if: :website?
-  # :legal_name, :company_type, :latitude, :longitude
 
   before_validation :set_slug, unless: :slug
   before_validation :set_org_type, :set_registered
@@ -46,53 +46,41 @@ class Organisation < ActiveRecord::Base
     state :approved
   end
 
-  def as_json(options={})
-    super(methods: [:grant_count_as_funder, :grant_count_as_recipient])
-  end
-
   private
 
-  def to_param
-    self.slug
-  end
-
-  def set_slug
-    self.slug = generate_slug
-  end
-
-  def generate_slug(n=1)
-    return nil unless self.name
-    candidate = self.name.parameterize
-    candidate += "-#{n}" if n > 1
-    return candidate unless Organisation.find_by_slug(candidate)
-    generate_slug(n+1)
-  end
-
-  def set_org_type
-    if self.charity_number? && self.company_number?
-      self.org_type = 3
-    elsif self.charity_number? && !self.company_number?
-      self.org_type = 1
-    elsif !self.charity_number? && self.company_number?
-      self.org_type = 2
-    elsif self.organisation_number? && (!self.charity_number? && !self.company_number?)
-      self.org_type = 4
-    else
-      self.org_type = 0
+    def to_param
+      self.slug
     end
-  end
 
-  def set_registered
-    self.org_type > 0 ? self.registered = true : self.registered = false
-    return true
-  end
+    def set_slug
+      self.slug = generate_slug
+    end
 
-  def grant_count_as_funder
-    grants_as_funder.count
-  end
+    def generate_slug(n=1)
+      return nil unless self.name
+      candidate = self.name.parameterize
+      candidate += "-#{n}" if n > 1
+      return candidate unless Organisation.find_by_slug(candidate)
+      generate_slug(n+1)
+    end
 
-  def grant_count_as_recipient
-    grants_as_recipient.count
-  end
+    def set_org_type
+      if self.charity_number? && self.company_number?
+        self.org_type = 3
+      elsif self.charity_number? && !self.company_number?
+        self.org_type = 1
+      elsif !self.charity_number? && self.company_number?
+        self.org_type = 2
+      elsif self.organisation_number? && (!self.charity_number? && !self.company_number?)
+        self.org_type = 4
+      else
+        self.org_type = 0
+      end
+    end
+
+    def set_registered
+      self.org_type > 0 ? self.registered = true : self.registered = false
+      return true
+    end
 
 end

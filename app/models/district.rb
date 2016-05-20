@@ -5,6 +5,6 @@ class District < ActiveRecord::Base
   has_many :grants, through: :regions
 
   validates :name, presence: true, uniqueness: { scope: :country }
-  validates :country, :subdivision, presence: true
+  validates :country, presence: true
 
 end

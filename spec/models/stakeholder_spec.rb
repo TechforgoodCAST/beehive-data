@@ -1,13 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe Stakeholder, type: :model do
+describe Stakeholder do
   before(:each) do
     basic_setup
-    @stakeholder = create(:stakeholder, beneficiary: @beneficiaries[0], grant: @grant)
+    @stakeholder = create(:stakeholder, beneficiary: @beneficiaries.first, grant: @grant)
   end
 
   it 'is unique per grant' do
-    duplicate_beneficiary = build(:stakeholder, beneficiary: @beneficiaries[0], grant: @grant)
+    duplicate_beneficiary = build(:stakeholder, beneficiary: @beneficiaries.first, grant: @grant)
     expect(duplicate_beneficiary).not_to be_valid
   end
 end

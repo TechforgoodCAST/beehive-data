@@ -42,20 +42,20 @@ class Grant < ActiveRecord::Base
 
   private
 
-  def set_year
-    self.year = self.award_date.year
-  end
+    def set_year
+      self.year = self.award_date.year
+    end
 
-  def funder_name
-    funder.name
-  end
+    def funder_name
+      funder.name
+    end
 
-  def recipient_name
-    recipient.name
-  end
+    def recipient_name
+      recipient.name
+    end
 
-  def beneficiary
-    beneficiaries.pluck(:sort)
-  end
+    def beneficiary
+      beneficiaries.pluck(:sort)
+    end
 
 end
