@@ -1,6 +1,26 @@
 class OrganisationsController < ApplicationController
 
-  before_action :authenticate_user!, :load_organisation
+  before_action :authenticate_user!
+  before_action :load_organisation, except: :index
+
+  def index
+    @organisations = Organisation.approved
+  end
+
+  def edit
+    if @organisation.scrape.keys.count > 0 && !@organisation.approved?
+      @organisation.attributes = @organisation.scrape['data'].except('regions', 'score')
+    end
+  end
+
+  def update
+    if @organisation.update(organisation_params)
+      @organisation.next_step! unless @organisation.approved?
+      redirect_to review_organisations_path
+    else
+      render :edit
+    end
+  end
 
   def review
     @organisations = Organisation.order(updated_at: :desc)
@@ -8,8 +28,8 @@ class OrganisationsController < ApplicationController
 
   def scrape
     Organisation.import.order(updated_at: :desc).limit(10).each do |org|
-      if org.public_find
-        org.update_attribute(:scrape, org.public_find)
+      if org.scrape_org
+        org.update_attribute(:scrape, org.scrape_org)
         org.update_attribute(:scraped_at, Time.now)
         if org.scrape['data']['score'] > 4
           org.update_attributes(org.use_scrape_data)
@@ -22,21 +42,6 @@ class OrganisationsController < ApplicationController
       end
     end
     redirect_to review_organisations_path
-  end
-
-  def edit
-    if @organisation.scrape.keys.count > 0
-      @organisation.attributes = @organisation.scrape['data'].except('regions', 'score')
-    end
-  end
-
-  def update
-    if @organisation.update(organisation_params)
-      @organisation.next_step! unless @organisation.approved?
-      redirect_to review_organisations_path
-    else
-      render :edit
-    end
   end
 
   private

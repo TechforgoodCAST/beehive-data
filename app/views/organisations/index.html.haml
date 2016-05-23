@@ -1,0 +1,18 @@
+%h1 Organisations
+
+%table
+  %thead
+    %tr
+      %th Import
+      %th Review
+      %th Approved
+  %tbody
+    %tr
+      %td= Organisation.import.count
+      %td= Organisation.review.count
+      %td= Organisation.approved.count
+
+%ul.collection
+  - @organisations.each do |org|
+    %li.collection-item
+      %span.title= link_to org.name, edit_organisation_path(org)

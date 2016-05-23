@@ -4,8 +4,7 @@ Rails.application.routes.draw do
 
   # Admin
   devise_for :users
-
-  resources :organisations, only: [:edit, :update] do
+  resources :organisations, only: [:edit, :update, :index] do
     collection do
       get   '/review', to: 'organisations#review'
       patch '/review', to: 'organisations#scrape', as: 'scrape'

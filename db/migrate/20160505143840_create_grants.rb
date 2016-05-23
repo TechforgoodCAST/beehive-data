@@ -69,11 +69,13 @@ class CreateGrants < ActiveRecord::Migration
       t.string :charity_number, :company_number, :organisation_number, index: true, uniqe: true
       t.string :name, required: true
       t.string :state, default: 'import', required: true
-      t.string :street_address, :city, :region, :postal_code, :website, :legal_name, :company_type
+      t.string :street_address, :city, :region, :postal_code, :website, :company_type
+      t.date :incorporated_date
       t.integer :org_type, required: true
       t.boolean :publisher, default: false
       t.boolean :multi_national, :registered
       t.float :latitude, :longitude
+      t.json :scrape, default: {}, null: false
       t.datetime :scraped_at
       t.timestamps null: false
     end

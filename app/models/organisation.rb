@@ -51,8 +51,12 @@ class Organisation < ActiveRecord::Base
     self.slug
   end
 
-  def public_find
-    find_charity_commission
+  def scrape_org
+    if self.company_number && !self.charity_number
+      find_companies_house
+    else
+      find_charity_commission
+    end
   end
 
   def use_scrape_data
@@ -67,7 +71,7 @@ class Organisation < ActiveRecord::Base
       "http://beta.charitycommission.gov.uk/charity-details/?regid=#{CGI.escape(charity_number)}&subid=0"
     end
 
-    def companies_house_url
+    def companies_house_url(company_number=self.company_number)
       "https://beta.companieshouse.gov.uk/company/#{CGI.escape(company_number)}"
     end
 
@@ -126,11 +130,49 @@ class Organisation < ActiveRecord::Base
         background[:income] = financials_multiplier(response.at_css('.detail-33:nth-child(1) .big-money'))
         background[:spending] = financials_multiplier(response.at_css('.detail-33:nth-child(2) .big-money'))
 
+        def parse_people_numbers(response, nth_child)
+          if element = response.at_css("#tpPeople li:nth-child(#{nth_child}) .mid-money")
+            return element.text.to_i
+          end
+        end
+
+        background[:trustees]   = parse_people_numbers(response, 1)
+        background[:employees]  = parse_people_numbers(response, 2)
+        background[:volunteers] = parse_people_numbers(response, 3)
+
         background[:what] = parse_to_array(response.at_css('#plWhatWhoHow .detail-50:nth-child(1) .detail-panel-wrap'))
         background[:who] = parse_to_array(response.at_css('#plWhatWhoHow .detail-50+ .detail-50 .detail-panel-wrap'))
         background[:how] = parse_to_array(response.at_css('.detail-100 .detail-panel-wrap'))
 
+        if data[:company_number]
+          background = background.merge(find_companies_house(data[:company_number])[:background])
+        end
+
         return { data: data, background: background }
+      end
+    end
+
+    def find_companies_house(company_number=self.company_number)
+      require 'open-uri'
+      response = Nokogiri::HTML(open(companies_house_url(company_number))) rescue nil
+
+      if response
+        companies_house_data = {}
+        companies_house_data[:company_type] = response.at_css('#company-type')
+                                                .text.gsub(/\n/, '').strip
+        companies_house_data[:incorporated_date] = response.at_css('#company-creation-date')
+                                                     .text.gsub(/\n/, '').strip.to_date
+        companies_house_data[:company_status] = response.at_css('#company-status')
+                                                .text.gsub(/\n/, '').strip
+        sic_array = []
+        10.times do |i|
+          sic_array << response.at_css("#sic#{i}").text.strip if response.at_css("#sic#{i}").present?
+        end
+        companies_house_data[:sic_code] = sic_array
+
+        return { background: companies_house_data }
+      else
+        return { background: {} }
       end
     end
 
