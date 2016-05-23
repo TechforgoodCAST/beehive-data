@@ -1,0 +1,23 @@
+%h1
+  Edit organisation
+  = surround '(', ')' do
+    = @organisation.state
+
+= @organisation.publisher
+
+= simple_form_for @organisation do |f|
+  = f.input :organisation_identifier
+  = f.input :name
+  = f.input :charity_number
+  = f.input :company_number
+  = f.input :organisation_number
+  = f.input :org_type, as: :select, collection: Organisation::ORG_TYPE, input_html: { class: 'browser-default' }
+  = f.input :country_id, as: :select, collection: Country.order(:name).group(:id, :name), input_html: { class: 'browser-default' }
+  = f.input :multi_national, as: :select, collection: [true, false], input_html: { class: 'browser-default' }
+  = f.input :street_address
+  = f.input :city
+  = f.input :region
+  = f.input :postal_code
+  = f.input :website
+
+  = f.button :submit, (@organisation.approved? ? 'Save' : 'Save & Approve'), input_html: { class: 'waves-effect waves-light btn' }

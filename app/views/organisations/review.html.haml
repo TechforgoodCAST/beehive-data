@@ -1,0 +1,33 @@
+%h1 Review organisations
+
+= link_to 'Scrape 5 organisations', scrape_organisations_path, method: :patch, class: 'waves-effect waves-light btn'
+
+%table
+  %thead
+    %tr
+      %th
+        Import
+        = surround '(', ')' do
+          = Organisation.import.count
+      %th
+        Review
+        = surround '(', ')' do
+          = Organisation.review.count
+      -# %th Approved
+  %tbody
+    - @organisations.each do |org|
+      %tr
+        - if org.state == 'import'
+          %td= org.name
+          %td
+          %td
+        - elsif org.state == 'review'
+          %td
+          %td= link_to org.name, edit_organisation_path(org)
+          %td
+        -# - else
+        -#   %td
+        -#   %td
+        -#   %td
+        -#     = link_to org.name, edit_organisation_path(org)
+        -#     -# = org.scrape['background']

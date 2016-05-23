@@ -17,6 +17,8 @@ gem 'haml'
 
 gem 'devise'
 gem 'workflow'
+gem 'nokogiri'
+gem 'simple_form'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

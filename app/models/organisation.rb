@@ -2,7 +2,9 @@ class Organisation < ActiveRecord::Base
 
   scope :funder,    -> { where(publisher: true) }
   scope :recipient, -> { where(publisher: false) }
-  scope :approved,   -> { where(state: 'approved') }
+  scope :import,    -> { where(state: 'import') }
+  scope :review,    -> { where(state: 'review') }
+  scope :approved,  -> { where(state: 'approved') }
 
   ORG_TYPE = [
     ['An individual', -1],
@@ -25,8 +27,7 @@ class Organisation < ActiveRecord::Base
 
   validates :publisher, :multi_national, :registered,
               inclusion: { in: [true, false] }, if: 'review? || approved?'
-  validates :street_address, :city, :region, :postal_code,
-              presence: true, if: 'review? || approved?'
+  validates :postal_code, presence: true, if: 'review? || approved?'
   validates :website, format: { with: URI::regexp(%w(http https)),
               message: 'enter a valid website address e.g. http://www.example.com'},
               if: :website?
@@ -46,10 +47,91 @@ class Organisation < ActiveRecord::Base
     state :approved
   end
 
+  def to_param
+    self.slug
+  end
+
+  def public_find
+    find_charity_commission
+  end
+
+  def use_scrape_data
+    if self.scrape.keys.count > 0
+      self.attributes = self.scrape['data'].except('regions', 'score')
+    end
+  end
+
   private
 
-    def to_param
-      self.slug
+    def charity_commission_url
+      "http://beta.charitycommission.gov.uk/charity-details/?regid=#{CGI.escape(charity_number)}&subid=0"
+    end
+
+    def companies_house_url
+      "https://beta.companieshouse.gov.uk/company/#{CGI.escape(company_number)}"
+    end
+
+    def parse_to_array(response)
+      return response.text.gsub(/\t|\r/, '').gsub(/\n\n/, "\n").sub(/\n/, '').split("\n")
+    end
+
+    def financials_multiplier(scrape)
+      if scrape.present?
+        string = scrape.text.sub('£', '')
+        case string.last
+        when 'K'
+          string = string.sub('K', '')
+          return string.to_f * 1000
+        when 'M'
+          string = string.sub('M', '')
+          return string.to_f * 1000000
+        end
+      end
+    end
+
+    def find_charity_commission
+      require 'open-uri'
+      response = Nokogiri::HTML(open(charity_commission_url)) rescue nil
+
+      if response
+        data = {}
+        root_id = '#ContentPlaceHolderDefault_cp_content_ctl00_CharityDetails_4_TabContainer1_tp'
+
+        if name = response.at_css('h1')
+          data[:name] = name.text
+        end
+
+        if postal_code = response.at_css(root_id + 'Overview_plContact .detail-50+ .detail-50 .detail-panel-wrap')
+          data[:postal_code] = postal_code.text.split(',').last.strip
+        end
+
+        if website = response.at_css(root_id + 'Overview_plContact h3+ a')
+          data[:website] = website.text
+        end
+
+        if regions = response.at_css(root_id + 'Operations_plList li')
+          data[:regions] = parse_to_array(regions)
+          data[:multi_national] = (data[:regions] & Constants::CHARITY_COMMISION_COUNTIRES).count > 1 ? true : false
+        end
+
+        if company_number = response.at_css(root_id + 'Overview_plCompanyNumber')
+          data[:company_number] = company_number.text.sub(/Company no. 0?/, '0').strip
+          self.org_type = 3
+        end
+
+        data[:score] = data.keys.count
+
+        background = {}
+
+        background[:income] = financials_multiplier(response.at_css('.detail-33:nth-child(1) .big-money'))
+        background[:spending] = financials_multiplier(response.at_css('.detail-33:nth-child(2) .big-money'))
+
+        background[:what] = parse_to_array(response.at_css('#plWhatWhoHow .detail-50:nth-child(1) .detail-panel-wrap'))
+        background[:who] = parse_to_array(response.at_css('#plWhatWhoHow .detail-50+ .detail-50 .detail-panel-wrap'))
+        background[:how] = parse_to_array(response.at_css('.detail-100 .detail-panel-wrap'))
+
+        return { data: data, background: background }
+      end
     end
 
     def set_slug
