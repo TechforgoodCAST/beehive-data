@@ -14,7 +14,6 @@ FactoryGirl.define do
 
     factory :review_grant, class: Grant do
       state           'review'
-      # age_groups      { FactoryGirl.create_list(:age_group, 8) }
     end
   end
 end

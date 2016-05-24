@@ -26,4 +26,9 @@ module Helpers
     get endpoint, {}, { 'Authorization': "Token token=#{user.api_token}" }
   end
 
+  def create_and_auth_user(opts={})
+    @user = create(:user)
+    login_as(@user, scope: :user)
+  end
+
 end
