@@ -1,18 +1,10 @@
-%h1 Organisations
+= render partial: 'partials/index', locals: { obj: Organisation }
 
-%table
+%table.ui.table
   %thead
     %tr
-      %th Import
-      %th Review
-      %th Approved
+      %th Approved organisations
   %tbody
-    %tr
-      %td= Organisation.import.count
-      %td= Organisation.review.count
-      %td= Organisation.approved.count
-
-%ul.collection
-  - @organisations.each do |org|
-    %li.collection-item
-      %span.title= link_to org.name, edit_organisation_path(org)
+    - @organisations.each do |org|
+      %tr
+        %td.selectable= link_to org.name, edit_organisation_path(org)

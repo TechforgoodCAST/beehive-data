@@ -1,0 +1,21 @@
+%h1= "#{obj}s"
+
+%table.ui.celled.small.table
+  %thead
+    %tr
+      %th Import
+      %th Review
+      %th Approved
+  %tbody
+    %tr
+      - if obj.import.count > 0
+        %td.warning= obj.import.count
+      - else
+        %td 0
+
+      - if obj.review.count > 0
+        %td.selectable.warning= link_to obj.review.count, "/#{obj.name.downcase}s/review"
+      - else
+        %td 0
+
+      %td= obj.approved.count

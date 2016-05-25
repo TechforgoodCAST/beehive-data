@@ -1,7 +1,7 @@
 class OrganisationsController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :load_organisation, except: :index
+  before_action :load_organisation, only: [:edit, :update]
 
   def index
     @organisations = Organisation.approved

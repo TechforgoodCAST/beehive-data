@@ -1,0 +1,49 @@
+%h1
+  Edit grant
+  = surround '(', ')' do
+    = @grant.state
+
+Errors
+- @grant.errors.full_messages.each do |msg|
+  %li= msg
+
+= simple_form_for @grant,
+  html: { class: 'ui form' },
+  defaults: { wrapper_html: { class: 'field' } } do |f|
+
+  %h4 Grant
+  = f.input :year, collection: Grant::VALID_YEARS
+  = f.association :funder, as: :select, label_method: :name
+  = f.association :recipient, as: :select, label_method: :name
+  = f.input :grant_identifier
+  = f.input :title
+  = f.input :description
+  = f.input :currency, as: :select, collection: Country.order(:currency_code).pluck(:currency_code).uniq
+  = f.input :funding_programme
+  = f.input :amount_awarded
+  = f.input :amount_applied_for
+  = f.input :amount_disbursed
+  = f.input :award_date, as: :string
+  = f.input :planned_start_date, as: :string
+  = f.input :planned_end_date, as: :string
+  = f.input :open_call, as: :select, collection: [true, false]
+
+  %h4 Organisation
+  = f.input :operating_for, as: :radio_buttons, collection: Grant::OPERATING_FOR
+  = f.input :income, as: :radio_buttons, collection: Grant::INCOME
+  = f.input :spending, as: :radio_buttons, collection: Grant::INCOME
+  = f.input :employees, as: :radio_buttons, collection: Grant::EMPLOYEES
+  = f.input :volunteers, as: :radio_buttons, collection: Grant::EMPLOYEES
+
+  %h4 Beneficiaries
+  = f.input :affect_people, as: :radio_buttons, collection: [true, false]
+  = f.input :affect_other, as: :radio_buttons, collection: [true, false]
+  = f.input :gender, as: :radio_buttons, collection: Grant::GENDERS
+  = f.association :age_groups, as: :check_boxes, collection: AgeGroup.all, label_method: :label
+  = f.association :beneficiaries, as: :select, collection: Beneficiary.all, label_method: :label, input_html: { multiple: true, class: 'ui fluid search dropdown'}
+
+  %h4 Location
+  = f.association :countries, as: :select, collection: Country.all, input_html: { multiple: true, class: 'ui fluid search dropdown'}
+  = f.association :districts, as: :select, collection: District.all, input_html: { multiple: true, class: 'ui fluid search dropdown'}
+
+  = f.button :submit, (@grant.approved? ? 'Save' : 'Save & Approve'), class: 'ui button teal'
