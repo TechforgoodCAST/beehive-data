@@ -4,7 +4,7 @@
   %thead
     %tr
       %th Import
-      %th Review
+      %th= link_to 'Review', "/#{obj.name.downcase}s/review"
       %th Approved
   %tbody
     %tr
@@ -14,7 +14,7 @@
         %td 0
 
       - if obj.review.count > 0
-        %td.selectable.warning= link_to obj.review.count, "/#{obj.name.downcase}s/review"
+        %td.warning= obj.review.count
       - else
         %td 0
 

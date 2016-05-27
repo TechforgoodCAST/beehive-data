@@ -26,7 +26,6 @@ class GrantsController < ApplicationController
     else
       render :edit
     end
-
   end
 
   def review
@@ -34,10 +33,9 @@ class GrantsController < ApplicationController
   end
 
   def scrape
-    Grant.import.order(updated_at: :desc).limit(10).each do |grant|
-      grant.scrape_grant
-      grant.next_step!
-      grant.next_step! if grant.valid?
+    Grant.with_approved_recipients.take(10).each do |grant|
+      grant.update_attribute(:state, 'review')
+      grant.next_step! if grant.scrape_grant && grant.save
     end
     redirect_to review_grants_path
   end
@@ -49,8 +47,8 @@ class GrantsController < ApplicationController
         :title, :description, :currency, :funding_programme, :gender, :amount_awarded,
         :amount_applied_for, :amount_disbursed, :award_date, :planned_start_date,
         :planned_end_date, :open_call, :affect_people, :affect_other, :operating_for,
-        :income, :spending, :employees, :volunteers, country_ids: [], district_ids: [],
-        age_group_ids: [], beneficiary_ids: [])
+        :income, :spending, :employees, :volunteers, :geographic_scale,
+        country_ids: [], district_ids: [], age_group_ids: [], beneficiary_ids: [])
     end
 
     def load_grant

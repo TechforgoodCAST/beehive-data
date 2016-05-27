@@ -76,7 +76,7 @@ class Organisation < ActiveRecord::Base
     end
 
     def parse_to_array(response)
-      return response.text.gsub(/\t|\r/, '').gsub(/\n\n/, "\n").sub(/\n/, '').split("\n")
+      return response.text.gsub(/\t|\r/, '').split("\n").reject { |r| r.empty? }
     end
 
     def financials_multiplier(scrape)
@@ -113,9 +113,9 @@ class Organisation < ActiveRecord::Base
           data[:website] = website.text
         end
 
-        if regions = response.at_css(root_id + 'Operations_plList li')
+        if regions = response.css(root_id + 'Operations_plList li')
           data[:regions] = parse_to_array(regions)
-          data[:multi_national] = (data[:regions] & Constants::CHARITY_COMMISION_COUNTIRES).count > 1 ? true : false
+          data[:multi_national] = (data[:regions] & CharityCommissionConstants::COUNTIRES).count > 1 ? true : false
         end
 
         if company_number = response.at_css(root_id + 'Overview_plCompanyNumber')
