@@ -66,8 +66,15 @@ class Grant < ActiveRecord::Base
               presence: true
   validates :year, inclusion: { in: VALID_YEARS }
 
-  validates :age_groups, :beneficiaries, :countries, :districts,
+  validates :age_groups,
+              presence: true, if: 'affect_people && (review? || approved?)'
+  validate  :beneficiary_groups, if: 'review? || approved?'
+  validates :countries,
               presence: true, if: 'review? || approved?'
+  validates :districts, presence: true,
+              unless: Proc.new { self.geographic_scale > 1 if self.geographic_scale },
+              if: 'review? || approved?'
+  validate  :ensure_districts_for_country
   validates :operating_for, inclusion: { in: 0..3 },
               if: 'review? || approved?'
   validates :income, inclusion: { in: 0..4 },
@@ -76,12 +83,16 @@ class Grant < ActiveRecord::Base
               if: 'review? || approved?'
   validates :affect_people, :affect_other,  inclusion: { in: [true, false] },
               if: 'review? || approved?'
+  validates :affect_people, presence: { message: 'cannot be false if Affect other is false' }, unless: 'affect_other?', if: 'review? || approved?'
+  validates :affect_other, presence: { message: 'cannot be false if Affect people is false' }, unless: 'affect_people?', if: 'review? || approved?'
   validates :gender, inclusion: { in: GENDERS },
-              if: 'review? || approved?'
+              if: 'affect_people && (review? || approved?)'
   validates :geographic_scale, inclusion: { in: 0..3 },
               if: 'review? || approved?'
 
   before_validation :set_year, unless: :year
+  before_validation :clear_beneficiary_fields, :clear_districts,
+                      if: 'review? || approved?'
 
   include Workflow
   workflow_column :state
@@ -103,6 +114,45 @@ class Grant < ActiveRecord::Base
 
     def set_year
       self.year = self.award_date.year
+    end
+
+    def beneficiary_groups
+      validate_beneficiary_group('People')
+      validate_beneficiary_group('Other')
+    end
+
+    def validate_beneficiary_group(group)
+      if (self.beneficiary_ids & Beneficiary.where(group: group).pluck(:id)).count < 1
+        errors.add(:beneficiaries, 'please select an option') if self.send("affect_#{group.downcase}").present?
+      end
+    end
+
+    def clear_beneficiary_ids(group)
+      self.beneficiaries = self.beneficiaries - Beneficiary.where(group: group)
+    end
+
+    def clear_beneficiary_fields
+      unless self.affect_people?
+        self.gender     = nil
+        self.age_groups = []
+        clear_beneficiary_ids('People')
+      end
+      clear_beneficiary_ids('Other') unless self.affect_other?
+    end
+
+    def clear_districts
+      if self.geographic_scale
+        self.districts = [] if self.geographic_scale > 1
+      end
+    end
+
+    def ensure_districts_for_country
+      if self.district_ids.count > 0
+        district_country_ids = District.where(id: self.district_ids).pluck(:country_id).uniq
+        unless self.country_ids == (district_country_ids & self.country_ids)
+          errors.add(:districts, 'not from selected countries')
+        end
+      end
     end
 
     def set_select(field, amount, segments)

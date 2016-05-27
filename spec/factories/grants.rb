@@ -13,7 +13,19 @@ FactoryGirl.define do
     award_date        Date.new(2015, 3, 9)
 
     factory :review_grant, class: Grant do
-      state           'review'
+      state             'review'
+      operating_for     Grant::OPERATING_FOR[0][1]
+      income            Grant::INCOME[0][1]
+      employees         Grant::EMPLOYEES[0][1]
+      volunteers        Grant::EMPLOYEES[0][1]
+      affect_people     true
+      gender            Grant::GENDERS.first
+      affect_other      false
+      geographic_scale  Grant::GEOGRAPHIC_SCALE[0][1]
+
+      factory :approved_grant, class: Grant do
+        state           'approved'
+      end
     end
   end
 end

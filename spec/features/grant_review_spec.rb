@@ -17,6 +17,12 @@ describe 'Moderator' do
     click_on 'Auto-review'
     expect(page).to have_text 'Review (10)'
 
+    # TODO: test UI
+    @grants[1].age_groups    = @age_groups
+    @grants[1].beneficiaries = @beneficiaries
+    @grants[1].countries     = @countries
+    @grants[1].districts     = @uk_districts + @kenya_districts
+
     click_on "#{@grants[1].grant_identifier}"
     expect(current_path).to eq edit_grant_path(@grants[1])
 
@@ -36,6 +42,9 @@ describe 'Moderator' do
     end
     within '.grant_volunteers' do
       choose '1 - 5'
+    end
+    within '.grant_geographic_scale' do
+      choose 'One or more local areas'
     end
     click_on 'Save'
 
