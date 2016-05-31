@@ -52,6 +52,21 @@ describe 'Moderator' do
     expect(page).to have_text 'Review (9)'
   end
 
+  scenario 'only sees fields for form selection' do
+    click_on 'Auto-review'
+    click_on "#{@grants[1].grant_identifier}"
+    expect(page).to have_css '.hidden', count: 2
+    # TODO: test UI
+  end
+
+  scenario 'can view approved organisations' do
+    @grants.each { |r| r.update_attribute(:state, 'approved') }
+    visit grants_path
+    expect(page).to have_css '.selectable', count: 11
+    click_on @grants.first.grant_identifier
+    expect(current_path).to eq edit_grant_path(@grants.first)
+  end
+
   scenario 'can automatically review grant'
 
 end

@@ -110,11 +110,8 @@ describe Organisation do
     expect(approved).to be_valid
   end
 
-  it 'name set from legal name if found'
-  it 'company number set if found'
-  it 'has a valid company number'
   it 'sets identifier if none present'
-  it 'that is individual has appropriate org type'
-  it 'geocoded if street address or postal code present'
+
+  # TODO: it 'geocoded if street address or postal code present'
 
 end

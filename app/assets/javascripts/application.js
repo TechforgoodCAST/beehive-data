@@ -2,7 +2,6 @@
 //= require jquery_ujs
 //= require semantic-ui/transition
 //= require semantic-ui/dropdown
-//= require_tree .
 
 var SemanticUiHelpers = (function(w, d) {
   var init = function() {

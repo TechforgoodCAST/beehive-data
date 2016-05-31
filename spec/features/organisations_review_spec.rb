@@ -27,14 +27,12 @@ describe 'Moderator' do
     expect(page).to have_text 'Review (9)'
   end
 
-  scenario 'can automatically review organistion'
-
-  scenario 'can view approved organisations'
-  #   @recipients.each { |r| r.update_attribute(:state, 'approved') }
-  #   visit organisations_path
-  #   expect(page).to have_text 'Review Grants'
-  # end
-
-  scenario 'only shown field for org type selected'
+  scenario 'can view approved organisations' do
+    @recipients.each { |r| r.update_attribute(:state, 'approved') }
+    visit organisations_path
+    expect(page).to have_css '.selectable', count: 11
+    click_on @recipients.first.name
+    expect(current_path).to eq edit_organisation_path(@recipients.first)
+  end
 
 end

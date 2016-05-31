@@ -127,19 +127,32 @@ describe Grant do
       expect(@grant).to be_valid
     end
 
-    it 'must have multiple countries if geographic_scale is 3'
-
     it 'requires districts to be from selected countries' do
       @grant.districts = @kenya_districts
       @grant.save
       expect(@grant.errors.messages[:districts]).to eq ['not from selected countries']
     end
+
+    it 'is valid when in review' do
+      expect(@grant.state).to eq 'review'
+      expect(@grant).to be_valid
+    end
+
+    it 'is valid when approved' do
+      @grant.update_attribute(:state, 'approved')
+      expect(@grant.state).to eq 'approved'
+      expect(@grant).to be_valid
+    end
+  end
+
+  it 'is valid when imported' do
+    Grant.destroy_all
+    grant = create(:grant, funder: @funder, recipient: @recipient)
+    expect(@grant.state).to eq 'import'
+    expect(grant).to be_valid
   end
 
   it 'has many activites'
-  it 'is valid when imported'
-  it 'is valid when in review'
-  it 'is valid when approved'
   it 'beneficiaries generated from scrape'
 
 end
