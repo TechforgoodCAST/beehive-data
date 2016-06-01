@@ -8,14 +8,17 @@
 
   %body
     .ui.container.margins
-      - if user_signed_in?
-        .ui.secondary.pointing.teal.menu
-          = link_to 'Organisations', organisations_path, class: (params[:controller] == 'organisations' ? 'item active' : 'item')
-          = link_to 'Grants', grants_path, class: (params[:controller] == 'grants' ? 'item active' : 'item')
-          .right.menu
-            = link_to 'Logout', destroy_user_session_path, method: :delete, class: 'ui item'
+      - if content_for?(:public)
+        = yield(:public)
+      - else
+        - if user_signed_in?
+          .ui.secondary.pointing.teal.menu
+            = link_to 'Organisations', organisations_path, class: (params[:controller] == 'organisations' ? 'item active' : 'item')
+            = link_to 'Grants', grants_path, class: (params[:controller] == 'grants' ? 'item active' : 'item')
+            .right.menu
+              = link_to 'Logout', destroy_user_session_path, method: :delete, class: 'ui item'
 
-      %p= notice
-      %p= alert
+        %p= notice
+        %p= alert
 
-      = yield
+        = yield

@@ -2,7 +2,7 @@ module V1
   class VersionController < ApplicationController
     abstract!
 
-    before_action :authenticate
+    # before_action :authenticate
 
     protected
 
