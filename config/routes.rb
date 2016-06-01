@@ -20,6 +20,9 @@ Rails.application.routes.draw do
   # API
   namespace :v1 do
     get '/funders', to: 'funders#index'
+    get '/grants/(:year)', to: 'grants#by_year'
+    get '/grants/(:year)/(:funder)', to: 'grants#by_funder'
+    get '/grants/(:year)/(:funder)/(:programme)', to: 'grants#by_programme'
   end
 
 end

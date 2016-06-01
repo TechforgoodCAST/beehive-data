@@ -42,10 +42,10 @@ Errors
   #affect_people_container.field{ class: ('hidden' unless  @grant.affect_people?) }
     = f.input :gender, as: :radio_buttons, collection: Grant::GENDERS
     = f.association :age_groups, as: :check_boxes, collection: AgeGroup.pluck(:label, :id)
-    = f.association :beneficiaries, as: :select, collection: Beneficiary.where(group: 'People').pluck(:label, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
+    = f.association :beneficiaries, as: :select, collection: Beneficiary.people.pluck(:label, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
   = f.input :affect_other, as: :radio_buttons, collection: [true, false]
   #affect_other_container.field{ class: ('hidden' unless  @grant.affect_other?) }
-    = f.association :beneficiaries, as: :select, collection: Beneficiary.where(group: 'Other').pluck(:label, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
+    = f.association :beneficiaries, as: :select, collection: Beneficiary.other.pluck(:label, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
 
   %h4 Location
   = f.input :geographic_scale, as: :radio_buttons, collection: Grant::GEOGRAPHIC_SCALE

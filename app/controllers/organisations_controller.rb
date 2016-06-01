@@ -4,7 +4,7 @@ class OrganisationsController < ApplicationController
   before_action :load_organisation, only: [:edit, :update]
 
   def index
-    @organisations = Organisation.approved
+    @organisations = Organisation.approved.order(:updated_at)
   end
 
   def edit

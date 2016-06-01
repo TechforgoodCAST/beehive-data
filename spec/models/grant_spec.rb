@@ -73,7 +73,7 @@ describe Grant do
       @grant.save
       expect(@grant.errors.messages[:gender]).to eq ['is not included in the list']
 
-      @grant.beneficiaries = Beneficiary.where(group: 'Other')
+      @grant.beneficiaries = Beneficiary.other
       set_affect_other
     end
 
@@ -82,7 +82,7 @@ describe Grant do
       @grant.save
       expect(@grant.errors.messages[:age_groups]).to eq ["can't be blank"]
 
-      @grant.beneficiaries = Beneficiary.where(group: 'Other')
+      @grant.beneficiaries = Beneficiary.other
       set_affect_other
     end
 
@@ -91,14 +91,14 @@ describe Grant do
       @grant.save
       expect(@grant.errors.messages[:beneficiaries]).to eq ['please select an option']
 
-      @grant.beneficiaries = Beneficiary.where(group: 'Other')
+      @grant.beneficiaries = Beneficiary.other
       set_affect_other
     end
 
     it "requires beneficiaries group 'Other' if affect_other" do
       @grant.affect_people = false
       @grant.affect_other  = true
-      @grant.beneficiaries = Beneficiary.where(group: 'People')
+      @grant.beneficiaries = Beneficiary.people
       @grant.save
       expect(@grant.errors.messages[:beneficiaries]).to eq ['please select an option']
     end

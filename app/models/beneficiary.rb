@@ -1,5 +1,8 @@
 class Beneficiary < ActiveRecord::Base
 
+  scope :people, -> { where(group: 'People') }
+  scope :other,  -> { where(group: 'Other') }
+
   BENEFICIARIES = [
     {
       label: "The general public",

@@ -8,6 +8,19 @@
 %p
   Publisher:
   = @organisation.publisher
+  - if @organisation.scrape.keys.count > 0
+    | Score:
+    = @organisation.scrape['data']['score']
+    of 6
+
+%p
+  .small.ui.buttons
+    - if @organisation.website
+      = link_to 'Website', @organisation.website, target: '_blank', class: 'ui button'
+    - if @organisation.charity_number
+      = link_to 'Charity Commission', @organisation.charity_commission_url, target: '_blank', class: 'ui button'
+    - if @organisation.company_number
+      = link_to 'Companies House', @organisation.companies_house_url, target: '_blank', class: 'ui button'
 
 = simple_form_for @organisation,
   html: { class: 'ui form' },

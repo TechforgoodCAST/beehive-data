@@ -65,15 +65,15 @@ class Organisation < ActiveRecord::Base
     end
   end
 
+  def charity_commission_url
+    "http://beta.charitycommission.gov.uk/charity-details/?regid=#{CGI.escape(charity_number)}&subid=0"
+  end
+
+  def companies_house_url(company_number=self.company_number)
+    "https://beta.companieshouse.gov.uk/company/#{CGI.escape(company_number)}"
+  end
+
   private
-
-    def charity_commission_url
-      "http://beta.charitycommission.gov.uk/charity-details/?regid=#{CGI.escape(charity_number)}&subid=0"
-    end
-
-    def companies_house_url(company_number=self.company_number)
-      "https://beta.companieshouse.gov.uk/company/#{CGI.escape(company_number)}"
-    end
 
     def parse_to_array(response)
       return response.text.gsub(/\t|\r/, '').split("\n").reject { |r| r.empty? }
