@@ -67,12 +67,13 @@
 	
 	var _routes2 = _interopRequireDefault(_routes);
 	
-	var _grantActions = __webpack_require__(/*! ./actions/grantActions */ 261);
+	var _actionCreators = __webpack_require__(/*! ./actions/actionCreators */ 413);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var store = (0, _configureStore2.default)();
-	store.dispatch((0, _grantActions.loadGrants)());
+	store.dispatch((0, _actionCreators.loadGrants)());
+	store.dispatch((0, _actionCreators.loadFunders)());
 	
 	(0, _reactDom.render)(_react2.default.createElement(
 	  _reactRedux.Provider,
@@ -21781,10 +21782,15 @@
 	
 	var _grantsReducer2 = _interopRequireDefault(_grantsReducer);
 	
+	var _fundersReducer = __webpack_require__(/*! ./fundersReducer */ 412);
+	
+	var _fundersReducer2 = _interopRequireDefault(_fundersReducer);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var rootReducer = (0, _redux.combineReducers)({
-	  grants: _grantsReducer2.default
+	  grants: _grantsReducer2.default,
+	  funders: _fundersReducer2.default
 	});
 	
 	exports.default = rootReducer;
@@ -21834,6 +21840,7 @@
 	  value: true
 	});
 	var LOAD_GRANTS_SUCCESS = exports.LOAD_GRANTS_SUCCESS = 'LOAD_GRANTS_SUCCESS';
+	var LOAD_FUNDERS_SUCCESS = exports.LOAD_FUNDERS_SUCCESS = 'LOAD_FUNDERS_SUCCESS';
 
 /***/ },
 /* 185 */
@@ -28470,13 +28477,21 @@
 	
 	var _redux = __webpack_require__(/*! redux */ 169);
 	
-	var _grantActions = __webpack_require__(/*! ../../actions/grantActions */ 261);
+	var _actionCreators = __webpack_require__(/*! ../../actions/actionCreators */ 413);
 	
-	var grantActions = _interopRequireWildcard(_grantActions);
+	var actions = _interopRequireWildcard(_actionCreators);
+	
+	var _Stats = __webpack_require__(/*! ./Stats */ 411);
+	
+	var _Stats2 = _interopRequireDefault(_Stats);
 	
 	var _FunderList = __webpack_require__(/*! ./FunderList */ 263);
 	
 	var _FunderList2 = _interopRequireDefault(_FunderList);
+	
+	var _Endpoints = __webpack_require__(/*! ./Endpoints */ 416);
+	
+	var _Endpoints2 = _interopRequireDefault(_Endpoints);
 	
 	var _Chart = __webpack_require__(/*! ./Chart */ 265);
 	
@@ -28506,12 +28521,31 @@
 	  _createClass(HomePage, [{
 	    key: 'render',
 	    value: function render() {
-	      var grants = this.props.grants;
+	      var _props = this.props;
+	      var grants = _props.grants;
+	      var funders = _props.funders;
 	
 	      return _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement(_FunderList2.default, { grants: grants }),
+	        _react2.default.createElement(
+	          'h1',
+	          null,
+	          'Beehive Data'
+	        ),
+	        _react2.default.createElement(
+	          'h3',
+	          null,
+	          'High quality data for charitable funding.'
+	        ),
+	        _react2.default.createElement(_Stats2.default, null),
+	        _react2.default.createElement(
+	          'h4',
+	          null,
+	          'Data quality 2015'
+	        ),
+	        _react2.default.createElement(_FunderList2.default, { funders: funders }),
+	        _react2.default.createElement(_Endpoints2.default, null),
 	        _react2.default.createElement(_Chart2.default, { data: grants })
 	      );
 	    }
@@ -28522,101 +28556,28 @@
 	
 	HomePage.propTypes = {
 	  grants: _react.PropTypes.array.isRequired,
+	  funders: _react.PropTypes.array.isRequired,
 	  actions: _react.PropTypes.object.isRequired
 	};
 	
 	function mapStateToProps(state) {
 	  return {
-	    grants: state.grants
+	    grants: state.grants,
+	    funders: state.funders
 	  };
 	}
 	
 	function mapDispatchToProps(dispatch) {
 	  return {
-	    actions: (0, _redux.bindActionCreators)(grantActions, dispatch)
+	    actions: (0, _redux.bindActionCreators)(actions, dispatch)
 	  };
 	}
 	
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(HomePage);
 
 /***/ },
-/* 261 */
-/*!******************************************************!*\
-  !*** ./app/assets/frontend/actions/grantActions.jsx ***!
-  \******************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.loadGrantsSuccess = loadGrantsSuccess;
-	exports.loadGrants = loadGrants;
-	
-	var _actionTypes = __webpack_require__(/*! ./actionTypes */ 184);
-	
-	var types = _interopRequireWildcard(_actionTypes);
-	
-	var _grantApi = __webpack_require__(/*! ../api/grantApi */ 262);
-	
-	var _grantApi2 = _interopRequireDefault(_grantApi);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	function loadGrantsSuccess(grants) {
-	  return { type: types.LOAD_GRANTS_SUCCESS, grants: grants };
-	}
-	
-	function loadGrants() {
-	  return function (dispatch) {
-	    return _grantApi2.default.getAllGrants().then(function (grants) {
-	      dispatch(loadGrantsSuccess(grants));
-	    }).catch(function (error) {
-	      throw error;
-	    });
-	  };
-	}
-
-/***/ },
-/* 262 */
-/*!**********************************************!*\
-  !*** ./app/assets/frontend/api/grantApi.jsx ***!
-  \**********************************************/
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var GrantApi = function () {
-	  function GrantApi() {
-	    _classCallCheck(this, GrantApi);
-	  }
-	
-	  _createClass(GrantApi, null, [{
-	    key: 'getAllGrants',
-	    value: function getAllGrants() {
-	      return new Promise(function (resolve) {
-	        resolve(Object.assign([], $.get('/v1/demo/grants/2015')));
-	      });
-	    }
-	  }]);
-	
-	  return GrantApi;
-	}();
-	
-	exports.default = GrantApi;
-
-/***/ },
+/* 261 */,
+/* 262 */,
 /* 263 */
 /*!************************************************************!*\
   !*** ./app/assets/frontend/components/home/FunderList.jsx ***!
@@ -28640,18 +28601,18 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var FunderList = function FunderList(_ref) {
-	  var grants = _ref.grants;
+	  var funders = _ref.funders;
 	  return _react2.default.createElement(
 	    'div',
 	    null,
-	    grants.map(function (grant) {
-	      return _react2.default.createElement(_FunderListItem2.default, { key: grant.grant_identifier, grant: grant });
+	    funders.map(function (funder) {
+	      return _react2.default.createElement(_FunderListItem2.default, { key: funder.organisation_identifier, funder: funder });
 	    })
 	  );
 	};
 	
 	FunderList.propTypes = {
-	  grants: _react.PropTypes.array.isRequired
+	  funders: _react.PropTypes.array.isRequired
 	};
 	
 	exports.default = FunderList;
@@ -28676,7 +28637,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var FunderListItem = function FunderListItem(_ref) {
-	  var grant = _ref.grant;
+	  var funder = _ref.funder;
 	  return _react2.default.createElement(
 	    "div",
 	    { className: "ui divided items" },
@@ -28690,7 +28651,7 @@
 	        _react2.default.createElement(
 	          "a",
 	          { className: "header" },
-	          grant.title
+	          funder.name
 	        ),
 	        _react2.default.createElement(
 	          "div",
@@ -28698,22 +28659,48 @@
 	          _react2.default.createElement(
 	            "span",
 	            null,
-	            "Description"
+	            funder.summary.grant_count,
+	            " grants in ",
+	            funder.year
 	          )
 	        ),
 	        _react2.default.createElement(
 	          "div",
 	          { className: "description" },
 	          _react2.default.createElement(
-	            "p",
-	            null,
-	            grant.amount_awarded
+	            "div",
+	            { className: "ui mini statistics" },
+	            _react2.default.createElement(
+	              "div",
+	              { className: "orange statistic" },
+	              _react2.default.createElement(
+	                "div",
+	                { className: "value" },
+	                funder.data_quality.normal * 100,
+	                "%"
+	              ),
+	              _react2.default.createElement(
+	                "div",
+	                { className: "label" },
+	                "Normal"
+	              )
+	            ),
+	            _react2.default.createElement(
+	              "div",
+	              { className: "olive statistic" },
+	              _react2.default.createElement(
+	                "div",
+	                { className: "value" },
+	                funder.data_quality.high * 100,
+	                "%"
+	              ),
+	              _react2.default.createElement(
+	                "div",
+	                { className: "label" },
+	                "High"
+	              )
+	            )
 	          )
-	        ),
-	        _react2.default.createElement(
-	          "div",
-	          { className: "extra" },
-	          "Additional Details"
 	        )
 	      )
 	    )
@@ -28721,7 +28708,7 @@
 	};
 	
 	FunderListItem.propTypes = {
-	  grant: _react.PropTypes.object.isRequired
+	  funder: _react.PropTypes.object.isRequired
 	};
 	
 	exports.default = FunderListItem;
@@ -54776,6 +54763,281 @@
 		};
 	
 	};
+
+/***/ },
+/* 411 */
+/*!*******************************************************!*\
+  !*** ./app/assets/frontend/components/home/Stats.jsx ***!
+  \*******************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Stats = function Stats(props) {
+	  return _react2.default.createElement(
+	    "div",
+	    { className: "ui statistics" },
+	    _react2.default.createElement(
+	      "div",
+	      { className: "statistic" },
+	      _react2.default.createElement(
+	        "div",
+	        { className: "value" },
+	        "3"
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "label" },
+	        "Funders"
+	      )
+	    ),
+	    _react2.default.createElement(
+	      "div",
+	      { className: "statistic" },
+	      _react2.default.createElement(
+	        "div",
+	        { className: "value" },
+	        "3,000"
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "label" },
+	        "Grants"
+	      )
+	    ),
+	    _react2.default.createElement(
+	      "div",
+	      { className: "statistic" },
+	      _react2.default.createElement(
+	        "div",
+	        { className: "value" },
+	        "£250m+"
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "label" },
+	        "in charitable funding"
+	      )
+	    )
+	  );
+	};
+	
+	exports.default = Stats;
+
+/***/ },
+/* 412 */
+/*!*********************************************************!*\
+  !*** ./app/assets/frontend/reducers/fundersReducer.jsx ***!
+  \*********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = fundersReducer;
+	
+	var _actionTypes = __webpack_require__(/*! ../actions/actionTypes */ 184);
+	
+	var types = _interopRequireWildcard(_actionTypes);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function fundersReducer() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case types.LOAD_FUNDERS_SUCCESS:
+	      return action.funders;
+	    default:
+	      return state;
+	  }
+	}
+
+/***/ },
+/* 413 */
+/*!********************************************************!*\
+  !*** ./app/assets/frontend/actions/actionCreators.jsx ***!
+  \********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.loadGrantsSuccess = loadGrantsSuccess;
+	exports.loadGrants = loadGrants;
+	exports.loadFundersSuccess = loadFundersSuccess;
+	exports.loadFunders = loadFunders;
+	
+	var _actionTypes = __webpack_require__(/*! ./actionTypes */ 184);
+	
+	var types = _interopRequireWildcard(_actionTypes);
+	
+	var _api = __webpack_require__(/*! ./api */ 415);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function loadGrantsSuccess(grants) {
+	  return { type: types.LOAD_GRANTS_SUCCESS, grants: grants };
+	}
+	function loadGrants() {
+	  return function (dispatch) {
+	    return _api2.default.getAllGrants().then(function (grants) {
+	      dispatch(loadGrantsSuccess(grants));
+	    }).catch(function (error) {
+	      throw error;
+	    });
+	  };
+	}
+	
+	function loadFundersSuccess(funders) {
+	  return { type: types.LOAD_FUNDERS_SUCCESS, funders: funders };
+	}
+	function loadFunders() {
+	  return function (dispatch) {
+	    return _api2.default.getAllFunders().then(function (funders) {
+	      dispatch(loadFundersSuccess(funders));
+	    }).catch(function (error) {
+	      throw error;
+	    });
+	  };
+	}
+
+/***/ },
+/* 414 */,
+/* 415 */
+/*!*********************************************!*\
+  !*** ./app/assets/frontend/actions/api.jsx ***!
+  \*********************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Api = function () {
+	  function Api() {
+	    _classCallCheck(this, Api);
+	  }
+	
+	  _createClass(Api, null, [{
+	    key: 'getAllGrants',
+	    value: function getAllGrants() {
+	      return new Promise(function (resolve) {
+	        resolve(Object.assign([], $.get('/v1/demo/grants/2015')));
+	      });
+	    }
+	  }, {
+	    key: 'getAllFunders',
+	    value: function getAllFunders() {
+	      return new Promise(function (resolve) {
+	        resolve(Object.assign([], $.get('/v1/demo/funders/2015')));
+	      });
+	    }
+	  }]);
+	
+	  return Api;
+	}();
+	
+	exports.default = Api;
+
+/***/ },
+/* 416 */
+/*!***********************************************************!*\
+  !*** ./app/assets/frontend/components/home/Endpoints.jsx ***!
+  \***********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Endpoints = function Endpoints() {
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'h4',
+	      null,
+	      'Example endpoints'
+	    ),
+	    _react2.default.createElement(
+	      'p',
+	      null,
+	      'Limited to ',
+	      _react2.default.createElement(
+	        'strong',
+	        null,
+	        '3'
+	      ),
+	      ' funders and ',
+	      _react2.default.createElement(
+	        'strong',
+	        null,
+	        '75'
+	      ),
+	      ' grants.'
+	    ),
+	    _react2.default.createElement(
+	      'ul',
+	      null,
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        '/v1/demo/funders/summary'
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        '/v1/demo/grants/:year'
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        '/v1/demo/grants/:year/:funder'
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        '/v1/demo/grants/:year/:funder/:funding_programme'
+	      )
+	    )
+	  );
+	};
+	
+	exports.default = Endpoints;
 
 /***/ }
 /******/ ]);

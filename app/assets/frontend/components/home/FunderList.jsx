@@ -1,15 +1,15 @@
 import React, { PropTypes } from 'react';
 import FunderListItem from './FunderListItem';
 
-const FunderList = ({ grants }) =>
+const FunderList = ({ funders }) =>
   <div>
-    {grants.map(grant =>
-      <FunderListItem key={grant.grant_identifier} grant={grant} />
+    {funders.map(funder =>
+      <FunderListItem key={funder.organisation_identifier} funder={funder} />
     )}
   </div>;
 
 FunderList.propTypes = {
-  grants: PropTypes.array.isRequired,
+  funders: PropTypes.array.isRequired,
 };
 
 export default FunderList;

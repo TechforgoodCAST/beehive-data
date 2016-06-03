@@ -4,10 +4,11 @@ import configureStore from './store/configureStore';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 import routes from './routes';
-import { loadGrants } from './actions/grantActions';
+import { loadGrants, loadFunders } from './actions/actionCreators';
 
 const store = configureStore();
 store.dispatch(loadGrants());
+store.dispatch(loadFunders());
 
 render(
   <Provider store={store}>

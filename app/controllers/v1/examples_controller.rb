@@ -3,12 +3,12 @@ module V1
 
     respond_to :json
 
-    def funders
-      @funders = Organisation.funder.approved # TODO: limit for demo
+    def funders_by_year
+      @funders = Organisation.funder.approved.limit(3) # TODO: limit for demo
       respond_with(@funders)
     end
 
-    def by_year
+    def grants_by_year
       @grants = Grant.approved.where(year: params[:year]) # TODO: limit for demo
       respond_with(@grants)
     end
