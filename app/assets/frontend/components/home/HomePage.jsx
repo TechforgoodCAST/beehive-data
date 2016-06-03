@@ -20,7 +20,7 @@ class HomePage extends React.Component {
         <h4>Data quality 2015</h4>
         <FunderList funders={funders} />
         <Endpoints />
-        <Chart data={grants} />
+        <Chart data={grants} type="bar" />
       </div>
     );
   }

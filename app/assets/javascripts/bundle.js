@@ -28546,7 +28546,7 @@
 	        ),
 	        _react2.default.createElement(_FunderList2.default, { funders: funders }),
 	        _react2.default.createElement(_Endpoints2.default, null),
-	        _react2.default.createElement(_Chart2.default, { data: grants })
+	        _react2.default.createElement(_Chart2.default, { data: grants, type: 'bar' })
 	      );
 	    }
 	  }]);
@@ -28726,199 +28726,33 @@
 	  value: true
 	});
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
 	var _react = __webpack_require__(/*! react */ 1);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _underscore = __webpack_require__(/*! underscore */ 266);
+	var _BarChart = __webpack_require__(/*! ./BarChart */ 418);
 	
-	var _underscore2 = _interopRequireDefault(_underscore);
+	var _BarChart2 = _interopRequireDefault(_BarChart);
 	
-	var _chart = __webpack_require__(/*! chart.js */ 267);
+	var _PolarChart = __webpack_require__(/*! ./PolarChart */ 417);
 	
-	var _chart2 = _interopRequireDefault(_chart);
+	var _PolarChart2 = _interopRequireDefault(_PolarChart);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var styles = {
-	  height: 350
+	var Chart = function Chart(_ref) {
+	  var data = _ref.data;
+	  var type = _ref.type;
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    type === 'bar' ? _react2.default.createElement(_BarChart2.default, { data: data }) : _react2.default.createElement(_PolarChart2.default, { data: data })
+	  );
 	};
 	
-	var Chart = function (_React$Component) {
-	  _inherits(Chart, _React$Component);
-	
-	  function Chart() {
-	    _classCallCheck(this, Chart);
-	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Chart).call(this));
-	
-	    _this.toggleChart = _this.toggleChart.bind(_this);
-	    return _this;
-	  }
-	
-	  _createClass(Chart, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.initChart();
-	    }
-	  }, {
-	    key: 'componentDidUpdate',
-	    value: function componentDidUpdate() {
-	      this.countChart(this.props.data);
-	    }
-	  }, {
-	    key: 'buildCountChart',
-	    value: function buildCountChart(data) {
-	      var result = [];
-	      var funders = _underscore2.default.uniq(_underscore2.default.pluck(data, 'funder'));
-	      _underscore2.default.each(funders, function (funder, index) {
-	        var monthCounts = _underscore2.default.chain(data).where({ funder: funder }).map(function (grant) {
-	          return {
-	            awardDate: parseInt(grant.award_date.slice(5, -3), 10)
-	          };
-	        }).countBy('awardDate').value();
-	
-	        var monthsOfYear = _underscore2.default.object(_underscore2.default.range(1, 13), _underscore2.default.times(12, _underscore2.default.random.bind(_underscore2.default, 0, 0)));
-	        var months = _underscore2.default.toArray(Object.assign({}, monthsOfYear, monthCounts));
-	
-	        var colours = ['255, 99, 132', '54, 162, 235', '255, 206, 86'];
-	        return result.push({
-	          label: funder,
-	          data: months,
-	          backgroundColor: 'rgba(' + colours[index] + ', 0.2)',
-	          borderColor: 'rgba(' + colours[index] + ', 1)',
-	          borderWidth: 1
-	        });
-	      });
-	      return result;
-	    }
-	  }, {
-	    key: 'buildAmountChart',
-	    value: function buildAmountChart(data) {
-	      var result = [];
-	      var funders = _underscore2.default.uniq(_underscore2.default.pluck(data, 'funder'));
-	      _underscore2.default.each(funders, function (funder, index) {
-	        var monthAmounts = _underscore2.default.chain(data).where({ funder: funder }).map(function (grant) {
-	          return {
-	            awardMonth: parseInt(grant.award_date.slice(5, -3), 10),
-	            amountAwarded: grant.amount_awarded
-	          };
-	        }).groupBy('awardMonth').value();
-	
-	        var monthsOfYear = _underscore2.default.object(_underscore2.default.range(1, 13), _underscore2.default.times(12, _underscore2.default.random.bind(_underscore2.default, 0, 0)));
-	        _underscore2.default.each(monthAmounts, function (arr) {
-	          _underscore2.default.each(arr, function (obj) {
-	            monthsOfYear[obj.awardMonth] += parseInt(obj.amountAwarded, 10);
-	          });
-	        });
-	        var months = _underscore2.default.toArray(monthsOfYear);
-	
-	        var colours = ['255, 99, 132', '54, 162, 235', '255, 206, 86'];
-	        return result.push({
-	          label: funder,
-	          data: months,
-	          backgroundColor: 'rgba(' + colours[index] + ', 0.2)',
-	          borderColor: 'rgba(' + colours[index] + ', 1)',
-	          borderWidth: 1
-	        });
-	      });
-	      return result;
-	    }
-	  }, {
-	    key: 'initChart',
-	    value: function initChart() {
-	      var chart = new _chart2.default(document.getElementById('chart'), {
-	        type: 'bar',
-	        data: {
-	          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-	          datasets: []
-	        },
-	        options: {
-	          title: {
-	            display: true,
-	            text: '2015 Grants' },
-	          // TODO: get year from data
-	          tooltips: {
-	            mode: 'label',
-	            multiKeyBackground: 'transparent'
-	          },
-	          scales: {
-	            yAxes: [{
-	              scaleLabel: {
-	                display: true,
-	                labelString: '# of grants'
-	              },
-	              ticks: {
-	                beginAtZero: true
-	              }
-	            }]
-	          }
-	        }
-	      });
-	      this.setState({ chart: chart });
-	    }
-	  }, {
-	    key: 'countChart',
-	    value: function countChart(data) {
-	      var chart = this.state.chart;
-	      chart.data.datasets = this.buildCountChart(data);
-	      chart.update();
-	    }
-	  }, {
-	    key: 'amountChart',
-	    value: function amountChart(data) {
-	      var chart = this.state.chart;
-	      chart.data.datasets = this.buildAmountChart(data);
-	      chart.update();
-	    }
-	  }, {
-	    key: 'toggleChart',
-	    value: function toggleChart(event) {
-	      if (event.target.value > 0) {
-	        this.amountChart(this.props.data);
-	      } else {
-	        this.countChart(this.props.data);
-	      }
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'tiny ui buttons' },
-	          _react2.default.createElement(
-	            'button',
-	            { className: 'ui button', value: '0', onClick: this.toggleChart },
-	            '# of grants'
-	          ),
-	          _react2.default.createElement('div', { className: 'or' }),
-	          _react2.default.createElement(
-	            'button',
-	            { className: 'ui button', value: '1', onClick: this.toggleChart },
-	            '£ of grants'
-	          )
-	        ),
-	        _react2.default.createElement('canvas', { id: 'chart', style: styles })
-	      );
-	    }
-	  }]);
-	
-	  return Chart;
-	}(_react2.default.Component);
-	
 	Chart.propTypes = {
-	  data: _react.PropTypes.array.isRequired
+	  data: _react.PropTypes.array.isRequired,
+	  type: _react.PropTypes.string.isRequired
 	};
 	
 	exports.default = Chart;
@@ -55038,6 +54872,401 @@
 	};
 	
 	exports.default = Endpoints;
+
+/***/ },
+/* 417 */
+/*!************************************************************!*\
+  !*** ./app/assets/frontend/components/home/PolarChart.jsx ***!
+  \************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _underscore = __webpack_require__(/*! underscore */ 266);
+	
+	var _underscore2 = _interopRequireDefault(_underscore);
+	
+	var _chart = __webpack_require__(/*! chart.js */ 267);
+	
+	var _chart2 = _interopRequireDefault(_chart);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var styles = {
+	  height: 350
+	};
+	
+	var PolarChart = function (_React$Component) {
+	  _inherits(PolarChart, _React$Component);
+	
+	  function PolarChart() {
+	    _classCallCheck(this, PolarChart);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PolarChart).call(this));
+	
+	    _this.toggleChart = _this.toggleChart.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(PolarChart, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.initChart();
+	    }
+	
+	    // componentDidUpdate() {
+	    //   this.countChart(this.props.data);
+	    // }
+	
+	  }, {
+	    key: 'buildCountChart',
+	    value: function buildCountChart(data) {
+	      var result = [];
+	      var funders = _underscore2.default.uniq(_underscore2.default.pluck(data, 'funder'));
+	      _underscore2.default.each(funders, function (funder, index) {
+	        var monthCounts = _underscore2.default.chain(data).where({ funder: funder }).map(function (grant) {
+	          return {
+	            awardDate: parseInt(grant.award_date.slice(5, -3), 10)
+	          };
+	        }).countBy('awardDate').value();
+	
+	        var monthsOfYear = _underscore2.default.object(_underscore2.default.range(1, 13), _underscore2.default.times(12, _underscore2.default.random.bind(_underscore2.default, 0, 0)));
+	        var months = _underscore2.default.toArray(Object.assign({}, monthsOfYear, monthCounts));
+	
+	        var colours = ['255, 99, 132', '54, 162, 235', '255, 206, 86'];
+	        return result.push({
+	          label: funder,
+	          data: months,
+	          backgroundColor: 'rgba(' + colours[index] + ', 0.2)',
+	          borderColor: 'rgba(' + colours[index] + ', 1)',
+	          borderWidth: 1
+	        });
+	      });
+	      return result;
+	    }
+	  }, {
+	    key: 'buildAmountChart',
+	    value: function buildAmountChart(data) {
+	      var result = [];
+	      var funders = _underscore2.default.uniq(_underscore2.default.pluck(data, 'funder'));
+	      _underscore2.default.each(funders, function (funder, index) {
+	        var monthAmounts = _underscore2.default.chain(data).where({ funder: funder }).map(function (grant) {
+	          return {
+	            awardMonth: parseInt(grant.award_date.slice(5, -3), 10),
+	            amountAwarded: grant.amount_awarded
+	          };
+	        }).groupBy('awardMonth').value();
+	
+	        var monthsOfYear = _underscore2.default.object(_underscore2.default.range(1, 13), _underscore2.default.times(12, _underscore2.default.random.bind(_underscore2.default, 0, 0)));
+	        _underscore2.default.each(monthAmounts, function (arr) {
+	          _underscore2.default.each(arr, function (obj) {
+	            monthsOfYear[obj.awardMonth] += parseInt(obj.amountAwarded, 10);
+	          });
+	        });
+	        var months = _underscore2.default.toArray(monthsOfYear);
+	
+	        var colours = ['255, 99, 132', '54, 162, 235', '255, 206, 86'];
+	        return result.push({
+	          label: funder,
+	          data: months,
+	          backgroundColor: 'rgba(' + colours[index] + ', 0.2)',
+	          borderColor: 'rgba(' + colours[index] + ', 1)',
+	          borderWidth: 1
+	        });
+	      });
+	      return result;
+	    }
+	  }, {
+	    key: 'initChart',
+	    value: function initChart() {
+	      var chart = new _chart2.default(document.getElementById('chart'), {
+	        type: 'polarArea',
+	        data: {
+	          labels: ['Red', 'Green', 'Yellow', 'Grey', 'Blue'],
+	          datasets: [{
+	            data: [110, 160, 70, 30, 140],
+	            backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB'],
+	            label: 'My dataset' }],
+	          // for legend
+	          options: {
+	            elements: {
+	              arc: {
+	                borderColor: '#000000'
+	              }
+	            }
+	          }
+	        }
+	      });
+	      this.setState({ chart: chart });
+	    }
+	  }, {
+	    key: 'countChart',
+	    value: function countChart(data) {
+	      var chart = this.state.chart;
+	      chart.data.datasets = this.buildCountChart(data);
+	      chart.update();
+	    }
+	  }, {
+	    key: 'amountChart',
+	    value: function amountChart(data) {
+	      var chart = this.state.chart;
+	      chart.data.datasets = this.buildAmountChart(data);
+	      chart.update();
+	    }
+	  }, {
+	    key: 'toggleChart',
+	    value: function toggleChart(event) {
+	      if (event.target.value > 0) {
+	        this.amountChart(this.props.data);
+	      } else {
+	        this.countChart(this.props.data);
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement('canvas', { id: 'chart', style: styles })
+	      );
+	    }
+	  }]);
+	
+	  return PolarChart;
+	}(_react2.default.Component);
+	
+	PolarChart.propTypes = {
+	  data: _react.PropTypes.array.isRequired
+	};
+	
+	exports.default = PolarChart;
+
+/***/ },
+/* 418 */
+/*!**********************************************************!*\
+  !*** ./app/assets/frontend/components/home/BarChart.jsx ***!
+  \**********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _underscore = __webpack_require__(/*! underscore */ 266);
+	
+	var _underscore2 = _interopRequireDefault(_underscore);
+	
+	var _chart = __webpack_require__(/*! chart.js */ 267);
+	
+	var _chart2 = _interopRequireDefault(_chart);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var styles = {
+	  height: 350
+	};
+	
+	var BarChart = function (_React$Component) {
+	  _inherits(BarChart, _React$Component);
+	
+	  function BarChart() {
+	    _classCallCheck(this, BarChart);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BarChart).call(this));
+	
+	    _this.toggleChart = _this.toggleChart.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(BarChart, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.initChart();
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      this.countChart(this.props.data);
+	    }
+	  }, {
+	    key: 'buildCountChart',
+	    value: function buildCountChart(data) {
+	      var result = [];
+	      var funders = _underscore2.default.uniq(_underscore2.default.pluck(data, 'funder'));
+	      _underscore2.default.each(funders, function (funder, index) {
+	        var monthCounts = _underscore2.default.chain(data).where({ funder: funder }).map(function (grant) {
+	          return {
+	            awardDate: parseInt(grant.award_date.slice(5, -3), 10)
+	          };
+	        }).countBy('awardDate').value();
+	
+	        var monthsOfYear = _underscore2.default.object(_underscore2.default.range(1, 13), _underscore2.default.times(12, _underscore2.default.random.bind(_underscore2.default, 0, 0)));
+	        var months = _underscore2.default.toArray(Object.assign({}, monthsOfYear, monthCounts));
+	
+	        var colours = ['255, 99, 132', '54, 162, 235', '255, 206, 86'];
+	        return result.push({
+	          label: funder,
+	          data: months,
+	          backgroundColor: 'rgba(' + colours[index] + ', 0.2)',
+	          borderColor: 'rgba(' + colours[index] + ', 1)',
+	          borderWidth: 1
+	        });
+	      });
+	      return result;
+	    }
+	  }, {
+	    key: 'buildAmountChart',
+	    value: function buildAmountChart(data) {
+	      var result = [];
+	      var funders = _underscore2.default.uniq(_underscore2.default.pluck(data, 'funder'));
+	      _underscore2.default.each(funders, function (funder, index) {
+	        var monthAmounts = _underscore2.default.chain(data).where({ funder: funder }).map(function (grant) {
+	          return {
+	            awardMonth: parseInt(grant.award_date.slice(5, -3), 10),
+	            amountAwarded: grant.amount_awarded
+	          };
+	        }).groupBy('awardMonth').value();
+	
+	        var monthsOfYear = _underscore2.default.object(_underscore2.default.range(1, 13), _underscore2.default.times(12, _underscore2.default.random.bind(_underscore2.default, 0, 0)));
+	        _underscore2.default.each(monthAmounts, function (arr) {
+	          _underscore2.default.each(arr, function (obj) {
+	            monthsOfYear[obj.awardMonth] += parseInt(obj.amountAwarded, 10);
+	          });
+	        });
+	        var months = _underscore2.default.toArray(monthsOfYear);
+	
+	        var colours = ['255, 99, 132', '54, 162, 235', '255, 206, 86'];
+	        return result.push({
+	          label: funder,
+	          data: months,
+	          backgroundColor: 'rgba(' + colours[index] + ', 0.2)',
+	          borderColor: 'rgba(' + colours[index] + ', 1)',
+	          borderWidth: 1
+	        });
+	      });
+	      return result;
+	    }
+	  }, {
+	    key: 'initChart',
+	    value: function initChart() {
+	      var chart = new _chart2.default(document.getElementById('chart'), {
+	        type: 'bar',
+	        data: {
+	          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+	          datasets: []
+	        },
+	        options: {
+	          title: {
+	            display: true,
+	            text: '2015 Grants' },
+	          // TODO: get year from data
+	          tooltips: {
+	            mode: 'label',
+	            multiKeyBackground: 'transparent'
+	          },
+	          scales: {
+	            yAxes: [{
+	              scaleLabel: {
+	                display: true,
+	                labelString: '# of grants'
+	              },
+	              ticks: {
+	                beginAtZero: true
+	              }
+	            }]
+	          }
+	        }
+	      });
+	      this.setState({ chart: chart });
+	    }
+	  }, {
+	    key: 'countChart',
+	    value: function countChart(data) {
+	      var chart = this.state.chart;
+	      chart.data.datasets = this.buildCountChart(data);
+	      chart.update();
+	    }
+	  }, {
+	    key: 'amountChart',
+	    value: function amountChart(data) {
+	      var chart = this.state.chart;
+	      chart.data.datasets = this.buildAmountChart(data);
+	      chart.update();
+	    }
+	  }, {
+	    key: 'toggleChart',
+	    value: function toggleChart(event) {
+	      if (event.target.value > 0) {
+	        this.amountChart(this.props.data);
+	      } else {
+	        this.countChart(this.props.data);
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'tiny ui buttons' },
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'ui button', value: '0', onClick: this.toggleChart },
+	            '# of grants'
+	          ),
+	          _react2.default.createElement('div', { className: 'or' }),
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'ui button', value: '1', onClick: this.toggleChart },
+	            '£ of grants'
+	          )
+	        ),
+	        _react2.default.createElement('canvas', { id: 'chart', style: styles })
+	      );
+	    }
+	  }]);
+	
+	  return BarChart;
+	}(_react2.default.Component);
+	
+	BarChart.propTypes = {
+	  data: _react.PropTypes.array.isRequired
+	};
+	
+	exports.default = BarChart;
 
 /***/ }
 /******/ ]);
