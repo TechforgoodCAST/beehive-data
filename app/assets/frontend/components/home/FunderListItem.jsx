@@ -6,12 +6,12 @@ const FunderListItem = ({ grant }) =>
       <div className="image">
       </div>
       <div className="content">
-        <a className="header">{grant.name}</a>
+        <a className="header">{grant.title}</a>
         <div className="meta">
           <span>Description</span>
         </div>
         <div className="description">
-          <p>Desc</p>
+          <p>{grant.amount_awarded}</p>
         </div>
         <div className="extra">
           Additional Details
@@ -21,7 +21,7 @@ const FunderListItem = ({ grant }) =>
   </div>;
 
 FunderListItem.propTypes = {
-    grant: PropTypes.object.isRequired,
+  grant: PropTypes.object.isRequired,
 };
 
 export default FunderListItem;
