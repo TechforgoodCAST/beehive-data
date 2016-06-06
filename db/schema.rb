@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(version: 20160506115639) do
     t.integer  "employees"
     t.integer  "volunteers"
     t.integer  "geographic_scale"
+    t.integer  "type_of_funding"
     t.datetime "created_at",                            null: false
     t.datetime "updated_at",                            null: false
   end

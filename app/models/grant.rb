@@ -46,6 +46,13 @@ class Grant < ActiveRecord::Base
     ['An entire country', 2],
     ['Across many countries', 3]
   ]
+  FUNDING_TYPE = [
+    ['Capital funding', 0],
+    ['Revenue funding - project costs', 1],
+    ['Revenue funding - running costs', 2],
+    ['Revenue funding - unrestricted (both project and running costs)', 3],
+    ['Other', 4]
+  ]
 
   belongs_to :funder, class_name: 'Organisation'
   belongs_to :recipient, class_name: 'Organisation'
@@ -76,6 +83,8 @@ class Grant < ActiveRecord::Base
               unless: Proc.new { self.geographic_scale > 1 if self.geographic_scale },
               if: 'review? || approved?'
   validate  :ensure_districts_for_country
+  validates :type_of_funding, inclusion: { in: 0..4 },
+              if: 'type_of_funding && (review? || approved?)'
   validates :operating_for, inclusion: { in: -1..3 },
               if: 'review? || approved?'
   validates :income, inclusion: { in: -1..4 },

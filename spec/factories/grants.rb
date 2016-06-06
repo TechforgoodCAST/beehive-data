@@ -14,6 +14,7 @@ FactoryGirl.define do
 
     factory :review_grant, class: Grant do
       state             'review'
+      type_of_funding   Grant::FUNDING_TYPE[0][1]
       operating_for     Grant::OPERATING_FOR[0][1]
       income            Grant::INCOME[0][1]
       employees         Grant::EMPLOYEES[0][1]

@@ -29,6 +29,7 @@ Errors
   = f.input :planned_start_date, as: :string
   = f.input :planned_end_date, as: :string
   = f.input :open_call, as: :select, collection: [true, false]
+  = f.input :type_of_funding, as: :radio_buttons, collection: Grant::FUNDING_TYPE
 
   %h4 Organisation
   = f.input :operating_for, as: :radio_buttons, collection: Grant::OPERATING_FOR
