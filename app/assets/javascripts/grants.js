@@ -1,3 +1,4 @@
+/* eslint-disable */
 var GrantHelpers = (function(w, d) {
 
   var checkBeneficiaryType = function(field) {

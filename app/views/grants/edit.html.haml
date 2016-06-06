@@ -42,15 +42,15 @@ Errors
   #affect_people_container.field{ class: ('hidden' unless  @grant.affect_people?) }
     = f.input :gender, as: :radio_buttons, collection: Grant::GENDERS
     = f.association :age_groups, as: :check_boxes, collection: AgeGroup.pluck(:label, :id)
-    = f.association :beneficiaries, as: :select, collection: Beneficiary.people.pluck(:label, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
+    = f.association :beneficiaries, as: :select, collection: Beneficiary.people.pluck(:label, :id), input_html: { multiple: true, id: 'beneficiary_people', class: 'ui fluid search dropdown' }
   = f.input :affect_other, as: :radio_buttons, collection: [true, false]
   #affect_other_container.field{ class: ('hidden' unless  @grant.affect_other?) }
-    = f.association :beneficiaries, as: :select, collection: Beneficiary.other.pluck(:label, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
+    = f.association :beneficiaries, as: :select, collection: Beneficiary.other.pluck(:label, :id), input_html: { multiple: true, id: 'beneficiary_other', class: 'ui fluid search dropdown' }
 
   %h4 Location
   = f.input :geographic_scale, as: :radio_buttons, collection: Grant::GEOGRAPHIC_SCALE
   = f.association :countries, as: :select, collection: Country.pluck(:name, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
   = @grant.recipient.scrape['data']['regions'] if @grant.recipient.scrape.keys.count > 0
-  = f.association :districts, as: :select, collection: District.pluck(:name, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
+  = f.association :districts, as: :select, collection: District.districts_options, input_html: { multiple: true, class: 'ui fluid search dropdown'}
 
   = f.button :submit, (@grant.approved? ? 'Save' : 'Save & Approve'), class: 'ui button teal'

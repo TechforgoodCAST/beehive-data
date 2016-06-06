@@ -67,6 +67,14 @@ describe 'Moderator' do
     expect(current_path).to eq edit_grant_path(@grants.first)
   end
 
-  scenario 'can automatically review grant'
+  scenario 'can select region or sub_country to populate districts' do
+    click_on 'Auto-review'
+    click_on "#{@grants[1].grant_identifier}"
+    select('England')
+    click_on 'Save & Approve'
+    expect(page).to have_css '#grant_district_ids option[selected]', count: 3
+  end
+
+  # TODO: scenario 'can automatically review grant'
 
 end

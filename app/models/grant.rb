@@ -75,9 +75,9 @@ class Grant < ActiveRecord::Base
               unless: Proc.new { self.geographic_scale > 1 if self.geographic_scale },
               if: 'review? || approved?'
   validate  :ensure_districts_for_country
-  validates :operating_for, inclusion: { in: 0..3 },
+  validates :operating_for, inclusion: { in: -1..3 },
               if: 'review? || approved?'
-  validates :income, inclusion: { in: 0..4 },
+  validates :income, inclusion: { in: -1..4 },
               if: 'review? || approved?'
   validates :employees, :volunteers, inclusion: { in: 0..7 },
               if: 'review? || approved?'
@@ -108,6 +108,13 @@ class Grant < ActiveRecord::Base
 
   def scrape_grant
     auto_complete
+  end
+
+  def check_regions(regions)
+    regions   = regions.reject { |i| i == '' }
+    districts = District.where('region IN (:regions) OR
+                                sub_country IN (:regions)',
+                                regions: regions).pluck(:id)
   end
 
   private

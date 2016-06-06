@@ -3,9 +3,15 @@
 //= require semantic-ui/transition
 //= require semantic-ui/dropdown
 
+/* eslint-disable */
 var SemanticUiHelpers = (function(w, d) {
+  var dropdowns = ['#beneficiary_people', '#beneficiary_other', '#grant_country_ids'];
   var init = function() {
-    return $('.ui.dropdown').dropdown();
+    if ($("#grant_district_ids option:selected").length < 26) {
+      dropdowns.push('#grant_district_ids');
+      return $(dropdowns).dropdown();
+    }
+    return $(dropdowns).dropdown();
   };
   return {
     init: init

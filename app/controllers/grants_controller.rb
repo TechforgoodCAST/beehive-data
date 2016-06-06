@@ -7,19 +7,16 @@ class GrantsController < ApplicationController
     @grants = Grant.approved
   end
 
-  # TODO: refactor
-  def create
-    grant = Grant.create( grant_identifier: params[:grant_identifier],
-                          funder_id: params[:funder_id],
-                          recipient_id: params[:recipient_id])
-    render json: grant
-  end
-
   def edit
     @grant.scrape_grant unless @grant.approved?
   end
 
   def update
+    district_ids = params[:grant][:district_ids]
+    if (district_ids & District.regions_and_sub_countries).any?
+      params[:grant][:district_ids] = (district_ids - District.regions_and_sub_countries) + @grant.check_regions(district_ids)
+    end
+
     if @grant.update(grant_params)
       @grant.next_step! unless @grant.approved?
       redirect_to review_grants_path

@@ -152,7 +152,6 @@ describe Grant do
     expect(grant).to be_valid
   end
 
-  it 'has many activites'
-  it 'beneficiaries generated from scrape'
+  # TODO: it 'has many activites'
 
 end

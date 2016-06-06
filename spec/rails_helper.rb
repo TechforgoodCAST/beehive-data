@@ -56,6 +56,7 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include Capybara::DSL
   config.include Warden::Test::Helpers
+  config.mock_with :mocha
   config.before :suite do
     Warden.test_mode!
   end
