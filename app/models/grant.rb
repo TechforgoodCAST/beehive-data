@@ -1,5 +1,6 @@
 class Grant < ActiveRecord::Base
 
+  scope :newest,   -> { order(updated_at: :desc) }
   scope :import,   -> { where(state: 'import') }
   scope :review,   -> { where(state: 'review') }
   scope :approved, -> { where(state: 'approved') }

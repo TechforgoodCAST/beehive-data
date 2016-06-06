@@ -4,7 +4,7 @@ class OrganisationsController < ApplicationController
   before_action :load_organisation, only: [:edit, :update]
 
   def index
-    @organisations = Organisation.approved.order(:updated_at)
+    @organisations = Organisation.approved.newest
   end
 
   def edit
@@ -23,7 +23,7 @@ class OrganisationsController < ApplicationController
   end
 
   def review
-    @organisations = Organisation.order(updated_at: :desc)
+    @organisations = Organisation.newest
   end
 
   def scrape

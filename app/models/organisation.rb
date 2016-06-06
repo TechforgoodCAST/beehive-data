@@ -1,5 +1,6 @@
 class Organisation < ActiveRecord::Base
 
+  scope :newest,    -> { order(updated_at: :desc) }
   scope :funder,    -> { where(publisher: true) }
   scope :recipient, -> { where(publisher: false) }
   scope :import,    -> { where(state: 'import') }

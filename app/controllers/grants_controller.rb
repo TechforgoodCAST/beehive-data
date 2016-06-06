@@ -4,7 +4,7 @@ class GrantsController < ApplicationController
   before_action :load_grant, only: [:edit, :update]
 
   def index
-    @grants = Grant.approved
+    @grants = Grant.approved.newest
   end
 
   def edit
@@ -26,7 +26,7 @@ class GrantsController < ApplicationController
   end
 
   def review
-    @grants = Grant.order(updated_at: :desc)
+    @grants = Grant.newest
   end
 
   def scrape
