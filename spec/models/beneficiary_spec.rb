@@ -13,7 +13,7 @@ describe Beneficiary do
     end
   end
 
-  it 'has 24 records' do
-    expect(Beneficiary.all.count).to eq 24
+  it 'has 25 records' do
+    expect(Beneficiary.all.count).to eq 25
   end
 end

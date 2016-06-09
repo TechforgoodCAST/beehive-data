@@ -95,7 +95,12 @@ class Beneficiary < ActiveRecord::Base
       sort:  "physical"
     },
     {
-      label: "Organisations",
+      label: "This organisation",
+      group: "Other",
+      sort:  "organisation"
+    },
+    {
+      label: "Other organisations",
       group: "Other",
       sort:  "organisations"
     },

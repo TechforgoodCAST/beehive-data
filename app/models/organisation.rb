@@ -32,6 +32,7 @@ class Organisation < ActiveRecord::Base
   validates :website, format: { with: URI::regexp(%w(http https)),
               message: 'enter a valid website address e.g. http://www.example.com'},
               if: :website?
+  validates :license, presence: true, if: 'publisher?'
 
   before_validation :set_slug, unless: :slug
   before_validation :set_org_type, :set_registered
@@ -77,7 +78,11 @@ class Organisation < ActiveRecord::Base
   private
 
     def parse_to_array(response)
-      return response.text.gsub(/\t|\r/, '').split("\n").reject { |r| r.empty? }
+      if response.count > 0
+        return response.text.gsub(/\t|\r/, '').split("\n").reject { |r| r.empty? }
+      else
+        return []
+      end
     end
 
     def financials_multiplier(scrape)
@@ -141,9 +146,15 @@ class Organisation < ActiveRecord::Base
         background[:employees]  = parse_people_numbers(response, 2)
         background[:volunteers] = parse_people_numbers(response, 3)
 
-        background[:what] = parse_to_array(response.at_css('#plWhatWhoHow .detail-50:nth-child(1) .detail-panel-wrap'))
-        background[:who] = parse_to_array(response.at_css('#plWhatWhoHow .detail-50+ .detail-50 .detail-panel-wrap'))
-        background[:how] = parse_to_array(response.at_css('.detail-100 .detail-panel-wrap'))
+        if what = response.at_css('#plWhatWhoHow .detail-50:nth-child(1) .detail-panel-wrap')
+          background[:what] = parse_to_array(what)
+        end
+        if who = response.at_css('#plWhatWhoHow .detail-50+ .detail-50 .detail-panel-wrap')
+          background[:who] = parse_to_array(who)
+        end
+        if how = response.at_css('.detail-100 .detail-panel-wrap')
+          background[:how] = parse_to_array(how)
+        end
 
         if data[:company_number]
           background = background.merge(find_companies_house(data[:company_number])[:background])

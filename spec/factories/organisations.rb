@@ -6,6 +6,7 @@ FactoryGirl.define do
 
     factory :funder, class: Organisation do
       publisher               true
+      license                 'http://esmeefairbairn.org.uk/what-we-fund/open-data/'
       name                    'Esmee Fairbairn Foundation'
       organisation_identifier { "GB-CHC-#{n}" }
       charity_number          { "CHC-#{n}" }

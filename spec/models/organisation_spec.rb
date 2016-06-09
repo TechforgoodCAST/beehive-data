@@ -110,6 +110,14 @@ describe Organisation do
     expect(approved).to be_valid
   end
 
+  it 'has license if publisher' do
+    @funder.license = nil;
+    expect(@funder).to_not be_valid
+
+    @funder.publisher = false;
+    expect(@funder).to be_valid
+  end
+
   it 'sets identifier if none present'
 
   # TODO: it 'geocoded if street address or postal code present'

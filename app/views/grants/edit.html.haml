@@ -19,7 +19,7 @@ Errors
   = f.association :recipient, as: :select, label_method: :name
   = f.input :grant_identifier
   = f.input :title
-  = f.input :description
+  = f.input :description, as: :text, input_html: { rows: 2 }
   = f.input :currency, as: :select, collection: Country.order(:currency_code).pluck(:currency_code).uniq
   = f.input :funding_programme
   = f.input :amount_awarded

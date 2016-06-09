@@ -27,7 +27,7 @@ describe Grant do
   end
 
   it 'has many beneficiaries' do
-    expect(@grant.beneficiaries.count).to eq 24
+    expect(@grant.beneficiaries.count).to eq 25
   end
 
   it 'has many countries' do
@@ -117,7 +117,7 @@ describe Grant do
       @grant.save!
       expect(@grant.gender).to eq nil
       expect(@grant.age_groups.count).to eq 0
-      expect(@grant.beneficiaries.count).to eq 4
+      expect(@grant.beneficiaries.count).to eq 5
     end
 
     it 'districts not required if whole countries selected' do

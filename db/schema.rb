@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(version: 20160506115639) do
     t.string   "postal_code"
     t.string   "website"
     t.string   "company_type"
+    t.string   "license"
     t.date     "incorporated_date"
     t.integer  "org_type"
     t.boolean  "publisher",               default: false

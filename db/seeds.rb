@@ -12,12 +12,12 @@ if ENV['SAVE']
   end
 
   Country.destroy_all
-  CSV.foreach(Rails.root.join('app', 'assets', 'csv', 'countries.csv'), headers: true) do |row|
+  CSV.foreach(Rails.root.join('lib', 'assets', 'csv', 'countries.csv'), headers: true) do |row|
     Country.create! row.to_hash
   end
 
   District.destroy_all
-  CSV.foreach(Rails.root.join('app', 'assets', 'csv', 'districts.csv'), headers: true) do |row|
+  CSV.foreach(Rails.root.join('lib', 'assets', 'csv', 'districts.csv'), headers: true) do |row|
     data = row.to_hash
     data['country'] = Country.find_by_alpha2(row['alpha2'])
     District.create! data.except('alpha2')

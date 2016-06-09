@@ -58,14 +58,14 @@ class Grant < ActiveRecord::Base
   belongs_to :recipient, class_name: 'Organisation'
 
   has_many :locations
-  has_many :countries, through: :locations
+  has_many :countries, through: :locations, dependent: :destroy
   has_many :regions
-  has_many :districts, through: :regions
+  has_many :districts, through: :regions, dependent: :destroy
 
   has_many :ages
-  has_many :age_groups, through: :ages
+  has_many :age_groups, through: :ages, dependent: :destroy
   has_many :stakeholders
-  has_many :beneficiaries, through: :stakeholders
+  has_many :beneficiaries, through: :stakeholders, dependent: :destroy
 
   validates :grant_identifier, uniqueness: true
   validates :grant_identifier, :funder, :recipient, :state, :year,
@@ -89,7 +89,7 @@ class Grant < ActiveRecord::Base
               if: 'review? || approved?'
   validates :income, inclusion: { in: -1..4 },
               if: 'review? || approved?'
-  validates :employees, :volunteers, inclusion: { in: 0..7 },
+  validates :employees, :volunteers, inclusion: { in: -1..7 },
               if: 'review? || approved?'
   validates :affect_people, :affect_other,  inclusion: { in: [true, false] },
               if: 'review? || approved?'
@@ -103,6 +103,7 @@ class Grant < ActiveRecord::Base
   before_validation :set_year, unless: :year
   before_validation :clear_beneficiary_fields, :clear_districts,
                       if: 'review? || approved?'
+  before_save :save_all_age_groups_if_all_ages
 
   include Workflow
   workflow_column :state
@@ -125,6 +126,28 @@ class Grant < ActiveRecord::Base
     districts = District.where('region IN (:regions) OR
                                 sub_country IN (:regions)',
                                 regions: regions).pluck(:id)
+  end
+
+  def ages
+    if self.age_groups
+      return self.age_groups.limit(1) if self.age_groups.include?(AgeGroup.first)
+      return self.age_groups
+    end
+  end
+
+  def locations(country)
+    def pluck(country, field)
+      return self.districts.where(country: country).pluck(field).uniq
+    end
+    def check(country, field, array)
+      self.districts.where(country: country, "#{field}": array) == District.where("#{field}": array)
+    end
+
+    sub_countries = pluck(country, 'sub_country')
+    regions       = pluck(country, 'region')
+    return sub_countries if check(country, 'sub_country', sub_countries)
+    return regions if check(country, 'region', regions)
+    return self.districts.pluck(:name)
   end
 
   private
@@ -155,6 +178,12 @@ class Grant < ActiveRecord::Base
         clear_beneficiary_ids('People')
       end
       clear_beneficiary_ids('Other') unless self.affect_other?
+    end
+
+    def save_all_age_groups_if_all_ages
+      if self.age_group_ids.include?(AgeGroup.first.id)
+        self.age_group_ids = AgeGroup.pluck(:id)
+      end
     end
 
     def clear_districts

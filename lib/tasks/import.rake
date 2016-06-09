@@ -34,12 +34,12 @@ namespace :import do
       end
     end
 
-    def console_log(obj)
+    def log(obj)
       obj_name = obj_name(obj)
       puts "#{obj.class.name}s: #{@counters["valid_#{obj_name}s".to_sym]} #{ENV['SAVE'] ? 'saved' : 'valid'}, #{@counters["invalid_#{obj_name}s".to_sym]} invalid"
     end
 
-    CSV.parse(open(ENV['FILE']).read, headers: true, encoding:'iso-8859-1:utf-8') do |row|
+    CSV.parse(open(ENV['FILE']).read, headers: true) do |row|
 
       funder     = Organisation.find_by(organisation_identifier: row['Funding Org:Identifier'])
       @recipient = Organisation.find_or_initialize_by(organisation_identifier: row['Recipient Org:Identifier'])
@@ -76,21 +76,23 @@ namespace :import do
         open_call:          row['From an open call?']
       }
 
-      save(@grant, grant_values, true)
+      if countries = row['Beneficiary Location:Country Code']
+        grant_values[:countries] = Country.where(alpha2: countries.split(','))
+      end
+      if districts = row['Beneficiary Location:Name']
+        grant_values[:districts] = District.where('name IN (:regions) OR
+                                                  region IN (:regions) OR
+                                                  sub_country IN (:regions)',
+                                                  regions: districts.split(',')
+                                                )
+      end
 
-      # gender:
-      # affect_people:
-      # affect_other:
-      # operating_for:
-      # income:
-      # spending:
-      # employees:
-      # volunteers:
+      save(@grant, grant_values, true)
     end
 
     puts "\n\n"
-    console_log(@recipient)
-    console_log(@grant)
+    log(@recipient)
+    log(@grant)
     if @errors.count > 0
       puts "\nErrors\n------"
       puts @errors
