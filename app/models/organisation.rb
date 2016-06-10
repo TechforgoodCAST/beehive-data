@@ -79,7 +79,7 @@ class Organisation < ActiveRecord::Base
 
     def parse_to_array(response)
       if response.count > 0
-        return response.text.gsub(/\t|\r/, '').split("\n").reject { |r| r.empty? }
+        return response.text.gsub(/\t|\r/, '').split("\n").compact
       else
         return []
       end

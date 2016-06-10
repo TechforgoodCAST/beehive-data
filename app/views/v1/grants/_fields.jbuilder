@@ -52,7 +52,7 @@ json.array! grants do |grant|
     json.areas_affected do
       json.array! grant.countries do |country|
         json.country country.alpha2
-        json.areas grant.locations(country)
+        json.areas   grant.districts.pluck(:name)
       end
     end
   end

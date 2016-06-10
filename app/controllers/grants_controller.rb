@@ -12,10 +12,7 @@ class GrantsController < ApplicationController
   end
 
   def update
-    district_ids = params[:grant][:district_ids]
-    if (district_ids & District.regions_and_sub_countries).any?
-      params[:grant][:district_ids] = (district_ids - District.regions_and_sub_countries) + @grant.check_regions(district_ids)
-    end
+    params[:grant][:district_ids] = @grant.check_regions(params[:grant][:district_ids])
 
     if @grant.update(grant_params)
       @grant.next_step! unless @grant.approved?

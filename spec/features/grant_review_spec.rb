@@ -43,9 +43,6 @@ describe 'Moderator' do
     within '.grant_volunteers' do
       choose '1 - 5'
     end
-    within '.grant_geographic_scale' do
-      choose 'One or more local areas'
-    end
     click_on 'Save'
 
     expect(current_path).to eq review_grants_path
@@ -67,13 +64,9 @@ describe 'Moderator' do
     expect(current_path).to eq edit_grant_path(@grants.first)
   end
 
-  scenario 'can select region or sub_country to populate districts' do
-    click_on 'Auto-review'
-    click_on "#{@grants[1].grant_identifier}"
-    select('England')
-    click_on 'Save & Approve'
-    expect(page).to have_css '#grant_district_ids option[selected]', count: 3
-  end
+  scenario 'shown relevant fields for location'
+  scenario 'validated at correct geographic_scale'
+  scenario 'geographic_scale set by import'
 
   # TODO: scenario 'can automatically review grant'
 

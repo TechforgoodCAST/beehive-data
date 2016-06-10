@@ -80,11 +80,13 @@ namespace :import do
         grant_values[:countries] = Country.where(alpha2: countries.split(','))
       end
       if districts = row['Beneficiary Location:Name']
-        grant_values[:districts] = District.where('name IN (:regions) OR
-                                                  region IN (:regions) OR
-                                                  sub_country IN (:regions)',
-                                                  regions: districts.split(',')
-                                                )
+        grant_values[:districts] = District.where(id: @grant.check_regions(
+          District.where('name IN (:regions) OR
+                          region IN (:regions) OR
+                          sub_country IN (:regions)',
+                          regions: districts.split(',')
+                        ).pluck(:id)
+        ))
       end
 
       save(@grant, grant_values, true)

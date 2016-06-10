@@ -52,6 +52,6 @@ Errors
   = f.input :geographic_scale, as: :radio_buttons, collection: Grant::GEOGRAPHIC_SCALE
   = f.association :countries, as: :select, collection: Country.pluck(:name, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
   = @grant.recipient.scrape['data']['regions'] if @grant.recipient.scrape.keys.count > 0
-  = f.association :districts, as: :select, collection: District.districts_options, input_html: { multiple: true, class: 'ui fluid search dropdown'}
+  = f.association :districts, as: :select, collection: District.pluck(:name, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
 
   = f.button :submit, (@grant.approved? ? 'Save' : 'Save & Approve'), class: 'ui button teal'
