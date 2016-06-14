@@ -103,7 +103,9 @@ class Grant < ActiveRecord::Base
   before_validation :set_year, unless: :year
   before_validation :clear_beneficiary_fields, :clear_districts,
                       if: 'review? || approved?'
-  before_save :save_all_age_groups_if_all_ages
+  before_save :save_all_age_groups_if_all_ages,
+              :set_geographic_scale_for_entire_country,
+              :set_geographic_scale_for_multiple_country
 
   include Workflow
   workflow_column :state
@@ -121,64 +123,31 @@ class Grant < ActiveRecord::Base
     auto_complete
   end
 
-  # TODO: refactor & test
-  def check_regions(district_ids)
-    # params ids to integers
-    district_ids = district_ids.reject(&:blank?).map(&:to_i)
-    countries = Country.where(id: District.where(id:district_ids).pluck(:country_id).uniq)
+  def before_save_check_regions
+    self.district_ids = check_regions(self.districts.pluck(:id))
+  end
 
-    # if more than one countries districts selected
+  # TODO: refactor
+  def check_regions(district_ids)
+    district_ids = district_ids.reject(&:blank?).map(&:to_i)
+    countries    = Country.where(id: District.where(id: district_ids).pluck(:country_id).uniq)
     if countries.count > 1
       self.geographic_scale = 3
       return []
-    end
-
-    # array of names for each region selected
-    remove = District.where(id: District.region_ids & district_ids).pluck(:name).uniq
-    # array of names for each sub_country selected
-    remove_sub = District.where(id: District.sub_country_ids & district_ids).pluck(:name).uniq
-
-    # return array of district_ids without districts of regions selected
-    result = district_ids - District.where(region: remove).pluck(:id)
-    result = result - District.where(sub_country: remove_sub).pluck(:id)
-
-    # check if all districts of a region have been selected
-    counts = District.group(:region).count
-    District.where(id: result).group(:region).count.each do |k, v|
-      result = (result - District.where(region: k).pluck(:id)) + [District.where(country: countries, name: k).first.id] if counts[k] == v
-    end
-    counts_sub = District.group(:sub_country).count
-    District.where(id: result).group(:sub_country).count.each do |k, v|
-      result = (result - District.where(sub_country: k).pluck(:id)) + [District.where(country: countries, name: k).first.id] if counts_sub[k] == v
-    end
-
-    # check if all regions of a sub_country have been selected
-    region_counts = Hash.new(0)
-    District.group(:sub_country, :region).uniq.count.map { |k,v| k[0] }.compact.sort.each do |region|
-      region_counts[region] += 1
-    end
-    region_counts.each { |k, v| region_counts[k] = v-1 }
-
-    sub_country_counts = Hash.new(0)
-    District.where(id: result).pluck(:sub_country).compact.each do |sub_country|
-      sub_country_counts[sub_country] += 1
-    end
-
-    sub_country_counts.each do |k,v|
-      result = (result - District.where(sub_country: k).pluck(:id)) + [District.where(country: countries, name: k).first.id] if region_counts[k] == v
-    end
-
-    # if all regions OR sub_countries selected then return [] and set country to entire
-    # OR multiple if more than one countries
-    countries.each do |country|
-      unless (country.districts.sub_country_ids - result).count > 0
-        result = (result - country.districts.sub_country_ids)
-        self.geographic_scale = 2
+    else
+      result = prune_region_districts(district_ids)
+      result = check_entire_regions(result)
+      result = check_entire_country(result)
+      # if all regions OR sub_countries selected then return [] and set country to entire
+      # OR multiple if more than one countries
+      countries.each do |country|
+        unless (country.districts.sub_country_ids - result).count > 0
+          result = (result - country.districts.sub_country_ids)
+          self.geographic_scale = 2
+        end
       end
+      return result
     end
-
-    # return array of district_ids without regions of sub_countries selected
-    return result
   end
 
   def ages
@@ -236,6 +205,60 @@ class Grant < ActiveRecord::Base
         unless self.country_ids == (district_country_ids & self.country_ids)
           errors.add(:districts, 'not from selected countries')
         end
+      end
+    end
+
+    def prune_region_districts(district_ids)
+      result = []
+      # array of names for each region selected
+      remove = District.where(id: District.region_ids & district_ids).pluck(:name).uniq
+      # array of names for each sub_country selected
+      remove_sub = District.where(id: District.sub_country_ids & district_ids).pluck(:name).uniq
+      # return array of district_ids without districts of regions selected
+      result = district_ids - District.where(region: remove).pluck(:id)
+      result = result - District.where(sub_country: remove_sub).pluck(:id)
+      return result
+    end
+
+    def check_entire_regions(result)
+      # check if all districts of a region have been selected
+      region_district_counts = District.group(:region).count.except(nil)
+      District.where(id: result).group(:region).count.each do |k, v|
+        result = (result - District.where(region: k).pluck(:id)) + [District.where(country: countries, name: k).first.id] if region_district_counts[k] == v
+      end
+      sub_country_district_counts = District.group(:sub_country).count.except(nil)
+      District.where(id: result).group(:sub_country).count.each do |k, v|
+        result = (result - District.where(sub_country: k).pluck(:id)) + [District.where(country: countries, name: k).first.id] if sub_country_district_counts[k] == v
+      end
+      self.geographic_scale = 1
+      return result
+    end
+
+    def check_entire_country(result)
+      # check if all regions of a sub_country have been selected
+      region_counts = Hash.new(0)
+      District.group(:sub_country, :region).uniq.count.map { |k,v| k[0] }.compact.sort.each do |region|
+        region_counts[region] += 1
+      end
+      region_counts.each { |k, v| region_counts[k] = v-1 }
+      selected_sub_countries = Hash.new(0)
+      District.where(id: result).pluck(:sub_country).compact.each do |sub_country|
+        selected_sub_countries[sub_country] += 1
+      end
+      selected_sub_countries.each do |k, v|
+        result = (result - District.where(sub_country: k).pluck(:id)) + [District.where(country: countries, name: k).first.id] if region_counts[k] == v
+      end
+      return result
+    end
+
+    def set_geographic_scale_for_entire_country
+      self.geographic_scale = 2 if self.district_ids.count == 0
+    end
+
+    def set_geographic_scale_for_multiple_country
+      if self.country_ids.count > 1
+        self.geographic_scale = 3
+        self.district_ids = []
       end
     end
 

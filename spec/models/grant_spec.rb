@@ -10,8 +10,8 @@ describe Grant do
                         recipient: @recipient,
                         age_groups: @age_groups,
                         beneficiaries: @beneficiaries,
-                        countries: @countries,
-                        districts: @uk_districts + @kenya_districts)
+                        countries: [@countries.first],
+                        districts: @uk_districts)
   end
 
   it 'belongs to funder' do
@@ -31,11 +31,14 @@ describe Grant do
   end
 
   it 'has many countries' do
+    @grant.countries = @countries
+    @grant.districts = @uk_districts + @kenya_districts
+    @grant.save!
     expect(@grant.countries.count).to eq 2
   end
 
   it 'has many districts' do
-    expect(@grant.districts.count).to eq 6
+    expect(@grant.districts.count).to eq 3
   end
 
   it 'year set from award date' do
@@ -152,6 +155,89 @@ describe Grant do
     expect(grant).to be_valid
   end
 
-  # TODO: it 'has many activites'
+  def setup_england
+    create(:blank_district, name: 'England', country: @countries.first)
+    create(:blank_district, name: 'South East', sub_country: 'England', country: @countries.first)
+    create(:blank_district, name: 'East Midlands', sub_country: 'England', country: @countries.first)
+
+    def check_regions(req, res)
+      expect(@grant.check_regions(req)).to eq res
+    end
+
+    @england         = District.find_by(name: 'England').id
+      @south_east    = District.find_by(name: 'South East').id
+        @arun        = District.find_by(name: 'Arun').id
+        @ashford     = District.find_by(name: 'Ashford').id
+      @east_midlands = District.find_by(name: 'East Midlands').id
+        @ashfield    = District.find_by(name: 'Ashfield').id
+  end
+
+  def setup_wales
+    create(:blank_district, name: 'Wales', country: @countries.first)
+    create(:blank_district, name: 'Cardiff', sub_country: 'Wales', country: @countries.first)
+    @wales     = District.find_by(name: 'Wales').id
+      @cardiff = District.find_by(name: 'Cardiff').id
+  end
+
+  def setup_regions
+    setup_england
+    setup_wales
+  end
+
+  it 'if all regions for country choose []' do
+    setup_england
+    check_regions([@south_east, @east_midlands], [])
+    expect(@grant.geographic_scale).to eq 2
+  end
+
+  it 'districts unaffected if no regions or sub_countries selected' do
+    setup_regions
+    check_regions([@arun], [@arun])
+  end
+
+  it 'if region selected clear districts for region and choose region' do
+    setup_regions
+    check_regions([@south_east, @arun], [@south_east])
+    expect(@grant.geographic_scale).to eq 1
+  end
+
+  it 'if all districts for region choose region' do
+    setup_regions
+    check_regions([@arun, @ashford], [@south_east])
+    expect(@grant.geographic_scale).to eq 1
+  end
+
+  it 'if all districts for sub_country choose sub_country' do
+    setup_regions
+    check_regions([@arun, @ashford, @ashfield], [@england])
+    expect(@grant.geographic_scale).to eq 1
+  end
+
+  it 'if all regions for sub_country choose sub_country' do
+    setup_regions
+    check_regions([@south_east, @east_midlands], [@england])
+    expect(@grant.geographic_scale).to eq 1
+  end
+
+  it 'if all districts for country choose []' do
+    setup_regions
+    check_regions([@arun, @ashford, @ashfield, @cardiff], [])
+    expect(@grant.geographic_scale).to eq 2
+  end
+
+  it 'if all regions or sub_countries for country choose []' do
+    setup_regions
+    check_regions([@south_east, @east_midlands, @wales], [])
+    expect(@grant.geographic_scale).to eq 2
+  end
+
+  it 'if all sub_countries for country choose []' do
+    setup_regions
+    check_regions([@england, @wales], [])
+    expect(@grant.geographic_scale).to eq 2
+  end
+
+  it 'sets geographic_scale to 0'
+  it 'sets geographic_scale to 3 if more than one country'
 
 end

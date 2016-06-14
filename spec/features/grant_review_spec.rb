@@ -64,7 +64,6 @@ describe 'Moderator' do
     expect(current_path).to eq edit_grant_path(@grants.first)
   end
 
-  scenario 'shown relevant fields for location'
   scenario 'validated at correct geographic_scale'
   scenario 'geographic_scale set by import'
 

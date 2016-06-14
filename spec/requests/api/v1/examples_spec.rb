@@ -108,7 +108,19 @@ describe '/v1/demo/grants/(:year)' do
     expect(json.first['beneficiaries']['ages'].count).to eq AgeGroup.count-1
   end
 
-  it 'shows areas as region or sub_county if appropriate'
-  it 'shows areas as [] if operating in more than one country'
+  it 'shows [] if entire country affected' do
+    @grants.first.countries = [@countries.first]
+    @grants.first.save!
+    request(@endpoint)
+    expect(json.last['locations']['areas_affected'].count).to eq 1
+    expect(json.last['locations']['geographic_scale']).to eq 'An entire country'
+    expect(json.last['locations']['areas_affected'].first['areas']).to eq []
+  end
+
+  it 'shows [] if multiple countries affected' do
+    expect(json.first['locations']['areas_affected'].count).to eq 2
+    expect(json.first['locations']['geographic_scale']).to eq 'Across many countries'
+    expect(json.first['locations']['areas_affected'].first['areas']).to eq []
+  end
 
 end

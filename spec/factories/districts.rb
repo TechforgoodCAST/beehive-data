@@ -12,4 +12,8 @@ FactoryGirl.define do
     sequence(:name, (0..2).cycle) { |i| ['Mombasa', 'Kwale', 'Kilifi'][i] }
     sequence(:subdivision, (0..2).cycle) { |i| ['1', '2', '3'][i] }
   end
+
+  factory :blank_district, class: District do
+    association :country, factory: :country
+  end
 end

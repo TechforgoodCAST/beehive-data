@@ -24,7 +24,7 @@ class Organisation < ActiveRecord::Base
   validates :charity_number, uniqueness: true, if: :charity_number?
   validates :company_number, uniqueness: true, if: :company_number?
   validates :organisation_number, uniqueness: true, if: :organisation_number?
-  validates :name, :country, :org_type, :state, presence: true
+  validates :name, :country_id, :org_type, :state, presence: true
 
   validates :publisher, :multi_national, :registered,
               inclusion: { in: [true, false] }, if: 'review? || approved?'
