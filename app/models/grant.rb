@@ -103,9 +103,9 @@ class Grant < ActiveRecord::Base
   before_validation :set_year, unless: :year
   before_validation :clear_beneficiary_fields, :clear_districts,
                       if: 'review? || approved?'
-  before_save :save_all_age_groups_if_all_ages,
-              :set_geographic_scale_for_entire_country,
-              :set_geographic_scale_for_multiple_country
+  before_save :save_all_age_groups_if_all_ages
+  before_save :set_geographic_scale_for_entire_country
+  before_save :set_geographic_scale_for_multiple_country
 
   include Workflow
   workflow_column :state
@@ -394,8 +394,8 @@ class Grant < ActiveRecord::Base
         self.beneficiaries    = beneficiary_select
         self.affect_people    = affect_group?('People')
         self.affect_other     = affect_group?('Other')
-        self.country_ids      = country_select
-        self.districts        = district_select
+        self.country_ids      = country_select  unless self.countries
+        self.districts        = district_select unless self.districts
         self.geographic_scale = geographic_scale_select
 
         # must select beneficiaries manually if less than 2 auto-selected

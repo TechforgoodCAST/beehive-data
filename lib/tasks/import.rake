@@ -77,14 +77,14 @@ namespace :import do
       }
 
       if countries = row['Beneficiary Location:Country Code']
-        grant_values[:countries] = Country.where(alpha2: countries.split(','))
+        grant_values[:countries] = Country.where(alpha2: countries.split(', '))
       end
       if districts = row['Beneficiary Location:Name']
         grant_values[:districts] = District.where(id: @grant.check_regions(
           District.where('name IN (:regions) OR
                           region IN (:regions) OR
                           sub_country IN (:regions)',
-                          regions: districts.split(',')
+                          regions: districts.split(', ')
                         ).pluck(:id)
         ))
       end
