@@ -30,4 +30,4 @@
         - elsif grant.state == 'review'
           - if Grant.import.count > 0
             %td
-          %td.selectable.warning= link_to grant.grant_identifier, edit_grant_path(grant)
+          %td.selectable.warning= link_to "#{grant.grant_identifier} | #{grant.recipient.name}", edit_grant_path(grant)
