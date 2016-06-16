@@ -3,23 +3,28 @@ require 'rails_helper'
 describe Grant do
   before(:each) do
     seed_test_db
-    @funder    = create(:funder, country: @countries.first)
-    @recipient = create(:recipient, country: @countries.first)
-    @grant     = create(:grant,
-                        funder: @funder,
-                        recipient: @recipient,
-                        age_groups: @age_groups,
-                        beneficiaries: @beneficiaries,
-                        countries: [@countries.first],
-                        districts: @uk_districts)
+    @funder     = create(:funder, country: @countries.first)
+    @recipients = create_list(:recipient, 2, country: @countries.first)
+    @grant      = create(:grant,
+                          funder: @funder,
+                          recipients: @recipients,
+                          age_groups: @age_groups,
+                          beneficiaries: @beneficiaries,
+                          countries: [@countries.first],
+                          districts: @uk_districts
+                        )
   end
 
   it 'belongs to funder' do
     expect(@funder.grants_as_funder.last).to eq @grant
   end
 
-  it 'belongs to recipient' do
-    expect(@recipient.grants_as_recipient.last).to eq @grant
+  it 'has many recipients' do
+    expect(@grant.recipients.count).to eq 2
+  end
+
+  it 'belongs to many recipients' do
+    @recipients.each { |r| expect(r.grants_as_recipient.last).to eq @grant }
   end
 
   it 'has many age_groups' do
@@ -42,7 +47,7 @@ describe Grant do
   end
 
   it 'year set from award date' do
-    expect(@grant.year).to eq @grant.award_date.year
+    expect(@grant.award_year).to eq @grant.award_date.year
   end
 
   context 'in review' do
@@ -50,7 +55,7 @@ describe Grant do
       @grant.destroy
       @grant = create(:review_grant,
                       funder: @funder,
-                      recipient: @recipient,
+                      recipients: @recipients,
                       age_groups: @age_groups,
                       beneficiaries: @beneficiaries,
                       countries: [@countries.first],
@@ -150,7 +155,7 @@ describe Grant do
 
   it 'is valid when imported' do
     Grant.destroy_all
-    grant = create(:grant, funder: @funder, recipient: @recipient)
+    grant = create(:grant, funder: @funder, recipients: [@recipients.first])
     expect(@grant.state).to eq 'import'
     expect(grant).to be_valid
   end

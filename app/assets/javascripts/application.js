@@ -5,7 +5,12 @@
 
 /* eslint-disable */
 var SemanticUiHelpers = (function(w, d) {
-  var dropdowns = ['#beneficiary_people', '#beneficiary_other', '#grant_country_ids'];
+  var dropdowns = [
+    '#beneficiary_people',
+    '#beneficiary_other',
+    '#grant_country_ids',
+    '#grant_recipient_ids'
+  ];
   var init = function() {
     if ($("#grant_district_ids option:selected").length < 26) {
       dropdowns.push('#grant_district_ids');

@@ -3,9 +3,9 @@ require 'rails_helper'
 describe 'Moderator' do
   before(:each) do
     seed_test_db
-    @funder    = create(:funder, country: @countries.first)
-    @recipient = create(:approved_org, country: @countries.first)
-    @grants    = create_list(:grant, 11, funder: @funder, recipient: @recipient)
+    @funder     = create(:funder, country: @countries.first)
+    @recipients = [create(:approved_org, country: @countries.first)]
+    @grants     = create_list(:grant, 11, funder: @funder, recipients: @recipients)
     create_and_auth_user
     visit review_grants_path
     expect(current_path).to eq review_grants_path

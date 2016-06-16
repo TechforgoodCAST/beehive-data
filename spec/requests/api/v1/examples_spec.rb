@@ -10,7 +10,7 @@ describe '/v1/demo/grants/(:year)' do
                        )
     @grants = create_list(:approved_grant, 3,
                             funder: @funder,
-                            recipient: @recipient,
+                            recipients: [@recipient],
                             age_groups: @age_groups,
                             beneficiaries: @beneficiaries,
                             countries: @countries,
@@ -36,7 +36,7 @@ describe '/v1/demo/grants/(:year)' do
   end
 
   it 'only sends grants for given year' do
-    @grants.first.update_attribute(:year, @year-1)
+    @grants.first.update_attribute(:award_year, @year-1)
     request(@endpoint)
     expect(json.length).to eq 2
   end
@@ -52,8 +52,8 @@ describe '/v1/demo/grants/(:year)' do
       expect(json.first).not_to have_key(f)
     end
     %w[
-      publisher license grant_identifier funder year title description
-      currency amount_awarded award_date recipient beneficiaries locations
+      publisher license grant_identifier funder award_year title description
+      currency amount_awarded award_date recipients beneficiaries locations
     ].each do |f|
       expect(json.first).to have_key(f)
     end
@@ -64,7 +64,7 @@ describe '/v1/demo/grants/(:year)' do
       organisation_identifier country postal_code operating_for income
       employees volunteers multi_national
     ].each do |f|
-      expect(json.first['recipient']).to have_key(f)
+      expect(json.first['recipients'].first).to have_key(f)
     end
   end
 
@@ -90,10 +90,10 @@ describe '/v1/demo/grants/(:year)' do
   end
 
   it 'does not include null values' do
-    expect(json.first['recipient']).to have_key('company_number')
+    expect(json.first['recipients'].first).to have_key('company_number')
     @recipient.update_column(:company_number, nil)
     request(@endpoint)
-    expect(json.first['recipient']).not_to have_key('company_number')
+    expect(json.first['recipients'].first).not_to have_key('company_number')
   end
 
   it "only show 'All ages' option when selected" do

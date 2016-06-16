@@ -7,7 +7,8 @@ class Grant < ActiveRecord::Base
   scope :with_approved_recipients, -> {
     find_by_sql("
       SELECT grants.* FROM grants
-      INNER JOIN organisations ON organisations.id = grants.recipient_id
+      INNER JOIN awards ON awards.grant_id = grants.id
+      INNER JOIN organisations ON organisations.id = awards.recipient_id
       WHERE (grants.state = 'import' AND organisations.state = 'approved')
       ORDER BY updated_at DESC
     ") }
@@ -55,7 +56,10 @@ class Grant < ActiveRecord::Base
   ]
 
   belongs_to :funder, class_name: 'Organisation'
-  belongs_to :recipient, class_name: 'Organisation'
+  # belongs_to :recipient, class_name: 'Organisation'
+  has_many :awards
+  has_many :recipients, through: :awards
+  # , class_name: 'Organisation'
 
   has_many :locations
   has_many :countries, through: :locations, dependent: :destroy
@@ -68,11 +72,11 @@ class Grant < ActiveRecord::Base
   has_many :beneficiaries, through: :stakeholders, dependent: :destroy
 
   validates :grant_identifier, uniqueness: true
-  validates :grant_identifier, :funder, :recipient, :state, :year,
+  validates :grant_identifier, :funder, :recipients, :state, :award_year,
             :title, :description, :currency, :funding_programme,
             :amount_awarded, :award_date,
               presence: true
-  validates :year, inclusion: { in: VALID_YEARS }
+  validates :award_year, inclusion: { in: VALID_YEARS }
 
   validates :age_groups,
               presence: true, if: 'affect_people && (review? || approved?)'
@@ -100,7 +104,7 @@ class Grant < ActiveRecord::Base
   validates :geographic_scale, inclusion: { in: 0..3 },
               if: 'review? || approved?'
 
-  before_validation :set_year, unless: :year
+  before_validation :set_year, unless: :award_year
   before_validation :clear_beneficiary_fields, :clear_districts,
                       if: 'review? || approved?'
   before_save :save_all_age_groups_if_all_ages
@@ -160,7 +164,7 @@ class Grant < ActiveRecord::Base
   private
 
     def set_year
-      self.year = self.award_date.year
+      self.award_year = self.award_date.year
     end
 
     def beneficiary_groups
@@ -295,7 +299,7 @@ class Grant < ActiveRecord::Base
 
     def map_charity_commission(mappings)
       result     = []
-      background = self.recipient.scrape['background']
+      background = self.recipients.first.scrape['background']
       %w[who what how].each do |k|
         if background[k].present?
           background[k].each do |i|
@@ -364,8 +368,8 @@ class Grant < ActiveRecord::Base
     end
 
     def auto_complete
-      if self.recipient.scrape.keys.count > 1
-        background = self.recipient.scrape['background']
+      if self.recipients.first.scrape.keys.count > 1
+        background = self.recipients.first.scrape['background']
 
         %w[income spending].each do |f|
           if background[f].present?
@@ -402,7 +406,7 @@ class Grant < ActiveRecord::Base
         self.beneficiaries.count < 2 ? false : true
 
         # must select countries or districts if less than scrape regions count
-        regions_count = self.recipient.scrape['data']['regions'].count
+        regions_count = self.recipients.first.scrape['data']['regions'].count
         self.countries.count < regions_count ? false : true
         self.districts.count < regions_count ? false : true
       end

@@ -3,7 +3,7 @@ FactoryGirl.define do
   factory :grant do
     transient { n { rand(9999) } }
     association       :funder, factory: :funder
-    association       :recipient, factory: :recipient
+    # association       :recipient, factory: :recipient
     grant_identifier  { "360G-esmeefairbairn-12-0732#{n}" }
     title             'Grant to Charity Projects'
     description       'Towards core costs of an organisation.'

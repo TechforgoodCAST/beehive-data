@@ -1,7 +1,7 @@
 json.array! @funders do |funder|
   json.ignore_nil!
 
-  json.year              params[:year]
+  json.award_year        params[:year]
   json.extract! funder,  :name, :organisation_identifier, :charity_number,
                          :company_number, :organisation_number,
                          :street_address, :city, :region, :postal_code, :website,

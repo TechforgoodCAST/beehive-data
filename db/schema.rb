@@ -31,6 +31,16 @@ ActiveRecord::Schema.define(version: 20160506115639) do
     t.integer "grant_id"
   end
 
+  create_table "awards", force: :cascade do |t|
+    t.integer  "grant_id"
+    t.integer  "recipient_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "awards", ["grant_id"], name: "index_awards_on_grant_id", using: :btree
+  add_index "awards", ["recipient_id"], name: "index_awards_on_recipient_id", using: :btree
+
   create_table "beneficiaries", force: :cascade do |t|
     t.string   "label"
     t.string   "sort"
@@ -69,7 +79,6 @@ ActiveRecord::Schema.define(version: 20160506115639) do
 
   create_table "grants", force: :cascade do |t|
     t.integer  "funder_id"
-    t.integer  "recipient_id"
     t.string   "grant_identifier"
     t.string   "title"
     t.string   "description"
@@ -86,7 +95,7 @@ ActiveRecord::Schema.define(version: 20160506115639) do
     t.boolean  "open_call"
     t.boolean  "affect_people"
     t.boolean  "affect_other"
-    t.integer  "year"
+    t.integer  "award_year"
     t.integer  "operating_for"
     t.integer  "income"
     t.integer  "spending"
@@ -100,7 +109,6 @@ ActiveRecord::Schema.define(version: 20160506115639) do
 
   add_index "grants", ["funder_id"], name: "index_grants_on_funder_id", using: :btree
   add_index "grants", ["grant_identifier"], name: "index_grants_on_grant_identifier", using: :btree
-  add_index "grants", ["recipient_id"], name: "index_grants_on_recipient_id", using: :btree
 
   create_table "locations", force: :cascade do |t|
     t.integer "country_id"

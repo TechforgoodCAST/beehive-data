@@ -3,10 +3,10 @@ require 'rails_helper'
 describe Region do
   before(:each) do
     seed_test_db
-    @funder    = create(:funder, country: @countries.first)
-    @recipient = create(:recipient, country: @countries.first)
-    @grant     = create(:grant, funder: @funder, recipient: @recipient, countries: [@countries.first])
-    @uk_region = create(:region, district: @uk_districts.first, grant: @grant)
+    @funder     = create(:funder, country: @countries.first)
+    @recipients = [create(:recipient, country: @countries.first)]
+    @grant      = create(:grant, funder: @funder, recipients: @recipients, countries: [@countries.first])
+    @uk_region  = create(:region, district: @uk_districts.first, grant: @grant)
   end
 
   it 'is unique per grant' do

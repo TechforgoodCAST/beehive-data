@@ -10,9 +10,9 @@ module Helpers
 
   def basic_setup
     seed_test_db
-    @funder    = create(:funder, country: @countries.first)
-    @recipient = create(:recipient, country: @countries.first)
-    @grant     = create(:grant, funder: @funder, recipient: @recipient)
+    @funder     = create(:funder, country: @countries.first)
+    @recipients = [create(:recipient, country: @countries.first)]
+    @grant      = create(:grant, funder: @funder, recipients: @recipients)
   end
 
   def json

@@ -7,25 +7,27 @@ json.array! grants do |grant|
 
   json.extract! grant, :grant_identifier
   json.funder          grant.funder.name
-  json.extract! grant, :year, :funding_programme, :title, :description,
+  json.extract! grant, :award_year, :funding_programme, :title, :description,
                        :currency, :amount_applied_for, :amount_awarded,
                        :amount_disbursed, :award_date, :planned_start_date,
                        :planned_end_date, :open_call
   json.type_of_funding Grant::FUNDING_TYPE[grant.type_of_funding][0] if grant.type_of_funding
 
-  json.recipient do
-    json.extract! grant.recipient, :organisation_identifier
-    json.country                   grant.recipient.country.alpha2
-    json.organisation_type         Organisation::ORG_TYPE[grant.recipient.org_type+1][0]
-    json.extract! grant.recipient, :name, :charity_number, :company_number,
-                                   :organisation_number, :street_address,
-                                   :city, :region, :postal_code, :website
-    json.operating_for             Grant::OPERATING_FOR[grant.operating_for][0]
-    json.income                    Grant::INCOME[grant.income][0]
-    json.spending                  Grant::INCOME[grant.spending][0] if grant.spending
-    json.employees                 Grant::EMPLOYEES[grant.employees][0]
-    json.volunteers                Grant::EMPLOYEES[grant.volunteers][0]
-    json.multi_national            grant.recipient.multi_national
+  json.recipients do
+    json.array! grant.recipients do |recipient|
+      json.extract! recipient, :organisation_identifier
+      json.country                   recipient.country.alpha2
+      json.organisation_type         Organisation::ORG_TYPE[recipient.org_type+1][0]
+      json.extract! recipient, :name, :charity_number, :company_number,
+                                     :organisation_number, :street_address,
+                                     :city, :region, :postal_code, :website
+      json.operating_for             Grant::OPERATING_FOR[grant.operating_for][0]
+      json.income                    Grant::INCOME[grant.income][0]
+      json.spending                  Grant::INCOME[grant.spending][0] if grant.spending
+      json.employees                 Grant::EMPLOYEES[grant.employees][0]
+      json.volunteers                Grant::EMPLOYEES[grant.volunteers][0]
+      json.multi_national            recipient.multi_national
+    end
   end
 
   json.beneficiaries do

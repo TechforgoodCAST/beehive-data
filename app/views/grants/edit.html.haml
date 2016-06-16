@@ -14,9 +14,9 @@ Errors
   defaults: { wrapper_html: { class: 'field' } } do |f|
 
   %h4 Grant
-  = f.input :year, collection: Grant::VALID_YEARS
+  = f.input :award_year, collection: Grant::VALID_YEARS
   = f.association :funder, as: :select, label_method: :name
-  = f.association :recipient, as: :select, label_method: :name
+  = f.association :recipients, as: :select, collection: Organisation.pluck(:name, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
   = f.input :grant_identifier
   = f.input :title
   = f.input :description, as: :text, input_html: { rows: 2 }
@@ -51,7 +51,7 @@ Errors
   %h4 Location
   = f.input :geographic_scale, as: :radio_buttons, collection: Grant::GEOGRAPHIC_SCALE
   = f.association :countries, as: :select, collection: Country.pluck(:name, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
-  = @grant.recipient.scrape['data']['regions'] if @grant.recipient.scrape.keys.count > 0
+  -# = @grant.recipient.scrape['data']['regions'] if @grant.recipient.scrape.keys.count > 0
   = f.association :districts, as: :select, collection: District.pluck(:name, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
 
   = f.button :submit, (@grant.approved? ? 'Save' : 'Save & Approve'), class: 'ui button teal'

@@ -2,7 +2,7 @@ class CreateGrants < ActiveRecord::Migration
   def change
     create_table :grants do |t|
       t.references :funder, required: true, index: true
-      t.references :recipient, required: true, index: true
+      # t.references :recipient, required: true, index: true
       t.string :grant_identifier, required: true, index: true, uniqe: true
       t.string :title, :description, :currency, :funding_programme, required: true
       t.string :gender
@@ -12,8 +12,14 @@ class CreateGrants < ActiveRecord::Migration
       t.date :award_date, required: true
       t.date :planned_start_date, :planned_end_date
       t.boolean :open_call, :affect_people, :affect_other
-      t.integer :year, required: true
+      t.integer :award_year, required: true
       t.integer :operating_for, :income, :spending, :employees, :volunteers, :geographic_scale, :type_of_funding
+      t.timestamps null: false
+    end
+
+    create_table :awards do |t|
+      t.references :grant, required: true, index: true
+      t.references :recipient, required: true, index: true
       t.timestamps null: false
     end
 

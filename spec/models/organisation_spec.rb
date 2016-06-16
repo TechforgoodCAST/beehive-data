@@ -5,7 +5,7 @@ describe Organisation do
     seed_test_db
     @funder    = create(:funder, country: @countries.first)
     @recipient = create(:recipient, country: @countries.first)
-    @grants    = Array.new(2) { |i| create(:grant, funder: @funder, recipient: @recipient) }
+    @grants    = Array.new(2) { |i| create(:grant, funder: @funder, recipients: [@recipient]) }
   end
 
   it 'belongs to a country' do

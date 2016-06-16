@@ -62,7 +62,7 @@ namespace :import do
 
       grant_values = {
         funder:             funder,
-        recipient:          @recipient,
+        recipients:         [@recipient],
         title:              row['Title'],
         description:        row['Description'],
         currency:           row['Currency'],
