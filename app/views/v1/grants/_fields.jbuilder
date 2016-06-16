@@ -7,7 +7,7 @@ json.array! grants do |grant|
 
   json.extract! grant, :grant_identifier
   json.funder          grant.funder.name
-  json.extract! grant, :year, :funding_programme, :title, :description,
+  json.extract! grant, :award_year, :funding_programme, :title, :description,
                        :currency, :amount_applied_for, :amount_awarded,
                        :amount_disbursed, :award_date, :planned_start_date,
                        :planned_end_date, :open_call

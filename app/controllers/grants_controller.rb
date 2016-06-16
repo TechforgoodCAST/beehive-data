@@ -37,7 +37,7 @@ class GrantsController < ApplicationController
   private
 
     def grant_params
-      params.require(:grant).permit(:year, :funder_id, :recipient_id, :grant_identifier,
+      params.require(:grant).permit(:award_year, :funder_id, :recipient_id, :grant_identifier,
         :title, :description, :currency, :funding_programme, :gender, :amount_awarded,
         :amount_applied_for, :amount_disbursed, :award_date, :planned_start_date,
         :planned_end_date, :open_call, :affect_people, :affect_other, :operating_for,

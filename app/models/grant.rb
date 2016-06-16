@@ -57,22 +57,22 @@ class Grant < ActiveRecord::Base
   belongs_to :funder, class_name: 'Organisation'
   belongs_to :recipient, class_name: 'Organisation'
 
-  has_many :locations
-  has_many :countries, through: :locations, dependent: :destroy
-  has_many :regions
-  has_many :districts, through: :regions, dependent: :destroy
+  has_many :locations, dependent: :destroy
+  has_many :countries, through: :locations
+  has_many :regions, dependent: :destroy
+  has_many :districts, through: :regions
 
-  has_many :ages
-  has_many :age_groups, through: :ages, dependent: :destroy
-  has_many :stakeholders
-  has_many :beneficiaries, through: :stakeholders, dependent: :destroy
+  has_many :ages, dependent: :destroy
+  has_many :age_groups, through: :ages
+  has_many :stakeholders, dependent: :destroy
+  has_many :beneficiaries, through: :stakeholders
 
   validates :grant_identifier, uniqueness: true
-  validates :grant_identifier, :funder, :recipient, :state, :year,
+  validates :grant_identifier, :funder, :recipient, :state, :award_year,
             :title, :description, :currency, :funding_programme,
             :amount_awarded, :award_date,
               presence: true
-  validates :year, inclusion: { in: VALID_YEARS }
+  validates :award_year, inclusion: { in: VALID_YEARS }
 
   validates :age_groups,
               presence: true, if: 'affect_people && (review? || approved?)'
@@ -100,7 +100,7 @@ class Grant < ActiveRecord::Base
   validates :geographic_scale, inclusion: { in: 0..3 },
               if: 'review? || approved?'
 
-  before_validation :set_year, unless: :year
+  before_validation :set_year, unless: :award_year
   before_validation :clear_beneficiary_fields, :clear_districts,
                       if: 'review? || approved?'
   before_save :save_all_age_groups_if_all_ages
@@ -160,7 +160,7 @@ class Grant < ActiveRecord::Base
   private
 
     def set_year
-      self.year = self.award_date.year
+      self.award_year = self.award_date.year
     end
 
     def beneficiary_groups

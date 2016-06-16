@@ -42,7 +42,7 @@ describe Grant do
   end
 
   it 'year set from award date' do
-    expect(@grant.year).to eq @grant.award_date.year
+    expect(@grant.award_year).to eq @grant.award_date.year
   end
 
   context 'in review' do

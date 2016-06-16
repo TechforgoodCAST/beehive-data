@@ -6,7 +6,7 @@ module V1
     end
 
     def grants_by_year
-      @grants = Grant.approved.where(year: params[:year]) # TODO: limit for demo
+      @grants = Grant.approved.where(award_year: params[:year]) # TODO: limit for demo
     end
 
   end

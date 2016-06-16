@@ -14,7 +14,7 @@ Errors
   defaults: { wrapper_html: { class: 'field' } } do |f|
 
   %h4 Grant
-  = f.input :year, collection: Grant::VALID_YEARS
+  = f.input :award_year, collection: Grant::VALID_YEARS
   = f.association :funder, as: :select, label_method: :name
   = f.association :recipient, as: :select, label_method: :name
   = f.input :grant_identifier
