@@ -15,6 +15,7 @@ json.array! grants do |grant|
 
   json.recipients do
     json.array! grant.recipients do |recipient|
+      json.amount_awarded recipient.awards.where(grant: grant, recipient: recipient).first.amount_awarded
       json.extract! recipient, :organisation_identifier
       json.country                   recipient.country.alpha2
       json.organisation_type         Organisation::ORG_TYPE[recipient.org_type+1][0]

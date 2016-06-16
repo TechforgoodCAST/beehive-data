@@ -34,8 +34,10 @@ ActiveRecord::Schema.define(version: 20160506115639) do
   create_table "awards", force: :cascade do |t|
     t.integer  "grant_id"
     t.integer  "recipient_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.decimal  "amount_awarded"
+    t.boolean  "lead"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
   add_index "awards", ["grant_id"], name: "index_awards_on_grant_id", using: :btree

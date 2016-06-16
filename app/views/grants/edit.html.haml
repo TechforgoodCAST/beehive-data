@@ -13,10 +13,17 @@ Errors
   html: { class: 'ui form' },
   defaults: { wrapper_html: { class: 'field' } } do |f|
 
+  = f.simple_fields_for :awards, @grant.awards.where(grant: @grant).first_or_initialize do |award_form|
+    = award_form.association :recipient, as: :select, label_method: :name
+    = award_form.input :amount_awarded
+    = award_form.input :lead
+
+  %hr
+
   %h4 Grant
   = f.input :award_year, collection: Grant::VALID_YEARS
   = f.association :funder, as: :select, label_method: :name
-  = f.association :recipients, as: :select, collection: Organisation.pluck(:name, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
+  -# = f.association :recipients, as: :select, collection: Organisation.pluck(:name, :id), input_html: { multiple: true, class: 'ui fluid search dropdown'}
   = f.input :grant_identifier
   = f.input :title
   = f.input :description, as: :text, input_html: { rows: 2 }

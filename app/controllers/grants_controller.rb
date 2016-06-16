@@ -9,6 +9,7 @@ class GrantsController < ApplicationController
 
   def edit
     @grant.scrape_grant unless @grant.approved?
+    # @grant.recipients.count.times { @grant.awards.build }
   end
 
   def update
@@ -43,7 +44,8 @@ class GrantsController < ApplicationController
         :planned_start_date, :planned_end_date, :open_call, :affect_people,
         :affect_other, :operating_for, :income, :spending, :employees,
         :volunteers, :geographic_scale, :type_of_funding, recipient_ids: [],
-        country_ids: [], district_ids: [], age_group_ids: [], beneficiary_ids: [])
+        country_ids: [], district_ids: [], age_group_ids: [], beneficiary_ids: [],
+        awards_attributes: [:id, :recipient_id, :amount_awarded, :lead])
     end
 
     def load_grant

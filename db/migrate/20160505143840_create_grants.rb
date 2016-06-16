@@ -20,6 +20,8 @@ class CreateGrants < ActiveRecord::Migration
     create_table :awards do |t|
       t.references :grant, required: true, index: true
       t.references :recipient, required: true, index: true
+      t.decimal :amount_awarded, required: true
+      t.boolean :lead
       t.timestamps null: false
     end
 

@@ -56,15 +56,14 @@ class Grant < ActiveRecord::Base
   ]
 
   belongs_to :funder, class_name: 'Organisation'
-  # belongs_to :recipient, class_name: 'Organisation'
-  has_many :awards
+  has_many :awards, dependent: :destroy
   has_many :recipients, through: :awards
-  # , class_name: 'Organisation'
+  accepts_nested_attributes_for :awards
 
-  has_many :locations
-  has_many :countries, through: :locations, dependent: :destroy
-  has_many :regions
-  has_many :districts, through: :regions, dependent: :destroy
+  has_many :locations, dependent: :destroy
+  has_many :countries, through: :locations
+  has_many :regions, dependent: :destroy
+  has_many :districts, through: :regions
 
   has_many :ages
   has_many :age_groups, through: :ages, dependent: :destroy

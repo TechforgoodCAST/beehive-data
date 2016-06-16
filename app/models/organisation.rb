@@ -20,7 +20,6 @@ class Organisation < ActiveRecord::Base
   has_many :grants_as_funder, class_name: 'Grant', foreign_key: 'funder_id'
   has_many :awards, foreign_key: 'recipient_id'
   has_many :grants_as_recipient, through: :awards, source: :grant
-  # , class_name: 'Grant', foreign_key: 'recipient_id'
 
   validates :organisation_identifier, :slug, uniqueness: true, presence: true
   validates :charity_number, uniqueness: true, if: :charity_number?
