@@ -12,15 +12,3 @@ export function loadGrants() {
         throw (error);
       });
 }
-
-export function loadFundersSuccess(funders) {
-  return { type: types.LOAD_FUNDERS_SUCCESS, funders };
-}
-export function loadFunders() {
-  return dispatch =>
-      api.getAllFunders().then(funders => {
-        dispatch(loadFundersSuccess(funders));
-      }).catch(error => {
-        throw (error);
-      });
-}

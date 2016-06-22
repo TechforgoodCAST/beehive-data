@@ -1,6 +1,6 @@
 %h1 Review organisations
 
-- if Organisation.import.count > 0
+- if Organisation.import.count > 0 && current_user.admin?
   .ui.row
     .ui.left.action.right.labeled.input
       = link_to 'Scrape', scrape_organisations_path, method: :patch, class: 'ui teal button'
@@ -11,7 +11,7 @@
 %table.ui.celled.table
   %thead
     %tr
-      - if Organisation.import.count > 0
+      - if Organisation.import.count > 0 && current_user.admin?
         %th
           Import
           = surround '(', ')' do
@@ -23,11 +23,14 @@
   %tbody
     - @organisations.each do |org|
       %tr
-        - if org.state == 'import'
-          - if Organisation.import.count > 0
-            %td= org.name
-          %td
-        - elsif org.state == 'review'
-          - if Organisation.import.count > 0
+        - if current_user.admin?
+          - if org.state == 'import' && current_user.admin?
+            - if Organisation.import.count > 0
+              %td= org.name
             %td
+          - elsif org.state == 'review'
+            - if Organisation.import.count > 0
+              %td
+            %td.selectable.warning= link_to org.name, edit_organisation_path(org)
+        - elsif org.state == 'review'
           %td.selectable.warning= link_to org.name, edit_organisation_path(org)

@@ -57,6 +57,9 @@ class Grant < ActiveRecord::Base
   belongs_to :funder, class_name: 'Organisation'
   belongs_to :recipient, class_name: 'Organisation'
 
+  has_many :moderators, as: :approvable
+  has_many :users, through: :moderators
+
   has_many :locations, dependent: :destroy
   has_many :countries, through: :locations
   has_many :regions, dependent: :destroy

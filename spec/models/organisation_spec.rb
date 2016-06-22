@@ -118,6 +118,14 @@ describe Organisation do
     expect(@funder).to be_valid
   end
 
+  it 'has many users when approved' do
+    create_and_auth_admin
+    create_and_auth_moderator
+    @recipient.update_column(:state, 'approved')
+    @recipient.user_ids = [@admin.id, @moderator.id]
+    expect(@recipient.users.count).to eq 2
+  end
+
   it 'sets identifier if none present'
 
   # TODO: it 'geocoded if street address or postal code present'

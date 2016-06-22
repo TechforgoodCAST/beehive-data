@@ -1,10 +1,14 @@
 = render partial: 'partials/index', locals: { obj: Grant }
 
-%table.ui.table
+%table.ui.celled.table
   %thead
     %tr
       %th Approved grants
+      %th Approved by
   %tbody
     - @grants.each do |grant|
       %tr
         %td.selectable= link_to grant.grant_identifier, edit_grant_path(grant)
+        %td
+          - grant.users.each do |user|
+            .ui.label= user.initials

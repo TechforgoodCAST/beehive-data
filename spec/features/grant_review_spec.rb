@@ -5,16 +5,29 @@ describe 'Moderator' do
     seed_test_db
     @funder    = create(:funder, country: @countries.first)
     @recipient = create(:approved_org, country: @countries.first)
-    @grants    = create_list(:grant, 11, funder: @funder, recipient: @recipient)
-    create_and_auth_user
+    @grants    = create_list(:grant, 10, funder: @funder, recipient: @recipient)
+    create_and_auth_moderator
+  end
+
+  scenario 'cannot auto-review' do
     visit review_grants_path
+    expect(page).to_not have_text 'Auto-review'
+  end
+
+  scenario 'cannot view import column' do
+    visit grants_path
+    expect(page).to_not have_text 'Import'
+  end
+
+  scenario 'cannot view approved' do
+    visit grants_path
     expect(current_path).to eq review_grants_path
   end
 
   scenario 'can manually review grant' do
-    expect(page).to have_text 'Import (11)'
+    @grants.each { |g| g.next_step! }
 
-    click_on 'Auto-review'
+    visit review_grants_path
     expect(page).to have_text 'Review (10)'
 
     # TODO: test UI
@@ -50,18 +63,11 @@ describe 'Moderator' do
   end
 
   scenario 'only sees fields for form selection' do
-    click_on 'Auto-review'
-    click_on "#{@grants[1].grant_identifier}"
+    @grants.first.next_step!
+    visit review_grants_path
+    click_on "#{@grants.first.grant_identifier}"
     expect(page).to have_css '.hidden', count: 2
     # TODO: test UI
-  end
-
-  scenario 'can view approved organisations' do
-    @grants.each { |r| r.update_attribute(:state, 'approved') }
-    visit grants_path
-    expect(page).to have_css '.selectable', count: 11
-    click_on @grants.first.grant_identifier
-    expect(current_path).to eq edit_grant_path(@grants.first)
   end
 
   scenario 'validated at correct geographic_scale'

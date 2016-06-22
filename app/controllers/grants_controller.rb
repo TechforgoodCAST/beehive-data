@@ -4,19 +4,24 @@ class GrantsController < ApplicationController
   before_action :load_grant, only: [:edit, :update]
 
   def index
-    @grants = Grant.approved.newest
+    if current_user.admin?
+      @grants = Grant.approved.newest
+    else
+      redirect_to review_grants_path
+    end
   end
 
   def edit
+    session[:return_to] ||= request.referer
     @grant.scrape_grant unless @grant.approved?
   end
 
   def update
     params[:grant][:district_ids] = @grant.check_regions(params[:grant][:district_ids])
-
     if @grant.update(grant_params)
       @grant.next_step! unless @grant.approved?
-      redirect_to review_grants_path
+      @grant.user_ids = User.ids(@grant, current_user)
+      redirect_to session.delete(:return_to) || review_grants_path
     else
       render :edit
     end

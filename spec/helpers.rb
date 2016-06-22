@@ -27,9 +27,18 @@ module Helpers
     get endpoint, {}, { 'Authorization': "Token token=#{user.api_token}" }
   end
 
-  def create_and_auth_user(opts={})
-    @user = create(:user)
-    login_as(@user, scope: :user)
+  def create_and_auth(instance)
+    login_as(instance, scope: :user)
+  end
+
+  def create_and_auth_admin(opts={})
+    @admin = create(:admin_user)
+    create_and_auth(@admin)
+  end
+
+  def create_and_auth_moderator(opts={})
+    @moderator = create(:user)
+    create_and_auth(@moderator)
   end
 
 end

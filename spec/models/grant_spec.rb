@@ -146,6 +146,14 @@ describe Grant do
       expect(@grant.state).to eq 'approved'
       expect(@grant).to be_valid
     end
+
+    it 'has many users when approved' do
+      create_and_auth_admin
+      create_and_auth_moderator
+      @grant.update_column(:state, 'approved')
+      @grant.user_ids = [@admin.id, @moderator.id]
+      expect(@grant.users.count).to eq 2
+    end
   end
 
   it 'is valid when imported' do

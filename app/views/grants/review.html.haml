@@ -1,6 +1,6 @@
 %h1 Review grants
 
-- if Grant.import.count > 0
+- if Grant.import.count > 0 && current_user.admin?
   .ui.row
     .ui.left.action.right.labeled.input
       = link_to 'Auto-review', scrape_grants_path, method: :patch, class: 'ui teal button'
@@ -11,7 +11,7 @@
 %table.ui.celled.table
   %thead
     %tr
-      - if Grant.import.count > 0
+      - if Grant.import.count > 0 && current_user.admin?
         %th
           Import
           = surround '(', ')' do
@@ -23,11 +23,14 @@
   %tbody
     - @grants.each do |grant|
       %tr
-        - if grant.state == 'import'
-          - if Grant.import.count > 0
-            %td= grant.grant_identifier
-          %td
-        - elsif grant.state == 'review'
-          - if Grant.import.count > 0
+        - if current_user.admin?
+          - if grant.state == 'import'
+            - if Grant.import.count > 0
+              %td= grant.grant_identifier
             %td
+          - elsif grant.state == 'review'
+            - if Grant.import.count > 0
+              %td
+            %td.selectable.warning= link_to "#{grant.grant_identifier} | #{grant.recipient.name}", edit_grant_path(grant)
+        - elsif grant.state == 'review'
           %td.selectable.warning= link_to "#{grant.grant_identifier} | #{grant.recipient.name}", edit_grant_path(grant)

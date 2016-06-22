@@ -1,10 +1,14 @@
 = render partial: 'partials/index', locals: { obj: Organisation }
 
-%table.ui.table
+%table.ui.celled.table
   %thead
     %tr
       %th Approved organisations
+      %th Approved by
   %tbody
     - @organisations.each do |org|
       %tr
         %td.selectable= link_to org.name, edit_organisation_path(org)
+        %td
+          - org.users.each do |user|
+            .ui.label= user.initials

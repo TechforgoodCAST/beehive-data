@@ -4,10 +4,15 @@ class OrganisationsController < ApplicationController
   before_action :load_organisation, only: [:edit, :update]
 
   def index
-    @organisations = Organisation.approved.newest
+    if current_user.admin?
+      @organisations = Organisation.approved.newest
+    else
+      redirect_to review_organisations_path
+    end
   end
 
   def edit
+    session[:return_to] ||= request.referer
     if @organisation.scrape.keys.count > 0 && !@organisation.approved?
       @organisation.attributes = @organisation.scrape['data'].except('regions', 'score')
     end
@@ -16,7 +21,8 @@ class OrganisationsController < ApplicationController
   def update
     if @organisation.update(organisation_params)
       @organisation.next_step! unless @organisation.approved?
-      redirect_to review_organisations_path
+      @organisation.user_ids = User.ids(@organisation, current_user)
+      redirect_to session.delete(:return_to) || review_organisations_path
     else
       render :edit
     end
@@ -34,6 +40,7 @@ class OrganisationsController < ApplicationController
         if org.scrape['data']['score'] > 4
           org.update_attributes(org.use_scrape_data)
           org.update_attribute(:state, 'approved')
+          org.user_ids = User.ids(org, current_user)
         else
           org.update_attribute(:state, 'review')
         end
