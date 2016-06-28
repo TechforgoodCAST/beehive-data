@@ -2,11 +2,12 @@
 
 - if Grant.import.count > 0 && current_user.admin?
   .ui.row
+    = form_tag scrape_grants_path, method: :patch
     .ui.left.action.right.labeled.input
-      = link_to 'Auto-review', scrape_grants_path, method: :patch, class: 'ui teal button'
-      %input{type: 'number', value: 10}
-        .ui.basic.label
-          grants
+      = button_tag 'Auto-review', class: 'ui teal button'
+      = number_field_tag :review, '10', min: 1, max: 100
+      .ui.basic.label
+        grants
 
 %table.ui.celled.table
   %thead

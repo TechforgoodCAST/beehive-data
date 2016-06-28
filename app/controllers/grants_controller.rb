@@ -32,7 +32,7 @@ class GrantsController < ApplicationController
   end
 
   def scrape
-    Grant.with_approved_recipients.take(10).each do |grant|
+    Grant.with_approved_recipients.take(params[:review].to_i).each do |grant|
       grant.update_attribute(:state, 'review')
       grant.next_step! if grant.scrape_grant && grant.save
     end

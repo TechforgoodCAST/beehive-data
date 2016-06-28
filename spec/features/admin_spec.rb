@@ -30,6 +30,15 @@ describe 'Admin' do
       expect(page).to have_text @admin.initials
     end
 
+    scenario 'can specify number of organisations to scrape' do
+      visit review_organisations_path
+      expect(page).to have_text 'Import (11)'
+
+      fill_in 'review', with: '1'
+      click_on 'Scrape'
+      expect(page).to have_text 'Review (1)'
+    end
+
     scenario 'can view approved organisations' do
       @recipients.each { |r| r.update_attribute(:state, 'approved') }
       visit organisations_path
@@ -88,6 +97,15 @@ describe 'Admin' do
 
       visit grants_path
       expect(page).to have_text @admin.initials
+    end
+
+    scenario 'can specify number of grants to auto-review' do
+      visit review_grants_path
+      expect(page).to have_text 'Import (11)'
+
+      fill_in 'review', with: '1'
+      click_on 'Auto-review'
+      expect(page).to have_text 'Review (1)'
     end
 
     scenario 'can view approved organisations' do
