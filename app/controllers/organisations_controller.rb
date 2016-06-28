@@ -37,10 +37,14 @@ class OrganisationsController < ApplicationController
       if org.scrape_org
         org.update_attribute(:scrape, org.scrape_org)
         org.update_attribute(:scraped_at, Time.now)
-        if org.scrape['data']['score'] > 4
-          org.update_attributes(org.use_scrape_data)
-          org.update_attribute(:state, 'approved')
-          org.user_ids = User.ids(org, current_user)
+        if org.scrape['data']
+          if org.scrape['data']['score'] > 4
+            org.update_attributes(org.use_scrape_data)
+            org.update_attribute(:state, 'approved')
+            org.user_ids = User.ids(org, current_user)
+          else
+            org.update_attribute(:state, 'review')
+          end
         else
           org.update_attribute(:state, 'review')
         end

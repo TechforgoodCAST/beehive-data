@@ -17,7 +17,7 @@
             = link_to 'Organisations', organisations_path, class: (params[:controller] == 'organisations' ? 'item active' : 'item')
             = link_to 'Grants', grants_path, class: (params[:controller] == 'grants' ? 'item active' : 'item')
             .right.menu
-              = link_to 'Logout', destroy_user_session_path, method: :delete, class: 'ui item'
+              = link_to "Logout (#{current_user.first_name})", destroy_user_session_path, method: :delete, class: 'ui item'
 
         %p= notice
         %p= alert

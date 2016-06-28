@@ -126,6 +126,30 @@ describe Organisation do
     expect(@recipient.users.count).to eq 2
   end
 
+  it 'of org_type "Individual" not automatically set' do
+    @recipient.org_type = -1
+    @recipient.charity_number = 'ABC123'
+    @recipient.company_number = 'ABC123'
+    @recipient.organisation_number = 'ABC123'
+    @recipient.save
+    expect(@recipient.charity_number).to eq nil
+    expect(@recipient.company_number).to eq nil
+    expect(@recipient.organisation_number).to eq nil
+    expect(@recipient.org_type).to eq -1
+  end
+
+  it 'of org_type "Another..." not automatically set' do
+    @recipient.org_type = 4
+    @recipient.charity_number = 'ABC123'
+    @recipient.company_number = 'ABC123'
+    @recipient.organisation_number = 'ABC123'
+    @recipient.save
+    expect(@recipient.charity_number).to eq nil
+    expect(@recipient.company_number).to eq nil
+    expect(@recipient.organisation_number).to eq nil
+    expect(@recipient.org_type).to eq 4
+  end
+
   it 'sets identifier if none present'
 
   # TODO: it 'geocoded if street address or postal code present'

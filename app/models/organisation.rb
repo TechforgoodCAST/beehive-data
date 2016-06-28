@@ -37,7 +37,7 @@ class Organisation < ActiveRecord::Base
   validates :license, presence: true, if: 'publisher?'
 
   before_validation :set_slug, unless: :slug
-  before_validation :set_org_type, :set_registered
+  before_validation :set_org_type, :set_registered, :clear_numbers_for_unknown_orgs
 
   include Workflow
   workflow_column :state
@@ -175,7 +175,8 @@ class Organisation < ActiveRecord::Base
         companies_house_data[:company_type] = response.at_css('#company-type')
                                                 .text.gsub(/\n/, '').strip
         companies_house_data[:incorporated_date] = response.at_css('#company-creation-date')
-                                                     .text.gsub(/\n/, '').strip.to_date
+                                                     .text.gsub(/\n/, '').strip.to_date if
+                                                     response.at_css('#company-creation-date')
         companies_house_data[:company_status] = response.at_css('#company-status')
                                                 .text.gsub(/\n/, '').strip
         sic_array = []
@@ -203,22 +204,34 @@ class Organisation < ActiveRecord::Base
     end
 
     def set_org_type
-      if self.charity_number? && self.company_number?
-        self.org_type = 3
-      elsif self.charity_number? && !self.company_number?
-        self.org_type = 1
-      elsif !self.charity_number? && self.company_number?
-        self.org_type = 2
-      elsif self.organisation_number? && (!self.charity_number? && !self.company_number?)
-        self.org_type = 4
-      else
-        self.org_type = 0
+      unless self.org_type.to_i > 3 || self.org_type.to_i < 0
+        if self.charity_number? && self.company_number?
+          self.org_type = 3
+        elsif self.charity_number? && !self.company_number?
+          self.org_type = 1
+        elsif !self.charity_number? && self.company_number?
+          self.org_type = 2
+        elsif self.organisation_number? && (!self.charity_number? && !self.company_number?)
+          self.org_type = 4
+        else
+          self.org_type = 0
+        end
       end
     end
 
     def set_registered
-      self.org_type > 0 ? self.registered = true : self.registered = false
+      unless self.org_type.to_i > 3 || self.org_type.to_i < 0
+        self.org_type > 0 ? self.registered = true : self.registered = false
+      end
       return true
+    end
+
+    def clear_numbers_for_unknown_orgs
+      if self.org_type.to_i > 3 || self.org_type.to_i < 0
+        self.charity_number = nil
+        self.company_number = nil
+        self.organisation_number = nil
+      end
     end
 
 end
