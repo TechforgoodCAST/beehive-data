@@ -33,7 +33,7 @@ class OrganisationsController < ApplicationController
   end
 
   def scrape
-    Organisation.import.order(updated_at: :desc).limit(10).each do |org|
+    Organisation.import.order(updated_at: :desc).limit(params[:review].to_i).each do |org|
       if org.scrape_org
         org.update_attribute(:scrape, org.scrape_org)
         org.update_attribute(:scraped_at, Time.now)
