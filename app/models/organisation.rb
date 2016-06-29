@@ -55,6 +55,10 @@ class Organisation < ActiveRecord::Base
     self.slug
   end
 
+  def set_slug
+    self.slug = generate_slug
+  end
+
   def scrape_org
     if self.company_number && !self.charity_number
       find_companies_house
@@ -189,10 +193,6 @@ class Organisation < ActiveRecord::Base
       else
         return { background: {} }
       end
-    end
-
-    def set_slug
-      self.slug = generate_slug
     end
 
     def generate_slug(n=1)

@@ -40,6 +40,7 @@ class OrganisationsController < ApplicationController
         if org.scrape['data']
           if org.scrape['data']['score'] > 4
             org.update_attributes(org.use_scrape_data)
+            org.set_slug
             org.update_attribute(:state, 'approved')
             org.user_ids = User.ids(org, current_user)
           else
