@@ -1,0 +1,251 @@
+.article
+  %h1.ui.header
+    Moderators
+    .sub.header Documentation
+  .ui.divider
+
+  .ui.container
+    .ui.stackable.divided.grid
+
+      .four.wide.column
+        .ui.sticky
+          .ui.vertical.following.fluid.accordion.text.menu
+            .item
+              %a.active.title
+                %i.dropdown.icon
+                %b Usage
+              .active.content.menu
+                %a.item{href: '#about'} About
+                %a.item{href: '#your_role'} Your role
+                %a.item{href: '#workflow'} Workflow
+                %a.item{href: '#getting_help'} Getting help
+            .item
+              %a.active.title
+                %i.dropdown.icon
+                %b Organisations
+              .active.content.menu
+                %a.item{href: '#organisation_identifier'} Organisation identifier
+                %a.item{href: '#org_type'} Org type
+                %a.item{href: '#charity_number'} Charity number
+                %a.item{href: '#company_number'} Company number
+                %a.item{href: '#organisation_number'} Organisation number
+
+      .twelve.wide.column
+
+        %h2.ui.header Usage
+
+        .ui.segment#about
+          %h3.ui.header About
+          %p Beehive Data is part of a family of tools and technology that helps charitable organisations and their funders make the most of their resources when working together. Its purpose is to improve open data about charitable funding, as well as providing an interface for other tools to access and use the information it enriches.
+
+        .ui.segment#your_role
+          %h3.ui.header Your role
+          %p As a moderator on Beehive Data, your role is to improve the quality and accuracy of open data about charitable funding. This involves reviewing the records of organisations and the funding they distribute or receive, correcting any errors, and completing any missing information to the best of your ability.
+
+        .ui.segment#workflow
+          %h3.ui.header Workflow
+          %p Beehive Data considers a record to be in one of three states:
+          %ol
+            %li Import - When data has been newly imported and had no improvement.
+            %li Review - When data requires the attention of Moderators to complete the improvement process.
+            %li Approved - When data has been reviewed, corrected, or completed either automatically or by Moderators.
+          %p
+            Moderators deal with records that are in a state of
+            = succeed '.' do
+              %em review
+            Below is the workflow Moderators should follow.
+          .ui.steps
+            .step
+              %i.icon 1
+              .content
+                .title= link_to 'Review all organisations', review_organisations_path
+            .step
+              %i.icon 2
+              .content
+                .title= link_to 'Notify Admin', 'mailto:support@beehivegiving.org'
+            .step
+              %i.icon 3
+              .content
+                .title= link_to 'Review all grants', review_grants_path
+        .ui.segment#getting_help
+          %h3.ui.header Getting help
+          %p
+            Contact
+            = succeed '.' do
+              = link_to 'support@beehivegiving.org', 'mailto:support@beehivegiving.org'
+
+        .ui.hidden.divider
+
+        %h2.ui.header Organisations
+
+        .ui.segment#organisation_identifier
+          %h3.ui.header Organisation identifier
+          %p
+            An
+            %em Organisation identifier
+            can give a clue about an organisations type and name. The below table shows different types of
+            = succeed ',' do
+              %em Organisation identifier
+            their meaning, and how to use them to research organisations.
+          %table.ui.celled.table
+            %thead
+              %tr
+                %th Organisation identifier
+                %th Meaning
+                %th Name
+            %tbody
+              %tr
+                %td
+                  360G-blf-org-
+                  HusborneCrawleyLowerSchoolSchool:
+                  CommunitySchool191867E06000056
+                %td Some identifiers will include the name and type of the organisation.
+                %td
+                  %em Husborne Crawley Lower School
+                  is a
+                  = succeed ',' do
+                    %em School
+                  and further details could be found be researching the name, and using school specific databases.
+              %tr
+                %td GB-CHC-280454
+                %td
+                  CHC denotes a charity registered in England and Wales by the
+                  = succeed '.' do
+                    = link_to 'Charity Commission', 'http://beta.charitycommission.gov.uk/', target: '_blank'
+                %td
+                  Use the number at the end of the
+                  = succeed ',' do
+                    %em Organisation identifier
+                  in the case
+                  %em 280454
+                  to look up the organisations name.
+              %tr
+                %td GB-COH-280454
+                %td
+                  COH denotes a company registered in the UK by
+                  = succeed '.' do
+                    = link_to 'Companies House', 'http://beta.companieshouse.gov.uk/', target: '_blank'
+                %td
+                  Use the number at the end of the
+                  = succeed ',' do
+                    %em Organisation identifier
+                  in the case
+                  %em 280454
+                  to look up the organisations name.
+              %tr
+                %td GB-SCO-280454 or GB-SC-280454
+                %td
+                  SCO or SC denotes a charity registered in Scotland by the
+                  = succeed '.' do
+                    = link_to 'Office of the Scottish Charity Regulator', 'http://www.oscr.org.uk/', target: '_blank'
+                %td
+                  Use the number at the end of the
+                  = succeed ',' do
+                    %em Organisation identifier
+                  in the case
+                  %em 280454
+                  to look up the organisations name.
+              %tr
+                %td GB-NIR-280454 or GB-NIC-280454 or GB-NI-280454
+                %td
+                  NIR or NI denotes a charity registered in Northern Ireland by the
+                  = succeed '.' do
+                    = link_to 'Charity Commission of Northern Ireland', 'http://www.charitycommissionni.org.uk/', target: '_blank'
+                %td
+                  Use the number at the end of the
+                  = succeed ',' do
+                    %em Organisation identifier
+                  in the case
+                  %em 280454
+                  to look up the organisations name.
+
+        .ui.segment#org_type
+          %h3.ui.header Org type
+          %p Org type, or Organisation type provides a number of broad options to categorise the type of an organisation.
+          %table.ui.definition.table
+            %thead
+              %tr
+                %th
+                %th When to use
+            %tbody
+              %tr
+                %td An individual
+                %td When the funding is directly to an individual and NOT through an organisation or project.
+              %tr
+                %td An unregistered organistion OR project
+                %td
+                  When the funded organisation or project is yet to start, or has no legal registration. Hospitals, Schools, Universities, and other organisations with unclear registration should not be assigned this category. Instead
+                  %em Another type of organisations
+                  should be used
+              %tr
+                %td A registered charity
+                %td When an organisation has a valid and traceable charity registration number.
+              %tr
+                %td A registered company
+                %td When an organisation has a valid and traceable company registration number.
+              %tr
+                %td A registered charity & company
+                %td When an organisation has a valid and traceable charity and company registration number.
+              %tr
+                %td Another type of organisation
+                %td When an organisation is neither unregisterd, a charity, or company e.g. a school.
+
+        .ui.segment#charity_number
+          %h3.ui.header Charity number
+          %p Below is a table explaining the most common charity registration numbers. Please contact an Admin if you need further help.
+          %table.ui.definition.table
+            %thead
+              %tr
+                %th
+                %th When to use
+            %tbody
+              %tr
+                %td= link_to 'Charity Commission (England & Wales)', 'http://beta.charitycommission.gov.uk/', target: '_blank'
+                %td Beehive Data automatically checks the Charity Commission if a valid number is present. The Charity Commission can be a good first place to start research.
+              %tr
+                %td= link_to 'OSCR (Scotland)', 'http://www.oscr.org.uk/', target: '_blank'
+                %td When the charity number includes SCO or SC at the beggining.
+              %tr
+                %td= link_to 'Charity Commission NI (Northern Ireland)', 'http://www.charitycommissionni.org.uk/', target: '_blank'
+                %td When an apparently valid charity number is not found on the Charity Commision for England and Wales, as it can often be the case that the organisation is registerd in Northern Ireland.
+
+        .ui.segment#company_number
+          %h3.ui.header Company number
+          %p Below is a table explaining the most common company registration numbers. Please contact an Admin if you need further help.
+          %table.ui.definition.table
+            %thead
+              %tr
+                %th
+                %th When to use
+            %tbody
+              %tr
+                %td= link_to 'Companies House (UK)', 'http://beta.companieshouse.gov.uk/', target: '_blank'
+                %td A UK wide register of companies.
+
+        .ui.top.attached.segment#organisation_number
+          %h3.ui.header Organisation number
+          %p
+            The
+            %em organisation number
+            field should be used when the
+            %em org type
+            is
+            = succeed '.' do
+              %em Another type of organisation
+            Below is a table explaining the most common registration numbers to include in the
+            %em organisation number
+            field.
+          %table.ui.definition.table
+            %thead
+              %tr
+                %th
+                %th When to use
+            %tbody
+              %tr
+                %td= link_to 'EduBase (England and Wales)', 'http://www.education.gov.uk/edubase/home.xhtml', target: '_blank'
+                %td Provided by the Department for Education, this is a register of educational establishments in England and Wales. Use this when searching for schools and universities.
+              %tr
+                %td= link_to 'UKRLP (UK)', 'https://www.ukrlp.co.uk/', target: '_blank'
+                %td A UK wide register of learning providers. Use this if educational establishments cannot be found on EduBase, or further details are required.
+
+        .ui.hidden.divider

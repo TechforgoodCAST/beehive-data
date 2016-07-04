@@ -15,7 +15,7 @@ gem 'uglifier', '>= 1.3.0'
 
 gem 'haml'
 
-gem 'semantic-ui-sass', github: 'doabit/semantic-ui-sass'
+gem 'semantic-ui-sass', '~> 2.2', github: 'doabit/semantic-ui-sass'
 gem 'devise'
 gem 'workflow'
 gem 'nokogiri'

@@ -5,13 +5,14 @@
   = surround '(', ')' do
     = @organisation.state
 
-%p
-  Publisher:
-  = @organisation.publisher
-  - if @organisation.scrape.keys.count > 0
-    | Score:
-    = @organisation.scrape['data']['score']
-    of 6
+- if current_user.admin?
+  %p
+    Publisher:
+    = @organisation.publisher
+    - if @organisation.scrape.keys.count > 0
+      | Score:
+      = @organisation.scrape['data']['score']
+      of 6
 
 %p
   .small.ui.buttons
@@ -26,18 +27,36 @@
   html: { class: 'ui form' },
   defaults: { wrapper_html: { class: 'field' } } do |f|
 
-  = f.input :organisation_identifier
-  = f.input :name
-  = f.input :org_type, as: :select, collection: Organisation::ORG_TYPE
-  = f.input :charity_number
-  = f.input :company_number
-  = f.input :organisation_number
-  = f.input :country_id, as: :select, collection: Country.order(:name).group(:id, :name)
-  = f.input :multi_national, as: :radio_buttons, collection: [true, false]
+  = f.input :organisation_identifier,
+    wrapper_html: { class: (current_user.admin? ? 'field' : 'disabled field') }
+
+  = f.input :name,
+    label_text: label_with_tooltip('Name', 'Please rename if "Unknown". "Organisation Identifier" can often include the correct name or a number that you can look up to find the correct name.', docs_moderators_path(anchor: 'organisation_identifier'))
+
+  = f.input :org_type, as: :select, collection: Organisation::ORG_TYPE,
+    label_text: label_with_tooltip('Org type', 'Please select the appropriate organisation type. Be sure to research if an organisation is unregistered before selecting the option.', docs_moderators_path(anchor: 'org_type'))
+
+  = f.input :charity_number,
+    label_text: label_with_tooltip('Charity number', 'Please enter an appropriate charity number.', docs_moderators_path(anchor: 'charity_number'))
+
+  = f.input :company_number,
+    label_text: label_with_tooltip('Company number', 'Please enter an appropriate company number.', docs_moderators_path(anchor: 'company_number'))
+
+  = f.input :organisation_number,
+    label_text: label_with_tooltip('Organisation number', 'Please enter an appropriate organisation number.', docs_moderators_path(anchor: 'organisation_number'))
+
+  = f.input :country_id, as: :select, collection: Country.order(:name).group(:id, :name),
+    label: 'In which country is this organisation registered, headquarted or primarily operating in?'
+
+  = f.input :multi_national, as: :radio_buttons, collection: [['Yes', true], ['No', false]],
+    label: 'Does this organisation operate in more than one country?'
+
   = f.input :street_address
   = f.input :city
   = f.input :region
-  = f.input :postal_code
+  = f.input :postal_code,
+    label_text: label_with_tooltip('Postal code', 'If you cannot find a postal code then please leave this record till last and contact an Admin.')
+
   = f.input :website
 
-  = f.button :submit, (@organisation.approved? ? 'Save' : 'Save & Approve'), class: 'ui button teal'
+  = f.button :submit, (@organisation.approved? ? 'Save' : 'Save & Approve'), class: 'teal'

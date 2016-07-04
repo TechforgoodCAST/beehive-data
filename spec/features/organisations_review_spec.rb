@@ -33,7 +33,7 @@ describe 'Moderator' do
     click_on 'Charity Projects 1'
     expect(current_path).to eq edit_organisation_path(@recipients[1])
 
-    choose true # multi_national
+    choose 'Yes' # multi_national
     fill_in 'organisation_postal_code', with: '123 ABC'
     click_on 'Save'
     expect(current_path).to eq review_organisations_path

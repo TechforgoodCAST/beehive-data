@@ -28,4 +28,7 @@ Rails.application.routes.draw do
     get '/demo/grants/(:year)', to: 'examples#grants_by_year'
   end
 
+  # Docs
+  get '/docs/moderators', to: 'docs#moderators'
+
 end

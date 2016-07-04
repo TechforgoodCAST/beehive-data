@@ -17,6 +17,9 @@
             = link_to 'Organisations', organisations_path, class: (params[:controller] == 'organisations' ? 'item active' : 'item')
             = link_to 'Grants', grants_path, class: (params[:controller] == 'grants' ? 'item active' : 'item')
             .right.menu
+              %a.item{ href: docs_moderators_path, class: (params[:controller] == 'docs' ? 'item active' : 'item') }
+                %i.circle.fitted.help.icon
+                Help
               = link_to "Logout (#{current_user.first_name})", destroy_user_session_path, method: :delete, class: 'ui item'
 
         %p= notice
