@@ -190,6 +190,8 @@ class Organisation < ActiveRecord::Base
         companies_house_data[:sic_code] = sic_array
 
         return { background: companies_house_data }
+      else
+        return { background: {} }
       end
     end
 
