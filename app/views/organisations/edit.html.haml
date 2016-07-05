@@ -9,7 +9,7 @@
   %p
     Publisher:
     = @organisation.publisher
-    - if @organisation.scrape.keys.count > 0
+    - if @organisation.scrape['data']
       | Score:
       = @organisation.scrape['data']['score']
       of 6

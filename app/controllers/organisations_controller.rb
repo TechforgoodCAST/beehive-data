@@ -14,11 +14,16 @@ class OrganisationsController < ApplicationController
   def edit
     session[:return_to] ||= request.referer
     if @organisation.scrape.keys.count > 0 && !@organisation.approved?
-      @organisation.attributes = @organisation.scrape['data'].except('regions', 'score')
+      @organisation.attributes = @organisation.scrape['data'].except('regions', 'score') if @organisation.scrape['data']
     end
   end
 
   def update
+    @organisation.company_number = organisation_params[:company_number]
+    if @organisation.scrape_org
+      @organisation.update_attribute(:scrape, @organisation.scrape_org)
+    end
+
     if @organisation.update(organisation_params)
       @organisation.next_step! unless @organisation.approved?
       @organisation.user_ids = User.ids(@organisation, current_user)
