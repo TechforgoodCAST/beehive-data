@@ -26,6 +26,13 @@ describe Organisation do
     expect(@recipient.slug).to eq 'charity-projects'
   end
 
+  it 'sets slug when name changed' do
+    expect(@recipient.slug).to eq 'charity-projects'
+    @recipient.name = 'A new slug'
+    @recipient.save
+    expect(@recipient.slug).to eq 'a-new-slug'
+  end
+
   it 'has uniqe identifier' do
     duplicate_org = build(:funder,
                           organisation_identifier: @funder.organisation_identifier,

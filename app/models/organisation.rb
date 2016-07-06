@@ -36,7 +36,7 @@ class Organisation < ActiveRecord::Base
               if: :website?
   validates :license, presence: true, if: 'publisher?'
 
-  before_validation :set_slug, unless: :slug
+  before_validation :set_slug, if: -> (o) { o.name_changed? }
   before_validation :set_org_type, :set_registered, :clear_numbers_for_unknown_orgs
 
   include Workflow
