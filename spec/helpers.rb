@@ -24,7 +24,7 @@ module Helpers
   end
 
   def auth_request(endpoint, user)
-    get endpoint, {}, { 'Authorization': "Token token=#{user.api_token}" }
+    get endpoint, {}, { 'Accept' => Mime::JSON, 'Authorization' => "Token token=#{user.api_token}" }
   end
 
   def create_and_auth(instance)

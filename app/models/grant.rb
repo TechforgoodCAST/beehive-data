@@ -72,7 +72,7 @@ class Grant < ActiveRecord::Base
 
   validates :grant_identifier, uniqueness: true
   validates :grant_identifier, :funder, :recipient, :state, :award_year,
-            :title, :description, :currency, :funding_programme,
+            :fund_slug, :title, :description, :currency, :funding_programme,
             :amount_awarded, :award_date,
               presence: true
   validates :award_year, inclusion: { in: VALID_YEARS }
@@ -103,6 +103,7 @@ class Grant < ActiveRecord::Base
   validates :geographic_scale, inclusion: { in: 0..3 },
               if: 'review? || approved?'
 
+  before_validation :set_fund_slug
   before_validation :set_year, unless: :award_year
   before_validation :clear_beneficiary_fields, :clear_districts,
                       if: 'review? || approved?'
@@ -161,6 +162,12 @@ class Grant < ActiveRecord::Base
   end
 
   private
+
+    def set_fund_slug
+      self.fund_slug = self.award_year.to_s + '-' +
+                       self.funder.slug + '-' +
+                       self.funding_programme.parameterize
+    end
 
     def set_year
       self.award_year = self.award_date.year

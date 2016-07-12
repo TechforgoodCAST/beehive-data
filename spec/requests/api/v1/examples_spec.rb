@@ -105,7 +105,7 @@ describe '/v1/demo/grants/(:year)' do
     @grants[0].save!
     request(@endpoint)
     expect(@grants[0].age_groups.count).to eq 7
-    expect(json.first['beneficiaries']['ages'].count).to eq AgeGroup.count-1
+    expect(json.last['beneficiaries']['ages'].count).to eq AgeGroup.count-1
   end
 
   it 'shows [] if entire country affected' do
