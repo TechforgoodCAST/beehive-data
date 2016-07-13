@@ -26,6 +26,8 @@ Rails.application.routes.draw do
 
     get '/demo/funders/(:year)', to: 'examples#funders_by_year'
     get '/demo/grants/(:year)', to: 'examples#grants_by_year'
+
+    get '/insight/grants', to: 'integrations#insight_grants'
   end
 
   # Docs

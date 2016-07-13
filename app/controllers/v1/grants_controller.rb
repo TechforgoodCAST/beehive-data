@@ -4,7 +4,7 @@ module V1
     before_action :load_funder, except: :by_year
 
     def by_year
-      @grants = Grant.approved.where(award_year: params[:year]) # TODO: refactor
+      @grants = Grant.newest.approved.where(award_year: params[:year]) # TODO: refactor
     end
 
     def by_funder
