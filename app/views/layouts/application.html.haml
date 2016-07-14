@@ -8,7 +8,7 @@
     = csrf_meta_tags
 
   %body
-    .ui.container.margins
+    .ui.container
       - if content_for?(:public)
         = yield(:public)
       - else
