@@ -52,8 +52,9 @@ describe '/v1/demo/grants/(:year)' do
       expect(json.first).not_to have_key(f)
     end
     %w[
-      publisher license grant_identifier funder award_year title description
-      currency amount_awarded award_date recipient beneficiaries locations
+      publisher license grant_identifier funder_identifier funder award_year
+      title description approval_date currency amount_awarded
+      recipient beneficiaries locations
     ].each do |f|
       expect(json.first).to have_key(f)
     end

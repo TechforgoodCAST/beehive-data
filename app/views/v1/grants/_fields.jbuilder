@@ -5,12 +5,17 @@ json.array! grants do |grant|
   json.publisher grant.funder.name
   json.license   grant.funder.license
 
-  json.extract! grant, :grant_identifier
-  json.funder          grant.funder.name
-  json.extract! grant, :award_year, :funding_programme, :title, :description,
-                       :currency, :amount_applied_for, :amount_awarded,
-                       :amount_disbursed, :award_date, :planned_start_date,
-                       :planned_end_date, :open_call
+  json.extract! grant,    :grant_identifier
+  json.funder_identifier  grant.funder.organisation_identifier
+  json.funder             grant.funder.name
+  json.fund               grant.funding_programme
+  json.extract! grant,    :award_year, :title, :description, :open_call
+  json.approval_date      grant.award_date
+  json.extract! grant,    :planned_start_date, :planned_end_date
+  json.currency           grant.currency
+  json.amount_awarded     grant.amount_awarded.to_f.round(2)
+  json.amount_applied_for grant.amount_applied_for.to_f.round(2) if grant.amount_applied_for
+  json.amount_disbursed   grant.amount_disbursed.to_f.round(2) if grant.amount_disbursed
   json.type_of_funding Grant::FUNDING_TYPE[grant.type_of_funding][0] if grant.type_of_funding
 
   json.recipient do

@@ -49,6 +49,9 @@ hr
   background-color: $red !important
   &:hover
     background-color: $red-hover !important
+  &:first-child
+    @media screen and (max-width: 480px)
+      margin-bottom: 10px
 
 .ui.basic.red.button
   color: $red !important

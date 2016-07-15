@@ -8,7 +8,7 @@ class AgeGroup < ActiveRecord::Base
     { label: 'Young adults (20-35 years)',  age_from: 20, age_to: 35  },
     { label: 'Adults (36-50 years)',        age_from: 36, age_to: 50  },
     { label: 'Mature adults (51-80 years)', age_from: 51, age_to: 80  },
-    { label: 'Older adults (80+)',          age_from: 80, age_to: 15  }
+    { label: 'Older adults (80+)',          age_from: 80, age_to: 150 }
   ]
 
   has_many :ages
