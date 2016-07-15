@@ -1,18 +1,46 @@
 - content_for :public do
   .ui.text.container.basic.segment#header
-    %h1.ui.header Beehive Data
+    %h1.ui.header
+      %a.logo{:href => root_path, title: 'Beehive Data'} Beehive Data
     %h2 High quality data about charitable funding
     %p
-      = link_to 'Beehive Data', root_path
+      %em Beehive Data
       is part of a family of tools and technology that helps charitable organisations and their funders make the most of their resources when working together. Its purpose is to improve open data about charitable funding, as well as providing an interface for other tools to access and use the information it enriches.
-  -#   %p
-  -#     = link_to 'See example', '#', class: 'big teal ui button'
-  -#     = link_to 'Request access', '#', class: 'big basic teal ui button'
-  -#   %p
-  -#     = link_to 'API Docs', '#', class: 'ui teal'
-  -#
-  -# .ui.text.container.basic.segment
-  -#   %p
-  -#     %strong Understand impact
-  -#   %p
-  -#     %strong Understand impact
+    %p
+      = link_to 'See demo', '#coming-soon', class: 'big red ui button', 'data-tooltip': 'Coming soon', 'data-inverted': ''
+      = link_to 'Get a developer token', '#coming-soon', class: 'big basic red ui button', 'data-tooltip': 'Coming soon', 'data-inverted': ''
+    %p
+      = link_to 'API Docs', '#coming-soon', class: 'red', 'data-tooltip': 'Coming soon', 'data-inverted': ''
+      -# = link_to 'API Docs', 'http://beehive-data.api-docs.io/', class: 'red', target: '_blank'
+
+  .ui.text.container.basic.segment
+    %h3.ui.header
+      %span.icons.tools
+      Powerful tools
+    %p
+      Like fuel in a car, information from
+      %em Beehive Data
+      makes advanced features like the funding recommendations on
+      = link_to 'Beehive Giving', 'http://www.beehivegiving.org/welcome?utm_source=BeehiveData&utm_medium=Link&utm_campaign=BeehiveData', class: 'red', target: '_blank'
+      possible. What will you make?
+
+    %h3.ui.header
+      %span.icons.decisions
+      Make better decisions
+    %p Understand the make up of charitable funding in unparalleled detail, and back up your experience with evidence.
+
+    %h3.ui.header
+      %span.icons.impact
+      Add impact
+    %p Look back at previous charitable funding and learn where to spend your time and resources.
+
+  .ui.text.container.basic.segment#footer
+    %hr
+    %small
+      &copy; #{Date.today.year}
+      = succeed ';' do
+        = link_to 'BeehiveGiving.org', 'http://www.beehivegiving.org/welcome?utm_source=BeehiveData&utm_medium=Link&utm_campaign=BeehiveData', class: 'red', target: '_blank'
+      Incubated by
+      = succeed ',' do
+        = link_to 'CAST', 'http://wearecast.org.uk/?utm_source=BeehiveData&utm_medium=Link&utm_campaign=BeehiveData', class: 'red', target: '_blank'
+      Registered Charity No: 1161998, Company No: 9544506

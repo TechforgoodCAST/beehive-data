@@ -1,7 +1,3 @@
-/*
- *= require_self
- */
-
 @import semantic-ui/globals/all
 @import semantic-ui/elements/all
 @import semantic-ui/collections/grid
@@ -16,19 +12,111 @@
 @import semantic-ui/modules/accordion
 @import semantic-ui/modules/sticky
 
-.margins
-  margin: 20px 0
+/* Variables
+ ========================================================================== */
 
-.hidden
-  display: none
-
-#header
-  text-align: center
-  margin-top: 3em
+$white:      #ffffff
+$light-grey: #eaeaea
+$grey:       #999999
+$red:        #da5d39
+$red-hover:  #ed684a
+$red-active: #a6422f
 
 /* Semantic UI Overrides - Form
  ========================================================================== */
+body
+  height: auto
+
+a:hover
+  text-decoration: underline
+
+hr
+  border-style: solid
+  border-color: $light-grey !important
+  border-width: 1px !important
+  margin-bottom: 1em
+
 .radio
   padding: 0 4px
   input
     margin-right: 4px
+
+.ui.red, .ui.basic.red.button
+  transition: all .25s
+
+.ui.red
+  color: $white !important
+  background-color: $red !important
+  &:hover
+    background-color: $red-hover !important
+
+.ui.basic.red.button
+  color: $red !important
+  box-shadow: 0px 0px 0px 1px $red inset !important
+  &:hover
+    color: $red-hover !important
+    box-shadow: 0px 0px 0px 1px $red-hover inset !important
+
+/* Utility
+ ========================================================================== */
+
+.hidden
+  display: none
+
+.red
+  color: $red
+  transition: all .25s
+  &:hover
+    color: $red-hover
+
+/* Shared
+ ========================================================================== */
+
+#header, #footer
+  text-align: center
+
+/* Header
+ ========================================================================== */
+
+#header
+  margin-top: 3em
+
+.logo
+  display: inline-block
+  position: relative
+  width: 200px
+  height: 52px
+  background-size: 200px 67px
+  background: asset-url('logo.svg') no-repeat
+  left: -12px
+  text-indent: -9999px
+  &:after
+    position: absolute
+    content: 'Alpha'
+    color: $grey
+    font-size: 10px
+    font-weight: bold
+    right: -29px
+    top: 10px
+    text-indent: 0
+
+.icons
+  width: 30px
+  height: 30px
+  background: asset-url('icons.svg') no-repeat
+  background-size: 90px 30px
+  display: inline-block
+  position: relative
+  top: 7px
+  margin-right: 4px
+  &.impact
+  &.decisions
+    background-position: -30px 0
+  &.tools
+    background-position: -60px 0
+
+/* Footer
+ ========================================================================== */
+
+#footer
+  margin-bottom: 3em
