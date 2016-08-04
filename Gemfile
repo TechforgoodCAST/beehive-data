@@ -21,7 +21,9 @@ gem 'workflow'
 gem 'nokogiri'
 gem 'simple_form'
 gem 'raygun4ruby'
-gem 'react_on_rails', '~> 5'
+gem 'browserify-rails'
+gem 'react-rails'
+gem 'httparty'
 
 gem 'rails_12factor', group: :production
 # Use jquery as the JavaScript library

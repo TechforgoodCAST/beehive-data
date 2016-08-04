@@ -24,5 +24,7 @@ module BeehiveData
     config.active_record.raise_in_transactional_callbacks = true
 
     config.assets.precompile += %w(bundle.js grants.js organisations.js)
+
+    config.browserify_rails.commandline_options = "-t [ babelify --presets [ es2015 react ] ]"
   end
 end

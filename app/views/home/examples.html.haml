@@ -1,0 +1,21 @@
+- content_for :public do
+  .ui.text.container.basic.segment#header
+    %h2 Examples
+    %p
+      Below are a few examples of how you might want to visualise information from
+      = succeed '.' do
+        %em Beehive Data
+
+  .ui.text.container.basic.segment
+    %h3.ui.header
+      %span
+      Compare who or what benefits from funding
+      %small
+        = link_to 'Data', v1_examples_by_year_path(2015), class: 'red', target: '_blank'
+      &middot;
+      %small
+        = link_to 'Code', '#coming-soon', class: 'red', 'data-tooltip': 'Coming soon', 'data-inverted': ''
+    = react_component('BarChart', { element: 'beneficiaries', data: @data }, prerender: true)
+
+  .ui.text.container.basic.segment
+    %h3.ui.header More coming soon...

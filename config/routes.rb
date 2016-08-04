@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   root 'home#home'
+  get '/examples', to: 'home#examples', as: 'examples'
 
   # Admin
   devise_for :users
@@ -18,14 +19,14 @@ Rails.application.routes.draw do
   end
 
   # API
-  namespace :v1 do
+  namespace :v1, constraints: { format: 'json' } do
     get '/funders', to: 'funders#index'
     get '/grants/(:year)', to: 'grants#by_year'
     get '/grants/(:year)/(:funder)', to: 'grants#by_funder'
     get '/grants/(:year)/(:funder)/(:programme)', to: 'grants#by_programme'
 
     get '/demo/funders/(:year)', to: 'examples#funders_by_year'
-    get '/demo/grants/(:year)', to: 'examples#grants_by_year'
+    get '/demo/grants/(:year)', to: 'examples#grants_by_year', as: 'examples_by_year'
 
     get '/insight/grants', to: 'integrations#insight_grants'
   end

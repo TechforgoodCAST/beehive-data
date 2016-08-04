@@ -75,14 +75,19 @@ hr
 /* Shared
  ========================================================================== */
 
-#header, #footer
+#logo, #header, #footer
   text-align: center
 
 /* Header
  ========================================================================== */
 
-#header
+#logo
   margin-top: 3em
+  margin-bottom: 0
+  padding-bottom: .5em
+
+#header
+  margin-top: 0
 
 .logo
   display: inline-block
@@ -113,6 +118,7 @@ hr
   top: 7px
   margin-right: 4px
   &.impact
+    background-position: 0 0
   &.decisions
     background-position: -30px 0
   &.tools
@@ -123,3 +129,9 @@ hr
 
 #footer
   margin-bottom: 3em
+
+/* Charts
+ ========================================================================== */
+
+#beneficiaries
+  min-height: 550px

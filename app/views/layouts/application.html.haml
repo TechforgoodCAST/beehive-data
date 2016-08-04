@@ -20,7 +20,21 @@
   %body
     .ui.container
       - if content_for?(:public)
+        .ui.text.container.basic.segment#logo
+          %h1.ui.header
+            %a.logo{:href => root_path, title: 'Beehive Data'} Beehive Data
         = yield(:public)
+        .ui.text.container.basic.segment#footer
+          %hr
+          %small
+            &copy; #{Date.today.year}
+            = succeed ';' do
+              = link_to 'BeehiveGiving.org', 'http://www.beehivegiving.org/welcome?utm_source=BeehiveData&utm_medium=Link&utm_campaign=BeehiveData', class: 'red', target: '_blank'
+            Incubated by
+            = succeed ',' do
+              = link_to 'CAST', 'http://wearecast.org.uk/?utm_source=BeehiveData&utm_medium=Link&utm_campaign=BeehiveData', class: 'red', target: '_blank'
+            Registered Charity No: 1161998, Company No: 9544506
+            
       - else
         - if user_signed_in?
           .ui.secondary.pointing.teal.menu

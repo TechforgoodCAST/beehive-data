@@ -1,5 +1,8 @@
 //= require jquery
 //= require jquery_ujs
+//= require react_ujs
+//= require react
+//= require components
 //= require semantic-ui/transition
 //= require semantic-ui/dropdown
 //= require semantic-ui/popup

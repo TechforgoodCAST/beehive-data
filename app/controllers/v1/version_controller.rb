@@ -17,9 +17,7 @@ module V1
       end
 
       def render_unauthorised
-        respond_to do |format|
-          format.json { render json: 'Bad credentials'.to_json, status: 401 }
-        end
+        render json: { unauthorized: "Bad credentials" }, status: 401
       end
 
   end
