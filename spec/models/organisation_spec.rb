@@ -159,6 +159,11 @@ describe Organisation do
 
   it 'sets identifier if none present'
 
+  it 'with recent_grants_as_funder returns grants for last 12 months' do
+    @grants.first.update_column(:award_date, @grants.first.award_date - 366)
+    expect(@funder.recent_grants_as_funder.count).to eq 1
+  end
+
   # TODO: it 'geocoded if street address or postal code present'
 
 end

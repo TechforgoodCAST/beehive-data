@@ -25,10 +25,14 @@ Rails.application.routes.draw do
     get '/grants/(:year)/(:funder)', to: 'grants#by_funder'
     get '/grants/(:year)/(:funder)/(:programme)', to: 'grants#by_programme'
 
+    # TODO: use recent grants instead of annual for beehive-giving analysis
+    # get '/recent_grants/(:funder)', to: 'grants#recent_by_funder'
+
     get '/demo/funders/(:year)', to: 'examples#funders_by_year'
     get '/demo/grants/(:year)', to: 'examples#grants_by_year', as: 'examples_by_year'
 
     get '/insight/grants', to: 'integrations#insight_grants'
+    get '/integrations/amounts', to: 'integrations#amounts', as: 'amounts'
   end
 
   # Docs

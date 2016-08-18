@@ -17,6 +17,11 @@ module V1
                                      funding_programme: params[:programme]) # TODO: refactor
     end
 
+    # TODO: use recent grants instead of annual for beehive-giving analysis
+    # def recent_by_funder
+    #   @grants = @funder.recent_grants_as_funder if params[:funder]
+    # end
+
     private
 
       def load_funder
