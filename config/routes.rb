@@ -33,6 +33,7 @@ Rails.application.routes.draw do
 
     get '/insight/grants', to: 'integrations#insight_grants'
     get '/integrations/amounts', to: 'integrations#amounts', as: 'amounts'
+    get '/integrations/durations', to: 'integrations#durations', as: 'durations'
   end
 
   # Docs

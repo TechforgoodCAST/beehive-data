@@ -245,6 +245,15 @@ describe Grant do
     expect(@grant.geographic_scale).to eq 2
   end
 
+  it 'planned_start_date must be before planned_end_date' do
+    @grant.planned_end_date = @grant.planned_start_date - 1
+    expect(@grant).not_to be_valid
+  end
+
+  it 'duration_funded set if planned_start_date and planned_end_date' do
+    expect(@grant.duration_funded_months).to eq 12
+  end
+
   it 'sets geographic_scale to 0'
   it 'sets geographic_scale to 3 if more than one country'
 

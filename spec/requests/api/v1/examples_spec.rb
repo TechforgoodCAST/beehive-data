@@ -17,7 +17,7 @@ describe '/v1/demo/grants/(:year)' do
                             districts: @uk_districts + @kenya_districts
                           )
     @user = create(:user)
-    @year = 2015
+    @year = Date.today.year
     @endpoint = "/v1/demo/grants/#{@year}"
     request(@endpoint)
   end

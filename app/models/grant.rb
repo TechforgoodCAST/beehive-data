@@ -76,6 +76,8 @@ class Grant < ActiveRecord::Base
             :amount_awarded, :award_date,
               presence: true
   validates :award_year, inclusion: { in: VALID_YEARS }
+  validates :duration_funded_months, presence: true, if: 'planned_start_date? && planned_end_date?'
+  validate :planned_start_date_before_planned_end_date
 
   validates :age_groups,
               presence: true, if: 'affect_people && (review? || approved?)'
@@ -103,7 +105,7 @@ class Grant < ActiveRecord::Base
   validates :geographic_scale, inclusion: { in: 0..3 },
               if: 'review? || approved?'
 
-  before_validation :set_fund_slug
+  before_validation :set_fund_slug, :set_duration_funded_months
   before_validation :set_year, unless: :award_year
   before_validation :clear_beneficiary_fields, :clear_districts,
                       if: 'review? || approved?'
@@ -171,6 +173,18 @@ class Grant < ActiveRecord::Base
 
     def set_year
       self.award_year = self.award_date.year
+    end
+
+    def set_duration_funded_months
+      if planned_start_date && planned_end_date
+        self.duration_funded_months = (self.planned_end_date.year * 12 + self.planned_end_date.month) - (self.planned_start_date.year * 12 + self.planned_start_date.month)
+      end
+    end
+
+    def planned_start_date_before_planned_end_date
+      if planned_start_date && planned_end_date
+        errors.add(:planned_start_date, 'Planned start date must be before planned end date') if planned_start_date > planned_end_date
+      end
     end
 
     def beneficiary_groups

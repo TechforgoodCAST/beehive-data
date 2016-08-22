@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160708131956) do
+ActiveRecord::Schema.define(version: 20160822115754) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(version: 20160708131956) do
     t.string   "currency"
     t.string   "funding_programme"
     t.string   "gender"
-    t.string   "state",              default: "import"
+    t.string   "state",                  default: "import"
     t.decimal  "amount_awarded"
     t.decimal  "amount_applied_for"
     t.decimal  "amount_disbursed"
@@ -94,9 +94,10 @@ ActiveRecord::Schema.define(version: 20160708131956) do
     t.integer  "volunteers"
     t.integer  "geographic_scale"
     t.integer  "type_of_funding"
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
     t.string   "fund_slug"
+    t.integer  "duration_funded_months"
   end
 
   add_index "grants", ["funder_id"], name: "index_grants_on_funder_id", using: :btree

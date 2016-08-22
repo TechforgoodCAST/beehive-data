@@ -8,21 +8,11 @@ module V1
     end
 
     def amounts
-      array_of_groups = []
-      @amounts = []
+      @amounts = parse_values('amounts', 'amount_awarded')
+    end
 
-      Organisation.funder.approved.each do |funder|
-        array_of_groups << funder.recent_grants_as_funder.group_by { |o| o.fund_slug }
-      end
-
-      array_of_groups.each do |funder|
-        funder.each do |fund|
-          @amounts << {
-            fund: fund[0],
-            amounts: fund[1].map { |o| o.amount_awarded.to_f }
-          }
-        end
-      end
+    def durations
+      @durations = parse_values('durations', 'duration_funded_months', true)
     end
 
     protected
@@ -31,6 +21,30 @@ module V1
         authenticate_with_http_token do |token, options|
           User.where(api_token: token, role: 'admin').first
         end
+      end
+
+      def parse_values(key, field, durations=false)
+        array_of_groups = []
+        result = []
+
+        Organisation.funder.approved.each do |funder|
+          if durations
+            array_of_groups << funder.recent_grants_as_funder.where('planned_start_date IS NOT NULL AND planned_end_date IS NOT NULL').group_by { |o| o.fund_slug }
+          else
+            array_of_groups << funder.recent_grants_as_funder.group_by { |o| o.fund_slug }
+          end
+        end
+
+        array_of_groups.each do |funder|
+          funder.each do |fund|
+            result << {
+              :fund => fund[0],
+              :"#{key}".to_sym => fund[1].map { |o| o.send(field).to_f }
+            }
+          end
+        end
+
+        return result
       end
 
   end
