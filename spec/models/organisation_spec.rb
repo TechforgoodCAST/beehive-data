@@ -159,7 +159,14 @@ describe Organisation do
 
   it 'sets identifier if none present'
 
+  it 'with recent_grants_as_funder returns approved grants' do
+    expect(@funder.recent_grants_as_funder.count).to eq 0
+    @grants.each { |g| g.update_column(:state, 'approved') }
+    expect(@funder.recent_grants_as_funder.count).to eq 2
+  end
+
   it 'with recent_grants_as_funder returns grants for last 12 months' do
+    @grants.each { |g| g.update_column(:state, 'approved') }
     @grants.first.update_column(:award_date, @grants.first.award_date - 366)
     expect(@funder.recent_grants_as_funder.count).to eq 1
   end
