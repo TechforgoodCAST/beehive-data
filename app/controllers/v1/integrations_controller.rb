@@ -15,6 +15,10 @@ module V1
       @durations = parse_values('durations', 'duration_funded_months', true)
     end
 
+    def fund_summary
+      @grants = Grant.recent(params[:fund_slug])
+    end
+
     protected
 
       def authenticate_token

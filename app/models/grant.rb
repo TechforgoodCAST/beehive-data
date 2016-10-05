@@ -1,5 +1,10 @@
 class Grant < ActiveRecord::Base
 
+  scope :recent, -> (fund) {
+    where(state: 'approved', fund_slug: fund)
+      .where('award_date >= ?', order(:award_date).last.award_date - 365)
+  }
+
   scope :newest,   -> { order(updated_at: :desc) }
   scope :import,   -> { where(state: 'import') }
   scope :review,   -> { where(state: 'review') }
@@ -166,8 +171,7 @@ class Grant < ActiveRecord::Base
   private
 
     def set_fund_slug
-      self.fund_slug = self.award_year.to_s + '-' +
-                       self.funder.slug + '-' +
+      self.fund_slug = self.funder.slug + '-' +
                        self.funding_programme.parameterize
     end
 

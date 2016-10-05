@@ -24,6 +24,8 @@ gem 'raygun4ruby'
 gem 'browserify-rails'
 gem 'react-rails'
 gem 'httparty'
+gem 'groupdate'
+gem 'active_median'
 
 gem 'rails_12factor', group: :production
 # Use jquery as the JavaScript library
