@@ -100,7 +100,7 @@ module IntegrationsHelper
         month: k.to_i,
         count: v,
         percent: v.to_f / @grants.count, # TODO: refactor
-        amount: sum[k]
+        amount: sum[k].to_f.round(2)
       }
     end
     result

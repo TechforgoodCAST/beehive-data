@@ -14,17 +14,17 @@ json.amount_awarded_max    @grants.maximum(:amount_awarded).to_f.round(2)
 json.amount_awarded_distribution amount_awarded_distribution
 
 if @grants.pluck(:duration_funded_months).include?(nil)
-  json.duration_months_mean         "Missing"
-  json.duration_months_median       "Missing"
-  json.duration_months_min          "Missing"
-  json.duration_months_max          "Missing"
-  json.duration_months_distribution "Missing"
+  json.duration_awarded_months_mean         "Missing"
+  json.duration_awarded_months_median       "Missing"
+  json.duration_awarded_months_min          "Missing"
+  json.duration_awarded_months_max          "Missing"
+  json.duration_awarded_months_distribution {}
 else
-  json.duration_months_mean   @grants.average(:duration_funded_months).to_f.round(2)
-  json.duration_months_median @grants.median(:duration_funded_months)
-  json.duration_months_min    @grants.minimum(:duration_funded_months).to_f.round(2)
-  json.duration_months_max    @grants.maximum(:duration_funded_months).to_f.round(2)
-  json.duration_months_distribution duration_months_distribution
+  json.duration_awarded_months_mean   @grants.average(:duration_funded_months).to_f.round(2)
+  json.duration_awarded_months_median @grants.median(:duration_funded_months)
+  json.duration_awarded_months_min    @grants.minimum(:duration_funded_months).to_f.round(2)
+  json.duration_awarded_months_max    @grants.maximum(:duration_funded_months).to_f.round(2)
+  json.duration_awarded_months_distribution duration_months_distribution
 end
 
 json.award_month_distribution award_month_distribution

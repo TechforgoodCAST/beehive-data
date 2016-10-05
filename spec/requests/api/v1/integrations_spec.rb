@@ -149,13 +149,14 @@ describe 'Integration' do
           fund_slug period_start period_end grant_count recipient_count
           amount_awarded_sum amount_awarded_mean amount_awarded_median
           amount_awarded_min amount_awarded_max amount_awarded_distribution
-          duration_months_mean duration_months_median duration_months_min
-          duration_months_max duration_months_distribution
-          award_month_distribution org_type_distribution
-          operating_for_distribution income_distribution employees_distribution
-          volunteers_distribution gender_distribution age_group_distribution
-          beneficiary_distribution geographic_scale_distribution
-          country_distribution district_distribution
+          duration_awarded_months_mean duration_awarded_months_median
+          duration_awarded_months_min duration_awarded_months_max
+          duration_awarded_months_distribution award_month_distribution
+          org_type_distribution operating_for_distribution income_distribution
+          employees_distribution volunteers_distribution gender_distribution
+          age_group_distribution beneficiary_distribution
+          geographic_scale_distribution country_distribution
+          district_distribution
         ].each do |f|
           expect(json).to have_key(f)
         end
