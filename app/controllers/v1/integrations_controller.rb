@@ -3,8 +3,9 @@ module V1
 
     before_action :authenticate
 
-    def insight_grants
-      @grants = Grant.approved
+    def beneficiaries
+      @grants = Grant.includes(:recipient)
+        .recent(Grant.approved.pluck(:fund_slug).uniq)
     end
 
     def amounts

@@ -18,14 +18,14 @@ describe 'Integration' do
                           )
     @admin = create(:admin_user)
     @user  = create(:user)
-    @beneficiaries = '/v1/insight/grants'
+    @beneficiaries = '/v1/integrations/beneficiaries'
     @amounts = '/v1/integrations/amounts'
     @durations = '/v1/integrations/durations'
     @fund_summary = "/v1/integrations/fund_summary/#{@grants.first.fund_slug}"
   end
 
   it 'with Beehive Insight: routes to correct version' do
-    assert_generates @beneficiaries, { controller: 'v1/integrations', action: 'insight_grants' }
+    assert_generates @beneficiaries, { controller: 'v1/integrations', action: 'beneficiaries' }
     assert_generates @amounts, { controller: 'v1/integrations', action: 'amounts' }
     assert_generates @durations, { controller: 'v1/integrations', action: 'durations' }
     assert_generates @fund_summary, { controller: 'v1/integrations', action: 'fund_summary', fund_slug: @grants.first.fund_slug }
