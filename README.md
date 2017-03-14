@@ -3,6 +3,7 @@
 ### Setup
 
 1. `bundle install`
+2. `npm install` # install node modules
 2. `rake db:create db:setup SAVE=true`
 
 ### Import Data
