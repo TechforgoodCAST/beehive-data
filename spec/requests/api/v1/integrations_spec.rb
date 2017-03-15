@@ -5,8 +5,7 @@ describe 'Integration' do
     seed_test_db
     @recipient = create(:approved_org, country: @countries.first)
     @funder    = create(:approved_org, country: @countries.first,
-                         publisher: true,
-                         license: 'http://some.license/'
+                         publisher: true
                        )
     @grants = create_list(:approved_grant, 3,
                             funder: @funder,
@@ -146,7 +145,7 @@ describe 'Integration' do
 
       it 'correct structure' do
         %w[
-          fund_slug period_start period_end grant_count recipient_count
+          sources fund_slug period_start period_end grant_count recipient_count
           amount_awarded_sum amount_awarded_mean amount_awarded_median
           amount_awarded_min amount_awarded_max amount_awarded_distribution
           duration_awarded_months_mean duration_awarded_months_median

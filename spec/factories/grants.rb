@@ -13,6 +13,8 @@ FactoryGirl.define do
     award_date         { Date.new(Date.today.year, 3, 9) }
     planned_start_date { Date.new(Date.today.year, 3, 9) }
     planned_end_date   { Date.new(Date.today.year + 1, 3, 9) }
+    license            'https://creativecommons.org/licenses/by/4.0/'
+    source             'http://esmeefairbairn.org.uk/what-we-fund/open-data/'
 
     factory :review_grant, class: Grant do
       state             'review'

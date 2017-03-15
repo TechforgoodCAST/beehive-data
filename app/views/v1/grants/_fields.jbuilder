@@ -3,7 +3,6 @@ json.array! grants do |grant|
   json.ignore_nil!
 
   json.publisher grant.funder.name
-  json.license   grant.funder.license
 
   json.extract! grant,    :grant_identifier
   json.funder_identifier  grant.funder.organisation_identifier

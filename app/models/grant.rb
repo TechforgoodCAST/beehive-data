@@ -110,6 +110,8 @@ class Grant < ActiveRecord::Base
   validates :geographic_scale, inclusion: { in: 0..3 },
               if: 'review? || approved?'
 
+  validates :license, :source, presence: true
+
   before_validation :set_fund_slug, :set_duration_funded_months
   before_validation :set_year, unless: :award_year
   before_validation :clear_beneficiary_fields, :clear_districts,

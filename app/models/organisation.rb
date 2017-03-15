@@ -34,7 +34,6 @@ class Organisation < ActiveRecord::Base
   validates :website, format: { with: URI::regexp(%w(http https)),
               message: 'enter a valid website address e.g. http://www.example.com'},
               if: :website?
-  validates :license, presence: true, if: 'publisher?'
 
   before_validation :set_slug, if: -> (o) { o.name_changed? }
   before_validation :set_org_type, :set_registered, :clear_numbers_for_unknown_orgs

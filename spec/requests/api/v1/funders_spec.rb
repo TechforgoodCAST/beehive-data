@@ -5,8 +5,7 @@ describe '/funders' do
     seed_test_db
     @funders  = create_list(:approved_org, 3,
                               country: @countries.first,
-                              publisher: true,
-                              license: 'http://some.license/'
+                              publisher: true
                             )
     @user = create(:user)
     @endpoint = '/v1/funders'

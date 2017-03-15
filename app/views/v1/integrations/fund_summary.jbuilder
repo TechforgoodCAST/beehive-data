@@ -1,3 +1,5 @@
+json.sources @grants.pluck(:license, :source).uniq.to_h
+
 json.fund_slug params[:fund_slug]
 json.period_start period_start
 json.period_end period_end
