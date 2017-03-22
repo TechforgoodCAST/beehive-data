@@ -13,7 +13,9 @@ if ENV['SAVE']
 
   Country.destroy_all
   CSV.foreach(Rails.root.join('lib', 'assets', 'csv', 'countries.csv'), headers: true) do |row|
-    Country.create! row.to_hash
+    data = row.to_hash
+    data["alt_names"] = (data["altnames"] || "").split(",")
+    Country.create! data
   end
 
   District.destroy_all
