@@ -84,9 +84,9 @@ namespace :import do
 
     GENDER_REGEXES = {
       # the following identify genders
-      :men => /\b(m(e|a)n|boys?|fathers?|males?|lads?)\b/i,
-      :women => /\b(wom(e|a)n|girls?|lad(y|ies)|mothers?|females?|lesbians?)\b/i,
-      :transgender => /\b(trans\-?(sexual|gender)?)\b/i,
+      :Male => /\b(m(e|a)n|boys?|fathers?|males?|lads?)\b/i,
+      :Female => /\b(wom(e|a)n|girls?|lad(y|ies)|mothers?|females?|lesbians?)\b/i,
+      :Transgender => /\b(trans\-?(sexual|gender)?)\b/i,
     }
 
     AGE_REGEXES = {
@@ -523,6 +523,15 @@ namespace :import do
           end
         end
 
+        # get countries
+        r[:countries] = []
+        if r[:charity]
+          r[:charity].fetch("areaOfOperation", [{}]).each do |aoo|
+            if aoo["aooType"]=="D"
+              r[:countries] << Country.where(ccaoo: aoo["aooKey"]).first[:id]
+            end
+          end
+        end
       end
 
       # bail if grant to individual
@@ -595,12 +604,21 @@ namespace :import do
 
       genders = GENDER_REGEXES.select{|gender, reg| desc =~ reg }.keys.uniq
       if genders.count==1
-        grant_values[:gender] = genders[0]
+        grant_values[:gender] = genders[0].to_s
       end
 
       ben_names = BEN_REGEXES.select {|ben, reg| desc =~ reg }.keys
       ben_names.concat doc[:recipientOrganization][0][:beneficiaries]
-      @grant.beneficiary_ids << Beneficiary.where(sort: ben_names.uniq).pluck(:id)
+      @grant.beneficiary_ids = Beneficiary.where(sort: ben_names.uniq).pluck(:id)
+
+      # check if affect people or others
+      ['People', 'Other'].each do |g|
+        ids = Beneficiary.where(group: g).pluck(:id)
+        grant_values["affect_#{g.downcase}".to_sym] = (@grant.beneficiary_ids & ids).count > 0
+      end
+      if grant_values[:affect_people]==false
+        grant_values[:affect_other]=true
+      end
 
       # get any ages from the description
       age_groups = []
@@ -626,16 +644,46 @@ namespace :import do
       end
       age_group_labels = age_group_labels.uniq.map{|age| age[:label]}
 
-      @grant.age_group_ids << AgeGroup.where(label: age_group_labels).pluck(:id)
+      @grant.age_group_ids = AgeGroup.where(label: age_group_labels).pluck(:id)
 
       # Find countries mentioned
-      #Country.all.each do |country|
-      #  if desc =~ /\b#{country[:name]}\b/i
-      #    puts [desc, country[:name]]
-      #  end
-      #end
+      grant_values[:countries] = []
 
-      save(@grant, grant_values)
+      # Using regexes
+      Country.all.each do |country|
+        # special case for Northern Ireland
+        country_desc = desc.gsub(/\bNorthern Ireland\b/i, '')
+
+        if country_desc =~ /\b#{country[:name]}\b/i
+          grant_values[:countries] << country[:alpha2]
+        end
+
+        country[:altnames].each do |altname|
+          if country_desc =~ /\b#{altname}\b/i
+            grant_values[:countries] << country[:alpha2]
+          end
+        end
+      end
+
+      # using data from the grant
+      doc.fetch(:beneficiaryLocation, [{}]).each do |location|
+        if location.fetch(:countryCode, nil)
+          grant_values[:countries] << location.fetch(:countryCode)
+        end
+      end
+
+      # Using charity commission data
+      if grant_values[:countries].count==0
+
+      end
+
+      grant_values[:countries] = Country.where(alpha2: grant_values[:countries])
+
+      if grant_values[:countries].count> 0
+        #print [desc,grant_values[:countries]]
+      end
+
+      save(@grant, grant_values, true)
 
     end
 
