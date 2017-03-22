@@ -425,9 +425,9 @@ namespace :import do
     # get JSON file
     file = File.read(ENV["GRANTNAV_FILE"] || "grantnav.json")
     grantnav = JSON.parse(file, {:symbolize_names => true})
-    puts grantnav[:grants].count
+    puts "Loaded #{grantnav[:grants].count} grants"
     if (ENV["SAMPLE"].to_i || 0) > 0
-      puts "Sampling #{ENV["SAMPLE"].to_i} grants"
+      puts "Sampling #{[ENV["SAMPLE"].to_i, grantnav[:grants].count].min} grants"
       collection = grantnav[:grants].sample(ENV["SAMPLE"].to_i).shuffle
     else
       collection = grantnav[:grants]
@@ -444,6 +444,9 @@ namespace :import do
     CSV.foreach(Rails.root.join('lib', 'assets', 'csv', 'cc-aoo-gss-iso.csv'), headers: true) do |row|
       ccareas["#{row["aootype"]}#{row["aookey"]}"] = row.to_hash
     end
+
+    # get district lookups
+    country_districts = District.includes(:country).all.group_by{ |d| d.country[:alpha2] }
 
     collection.each do |doc|
 
@@ -549,8 +552,8 @@ namespace :import do
               r[:districts] << ccareas["#{aoo["aooType"]}#{aoo["aooKey"]}"]["oldCode"]
             end
           end
+          r[:districts] = District.where(subdivision: r[:districts])
         end
-        puts r[:districts]
       end
 
       # bail if grant to individual
@@ -584,7 +587,8 @@ namespace :import do
 
       save(@recipient, recipient_values)
 
-      @grant = Grant.where(grant_identifier: doc[:id])
+      @grant = Grant.includes(:districts)
+                    .where(grant_identifier: doc[:id])
                     .first_or_initialize
 
       grant_programme = doc.fetch(:grantProgramme, [{}])[0].fetch(:title, "Main Fund")
@@ -720,7 +724,24 @@ namespace :import do
 
       grant_values[:countries] = Country.where(alpha2: grant_values[:countries])
 
-      puts @grant.check_regions([])
+      # get districts
+      grant_values[:districts] = []
+
+      if grant_values[:districts].count==0
+        if doc[:recipientOrganization][0][:districts].empty?
+          # use all districts for country
+          grant_values[:countries].each do |c|
+            grant_values[:districts].concat country_districts[ c[:alpha2] ]
+          end
+        else
+          # get districts from charity
+          grant_values[:districts] = doc[:recipientOrganization][0][:districts]
+        end
+      end
+
+      if grant_values[:districts].count==0
+        byebug
+      end
 
       save(@grant, grant_values, true)
 
