@@ -128,7 +128,27 @@ class Beneficiary < ActiveRecord::Base
       label: "At risk of sexual exploitation, trafficking, forced labour, or servitude",
       group: "People",
       sort:  "exploitation"
-    }
+    },
+    {
+      label: "Experiencing Domestic or Sexual Abuse",
+      group: "People",
+      sort:  "abuse"
+    },
+    {
+      label: "Substance misuse",
+      group: "People",
+      sort:  "addiction"
+    },
+    {
+      label: "Learning Disabilities",
+      group: "People",
+      sort:  "learningdisabilities"
+    },
+    {
+      label: "Experiencing isolation or loneliness",
+      group: "People",
+      sort:  "isolation"
+    },
   ]
 
   has_many :stakeholders
