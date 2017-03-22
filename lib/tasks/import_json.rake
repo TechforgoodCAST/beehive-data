@@ -588,6 +588,7 @@ namespace :import do
         volunteers:         doc[:recipientOrganization][0][:financial][:volunteers].presence || -1,
         employees:          doc[:recipientOrganization][0][:financial][:employees].presence || -1,
         operating_for:      doc[:recipientOrganization][0][:operating_for].presence || -1,
+        state:              "approved",
       }
 
       desc = "#{doc[:title]} #{doc[:description]}"
@@ -626,6 +627,13 @@ namespace :import do
       age_group_labels = age_group_labels.uniq.map{|age| age[:label]}
 
       @grant.age_group_ids << AgeGroup.where(label: age_group_labels).pluck(:id)
+
+      # Find countries mentioned
+      #Country.all.each do |country|
+      #  if desc =~ /\b#{country[:name]}\b/i
+      #    puts [desc, country[:name]]
+      #  end
+      #end
 
       save(@grant, grant_values)
 
