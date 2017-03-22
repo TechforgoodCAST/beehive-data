@@ -18,6 +18,10 @@ namespace :import do
       invalid_grants:        0,
       skipped_year:          0,
       skipped_individual:    0,
+      default_age:           0,
+      default_beneficiaries: 0,
+      default_gender:        0,
+      default_country:       0,
     }
 
     def obj_name(obj)
@@ -528,7 +532,12 @@ namespace :import do
         if r[:charity]
           r[:charity].fetch("areaOfOperation", [{}]).each do |aoo|
             if aoo["aooType"]=="D"
-              r[:countries] << Country.where(ccaoo: aoo["aooKey"]).first[:id]
+              c = Country.where(ccaoo: aoo["aooKey"]).first
+              if c
+                r[:countries] << c[:alpha2]
+              end
+            elsif ['A','B','C'].include? aoo["aooType"]
+              r[:countries] << 'GB'
             end
           end
         end
@@ -560,7 +569,7 @@ namespace :import do
         country:                 Country.find_by(alpha2: doc[:recipientOrganization][0].fetch(:country, 'GB')),
         website:                 doc[:recipientOrganization][0][:url].presence,
         org_type:                doc[:recipientOrganization][0][:org_type],
-        multi_national:          false, # TODO find actual multi_national value
+        multi_national:          doc[:recipientOrganization][0][:countries].count > 1, # TODO find actual multi_national value
       }
 
       save(@recipient, recipient_values)
@@ -606,6 +615,9 @@ namespace :import do
       if genders.count==1
         grant_values[:gender] = genders[0].to_s
       end
+      if genders.count==0
+        @counters[:default_gender] += 1
+      end
 
       ben_names = BEN_REGEXES.select {|ben, reg| desc =~ reg }.keys
       ben_names.concat doc[:recipientOrganization][0][:beneficiaries]
@@ -644,6 +656,12 @@ namespace :import do
       end
       age_group_labels = age_group_labels.uniq.map{|age| age[:label]}
 
+      # default to All ages
+      if age_group_labels.empty?
+        age_group_labels = ["All ages"]
+        @counters[:default_age] += 1
+      end
+
       @grant.age_group_ids = AgeGroup.where(label: age_group_labels).pluck(:id)
 
       # Find countries mentioned
@@ -674,13 +692,18 @@ namespace :import do
 
       # Using charity commission data
       if grant_values[:countries].count==0
-
+        if doc[:recipientOrganization][0][:countries].empty?
+          grant_values[:countries] = ["GB"]
+          @counters[:default_country] += 1
+        else
+          grant_values[:countries] = doc[:recipientOrganization][0][:countries]
+        end
       end
 
       grant_values[:countries] = Country.where(alpha2: grant_values[:countries])
 
       if grant_values[:countries].count> 0
-        #print [desc,grant_values[:countries]]
+        #print [grant_values[:countries]]
       end
 
       save(@grant, grant_values, true)
@@ -690,6 +713,10 @@ namespace :import do
     puts "\n\n"
     puts "Skipped: #{@counters[:skipped_year]} grants due to the year"
     puts "Skipped: #{@counters[:skipped_individual]} grants as to individuals"
+    puts "Default: #{@counters[:default_age]} grants given default age \"All ages\""
+    puts "Default: #{@counters[:default_gender]} grants given default gender \"All genders\""
+    puts "Default: #{@counters[:default_country]} grants given default country \"GB\""
+    puts "Default: #{@counters[:default_beneficiaries]} grants given default beneficaries"
     log(@recipient)
     log(@grant)
     if @errors.count > 0
