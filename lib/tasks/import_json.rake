@@ -9,6 +9,7 @@ namespace :import do
   task json: :environment do
     require 'mongo'
     require 'json'
+    require 'open-uri'
 
     @errors = []
     @counters = {
@@ -423,7 +424,7 @@ namespace :import do
     # start
 
     # get JSON file
-    file = File.read(ENV["GRANTNAV_FILE"] || "grantnav.json")
+    file = open(ENV["GRANTNAV_FILE"] || "grantnav.json").read
     grantnav = JSON.parse(file, {:symbolize_names => true})
     puts "Loaded #{grantnav[:grants].count} grants"
     if (ENV["SAMPLE"].to_i || 0) > 0
