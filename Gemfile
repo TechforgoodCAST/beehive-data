@@ -6,8 +6,8 @@ ruby '2.3.1'
 gem 'rails', '4.2.6'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.15'
-# Use Passenger as the app server
-gem 'passenger', '>= 5.0.25', require: 'phusion_passenger/rack_handler'
+# Use Puma as the app server
+gem 'puma', '~> 3.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -26,6 +26,7 @@ gem 'react-rails'
 gem 'httparty'
 gem 'groupdate'
 gem 'active_median'
+gem 'mongo'
 
 gem 'rails_12factor', group: :production
 # Use jquery as the JavaScript library

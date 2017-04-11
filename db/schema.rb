@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160930122900) do
+ActiveRecord::Schema.define(version: 20170322114723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,6 +48,8 @@ ActiveRecord::Schema.define(version: 20160930122900) do
     t.string   "currency_code"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.json     "altnames"
+    t.string   "ccaoo"
   end
 
   add_index "countries", ["alpha2"], name: "index_countries_on_alpha2", using: :btree
@@ -98,6 +100,8 @@ ActiveRecord::Schema.define(version: 20160930122900) do
     t.datetime "updated_at",                                null: false
     t.string   "fund_slug"
     t.integer  "duration_funded_months"
+    t.string   "license"
+    t.string   "source"
   end
 
   add_index "grants", ["funder_id"], name: "index_grants_on_funder_id", using: :btree
@@ -133,7 +137,6 @@ ActiveRecord::Schema.define(version: 20160930122900) do
     t.string   "postal_code"
     t.string   "website"
     t.string   "company_type"
-    t.string   "license"
     t.date     "incorporated_date"
     t.integer  "org_type"
     t.boolean  "publisher",               default: false

@@ -117,14 +117,6 @@ describe Organisation do
     expect(approved).to be_valid
   end
 
-  it 'has license if publisher' do
-    @funder.license = nil;
-    expect(@funder).to_not be_valid
-
-    @funder.publisher = false;
-    expect(@funder).to be_valid
-  end
-
   it 'has many users when approved' do
     create_and_auth_admin
     create_and_auth_moderator

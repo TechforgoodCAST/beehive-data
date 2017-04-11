@@ -5,8 +5,7 @@ describe '/v1/demo/grants/(:year)' do
     seed_test_db
     @recipient = create(:approved_org, country: @countries.first)
     @funder    = create(:approved_org, country: @countries.first,
-                         publisher: true,
-                         license: 'http://some.license/'
+                         publisher: true
                        )
     @grants = create_list(:approved_grant, 3,
                             funder: @funder,
@@ -52,7 +51,7 @@ describe '/v1/demo/grants/(:year)' do
       expect(json.first).not_to have_key(f)
     end
     %w[
-      publisher license grant_identifier funder_identifier funder award_year
+      publisher grant_identifier funder_identifier funder award_year
       title description approval_date currency amount_awarded
       recipient beneficiaries locations
     ].each do |f|
