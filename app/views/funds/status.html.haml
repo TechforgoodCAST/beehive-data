@@ -1,0 +1,8 @@
+%table.ui.celled.table
+  %thead
+    %tr
+      %th fund_slug
+  %tbody
+    - @funds.each do |fund|
+      %tr
+        %td.selectable= link_to fund, v1_fund_summary_path(fund), target: '_blank'

@@ -1,6 +1,22 @@
 require 'rails_helper'
 
 describe 'Admin' do
+  context 'Status' do
+    before(:each) do
+      seed_test_db
+      @funder    = create(:funder, country: @countries.first)
+      @recipient = create(:approved_org, country: @countries.first)
+      @grants    = create_list(:grant, 11, funder: @funder, recipient: @recipient)
+      create_and_auth_admin
+    end
+
+    scenario 'can view list of funds' do
+      @grants.each_with_index { |g, i| g.update_column(:fund_slug, "slug-#{i}")}
+      visit status_path
+      expect(page).to have_css '.selectable', count: 11
+    end
+  end
+
   context 'Organisation' do
     before(:each) do
       seed_test_db
