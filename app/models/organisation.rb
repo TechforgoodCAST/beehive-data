@@ -52,9 +52,14 @@ class Organisation < ActiveRecord::Base
 
   def recent_grants_as_funder
     most_recent_grant = self.grants_as_funder.order(:award_date).last
+    if most_recent_grant
+      earliest_award_date = most_recent_grant.award_date - 365
+    else
+      earliest_award_date = 365.days.ago
+    end
     self.grants_as_funder
       .where(state: 'approved')
-      .where('award_date >= ?', most_recent_grant.award_date - 365)
+      .where('award_date >= ?', earliest_award_date)
   end
 
   def to_param

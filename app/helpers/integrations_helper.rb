@@ -1,14 +1,22 @@
 module IntegrationsHelper
 
   def period_start
-    grants = @grants.order(:award_date)
-    first = grants.first.award_date
-    last = grants.last.award_date
-    last > first - 365 ? first : last - 365
+    if @grants.count==0
+      365.days.ago.to_date
+    else
+      grants = @grants.order(:award_date)
+      first = grants.first.award_date
+      last = grants.last.award_date
+      last > first - 365 ? first : last - 365
+    end
   end
 
   def period_end
-    @grants.order(:award_date).last.award_date
+    if @grants.count==0
+      Time.now.to_date
+    else
+      @grants.order(:award_date).last.award_date
+    end
   end
 
   def org_type_distribution

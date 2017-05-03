@@ -6,7 +6,7 @@ module V1
     end
 
     def grants_by_year
-      @grants = Grant.approved.where(award_year: params[:year]) # TODO: limit for demo
+      @grants = Grant.includes({recipient: [:country]}, :countries, :districts, :age_groups, :beneficiaries, :ages, :regions).approved.where(award_year: params[:year]).order("RANDOM()").limit(20)
     end
 
   end

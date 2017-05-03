@@ -16,7 +16,7 @@ json.array! @funders do |funder|
     json.currency             grants.pluck(:currency).uniq.first
     json.total_amount_awarded grants.sum(:amount_awarded)
     json.min_amount_awarded   grants.minimum(:amount_awarded)
-    json.avg_amount_awarded   grants.average(:amount_awarded).round(2)
+    json.avg_amount_awarded   grants.average(:amount_awarded).present? ? grants.average(:amount_awarded).round(2) : 0
     json.max_amount_awarded   grants.maximum(:amount_awarded)
     json.funding_programmes   grants.pluck(:funding_programme).uniq
   end

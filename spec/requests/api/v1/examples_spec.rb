@@ -101,16 +101,21 @@ describe '/v1/demo/grants/(:year)' do
     expect(json.first['beneficiaries']['ages'].count).to eq 1
     expect(json.first['beneficiaries']['ages'].first).to eq all_ages_option
 
-    @grants[0].age_group_ids = AgeGroup.pluck(:id).slice(1, AgeGroup.count)
-    @grants[0].save!
+    @grants.each do |grant|
+      grant.age_group_ids = AgeGroup.pluck(:id).slice(1, AgeGroup.count)
+      grant.save!
+    end
+
     request(@endpoint)
     expect(@grants[0].age_groups.count).to eq 7
     expect(json.first['beneficiaries']['ages'].count).to eq AgeGroup.count-1
   end
 
   it 'shows [] if entire country affected' do
-    @grants.first.countries = [@countries.first]
-    @grants.first.save!
+    @grants.each do |grant|
+      grant.countries = [@countries.first]
+      grant.save!
+    end
     request(@endpoint)
     expect(json.last['locations']['areas_affected'].count).to eq 1
     expect(json.last['locations']['geographic_scale']).to eq 'An entire country'
