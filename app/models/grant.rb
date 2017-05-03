@@ -1,8 +1,14 @@
 class Grant < ActiveRecord::Base
 
   scope :recent, -> (fund) {
+    most_recent_grant = where(state: 'approved', fund_slug: fund).order(:award_date).last
+    if most_recent_grant
+      earliest_award_date = most_recent_grant.award_date - 365
+    else
+      earliest_award_date = 365.days.ago
+    end
     where(state: 'approved', fund_slug: fund)
-      .where('award_date >= ?', order(:award_date).last.award_date - 365)
+      .where('award_date >= ?', earliest_award_date)
   }
 
   scope :newest,   -> { order(updated_at: :desc) }
