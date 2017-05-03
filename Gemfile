@@ -15,7 +15,7 @@ gem 'uglifier', '>= 1.3.0'
 
 gem 'haml'
 
-gem 'semantic-ui-sass', '~> 2.2', github: 'doabit/semantic-ui-sass'
+gem 'semantic-ui-sass', '~> 2.2', git: 'https://github.com/doabit/semantic-ui-sass.git'
 gem 'devise'
 gem 'workflow'
 gem 'nokogiri'
@@ -37,6 +37,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 group :development, :test do
+  gem 'dotenv-rails'
   gem 'byebug'
   gem 'rspec-rails', '~> 3.0'
   gem 'guard-rspec', require: false
