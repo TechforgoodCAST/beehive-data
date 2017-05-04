@@ -176,6 +176,102 @@ class Grant < ActiveRecord::Base
     end
   end
 
+  # beneficiary utilities
+  def get_charity_beneficiaries(char)
+    # Get a list of beneficiaries based on the charity's beneficiaries
+    if self.beneficiaries.count>0 || char.nil?
+      return
+    end
+    beneficiaries = []
+
+    # convert charity commission classification categories to beehive ones
+    cc_to_beehive = {
+        105 => "poverty",
+        108 => "religious",
+        111 => "animals",
+        203 => "disabilities",
+        204 => "ethnic",
+        205 => "organisations",
+        207 => "public",
+    }
+
+    # convert OSCR classification categories to beehive ones
+    oscr_to_beehive = {
+        "No specific group, or for the benefit of the community" => "public",
+        "People with disabilities or health problems" => "disabilities",
+        "The advancement of religion" => "religious",
+        "People of a particular ethnic or racial origin" => "ethnic",
+        "The advancement of animal welfare" => "animals",
+        "The advancement of environmental protection or improvement" => "environment",
+        "Other charities / voluntary bodies" => "organisations",
+        "The prevention or relief of poverty" => "poverty",
+    }
+
+    # Charity Commission beneficiaries
+    if char[:class]
+      beneficiaries.concat (char[:class] & cc_to_beehive.keys).map{|c| cc_to_beehive[c] }
+    end
+
+    # OSCR beneficiaries
+    char.fetch(:beta, {}).each do |i, v|
+      beneficiaries.concat (v & oscr_to_beehive.keys).map{ |c| oscr_to_beehive[c] }
+    end
+
+    self.beneficiary_ids = Beneficiary.where(sort: beneficiaries.uniq).pluck(:id)
+
+  end
+
+  def get_char_financial(char = nil)
+    """
+    Financial information
+
+    Retrieved either based on the latest available data (if time_from is
+    None) or based on a date given.
+    """
+    if char.nil?
+      return
+    end
+    time_from = self.award_date || Date.today
+
+    # income and spending
+    fin = char.fetch("financial", []).find_all{ |i| i["income"] && i["spending"] && i["fyEnd"] && i["fyStart"]}
+    fin = fin.sort { |a, b| b["fyEnd"] <=> a["fyEnd"] }
+    use_fin = fin.find{|i| (time_from <= i["fyEnd"] && time_from >= i["fyStart"]) } || fin.last
+
+    if use_fin
+      #financial[:financial_fye] = use_fin["fyEnd"]
+      financials_select( :income, use_fin["income"].to_i )
+      financials_select( :spending, use_fin["spending"].to_i )
+    end
+
+    # volunteers and employees
+    partb = char.fetch("partB", []).sort{ |a, b| b["fyEnd"] <=> a["fyEnd"] }
+    use_partb = partb.find{|i| (time_from <= i["fyEnd"] && time_from >= i["fyStart"])} || partb.last
+
+    employee_bands = [0, 5, 25, 50, 100, 250, 500, 1_000_000]
+
+    if use_partb
+      #financial[:people_fye] = use_partb["fyEnd"]
+      staff_select( :employees, use_partb.fetch("people", {}).fetch("employees", 0).to_i )
+      staff_select( :volunteers, use_partb.fetch("people", {}).fetch("volunteers", 0).to_i )
+    end
+  end
+
+  def get_operating_for(charity = nil)
+    if charity.nil?
+      self.operating_for = -1
+      return
+    end
+
+    char_reg = charity.fetch("registration", [{}])[0].fetch("regDate", nil)
+    if char_reg.nil?
+      self.operating_for = -1
+      return
+    end
+
+    operating_for_select(char_reg.to_date)
+  end
+
   private
 
     def set_fund_slug
@@ -303,7 +399,7 @@ class Grant < ActiveRecord::Base
         return self[field] = segments.length-1
       else
         segments.each_with_index do |num, i|
-          return self[field] = i if amount >= segments[i] && amount < segments[i+1]
+          return self[field] = i if amount >= segments[i] && amount < (segments[i+1] || Float::INFINITY)
         end
       end
     end
@@ -319,7 +415,7 @@ class Grant < ActiveRecord::Base
     end
 
     def operating_for_select(date)
-      age = ((Date.today - date.to_date).to_f / 365)
+      age = (((self.award_date || Date.today) - date.to_date).to_f / 365)
       if age <= 1
         self.operating_for = 1
       elsif age > 1 && age <= 3
