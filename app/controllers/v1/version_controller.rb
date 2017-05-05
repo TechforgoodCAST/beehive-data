@@ -6,7 +6,12 @@ module V1
 
     protected
 
+      def auth_admin
+        request.headers["Authorization"] = "Token token=#{current_user.api_token}" if current_user
+      end
+
       def authenticate
+        auth_admin
         authenticate_token || render_unauthorised
       end
 
