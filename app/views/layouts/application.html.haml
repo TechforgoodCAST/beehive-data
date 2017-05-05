@@ -34,10 +34,11 @@
             = succeed ',' do
               = link_to 'CAST', 'http://wearecast.org.uk/?utm_source=BeehiveData&utm_medium=Link&utm_campaign=BeehiveData', class: 'red', target: '_blank'
             Registered Charity No: 1161998, Company No: 9544506
-            
+
       - else
         - if user_signed_in?
           .ui.secondary.pointing.teal.menu
+            = link_to 'Status', status_path, class: (params[:controller] == 'organisations' ? 'item active' : 'item')
             = link_to 'Organisations', organisations_path, class: (params[:controller] == 'organisations' ? 'item active' : 'item')
             = link_to 'Grants', grants_path, class: (params[:controller] == 'grants' ? 'item active' : 'item')
             .right.menu
