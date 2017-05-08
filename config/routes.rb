@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       patch '/review', to: 'grants#scrape', as: 'scrape'
     end
   end
+  get '/status', to: 'funds#status', as: 'status'
 
   # API
   namespace :v1, constraints: { format: 'json' } do
