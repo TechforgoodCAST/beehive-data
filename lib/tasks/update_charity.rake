@@ -14,24 +14,54 @@ namespace :update do
       database: 'charity-base'
     )
 
+    @errors = []
+    def save(obj, counts)
+      if obj.valid?
+        if obj.changed?
+          print '.'
+          counts[:saved]+=1
+          obj.save if ENV['SAVE']
+        else
+          print '_'
+          counts[:unchanged]+=1
+        end
+      else
+        print '*'
+        counts[:invalid]+=1
+        @errors << "#{obj.send("#{obj.class.name.downcase}_identifier")}: #{obj.errors.full_messages}"
+      end
+      return counts
+    end
+
+    # get charity commission lookups
+    @ccareas = {}
+    CSV.foreach(Rails.root.join('lib', 'assets', 'csv', 'cc-aoo-gss-iso.csv'), headers: true) do |row|
+      @ccareas["#{row["aootype"]}#{row["aookey"]}"] = row.to_hash
+    end
+
     # Start updating charity data
 
     # First check for any missing charity numbers
     # @TODO: currently doesn't save some records due to duplicate charity numbers - find a way to merge records.
-    # counts = {saved: 0, invalid: 0}
-    # Organisation.where("(organisation_identifier LIKE 'GB-CHC-%' OR organisation_identifier LIKE 'GB-SC-%') AND charity_number IS NULL").find_each do |org|
-    #   org[:charity_number] = parseCharityNumber(org[:organisation_identifier])
-    #   org.org_type = 0 # change org type to trigger the "set_org_type" function
-    #   org.save ? counts[:saved]+=1 : counts[:invalid]+=1
-    # end
-    # puts "#{counts[:saved]} charity numbers added from organisation_identifier"
-    # puts "#{counts[:invalid]} charity numbers not added from organisation_identifier (charity number already exists)"
+    counts = {saved: 0, invalid: 0, unchanged: 0}
+    Organisation.where("(organisation_identifier LIKE 'GB-CHC-%' OR organisation_identifier LIKE 'GB-SC-%') AND charity_number IS NULL").find_each do |org|
+      org[:charity_number] = org.parseCharityNumber(org[:organisation_identifier])
+      org.org_type = 0 # change org type to trigger the "set_org_type" function
+      counts = save(org, counts)
+    end
+    puts "\n"
+    puts "#{counts[:saved]} charity numbers added from organisation_identifier"
+    puts "#{counts[:invalid]} charity numbers not added from organisation_identifier (charity number already exists)"
+    puts "#{counts[:unchanged]} charity numbers unchanged"
 
     # Then go through all the organisations with charity numbers (and amend their grants)
-    Organisation.includes(grants_as_recipient: :beneficiaries).where("charity_number IS NOT NULL").limit(10).find_each do |org|
+    counts = {org: {saved: 0, invalid: 0, unchanged: 0}, grant: {saved: 0, invalid: 0, unchanged: 0}}
+    Organisation.import.includes(grants_as_recipient: :beneficiaries).where("charity_number IS NOT NULL AND scraped_at IS NULL").find_each do |org|
 
       # get the charity information
       charity = org.get_charitybase(charitybase)
+      org.scraped_at = DateTime.now
+      org.state = 'approved'
 
       unless org.valid?
         if org.errors[:company_number]
@@ -39,10 +69,26 @@ namespace :update do
         end
       end
 
-      puts "<Organisation #{org.organisation_identifier}>", org.changes
-      #org.save!
+      counts[:org] = save(org, counts[:org])
+
+      org.grants_as_recipient.import.each do |grant|
+        counts[:grant] = save(grant, counts[:grant])
+      end
 
     end
+    puts "\n"
+    puts "#{counts[:org][:saved]} organisations updated with charity details"
+    puts "#{counts[:org][:invalid]} organisations could not be updated (invalid)"
+    puts "#{counts[:org][:unchanged]} organisations unchanged"
+    puts "\n"
+    puts "#{counts[:grant][:saved]} grants updated with charity details"
+    puts "#{counts[:grant][:invalid]} grants could not be updated (invalid)"
+    puts "#{counts[:grant][:unchanged]} grants unchanged"
+    if @errors.count > 0
+      puts "\nErrors\n------"
+      puts @errors
+    end
+    puts "\n"
 
   end
 end
