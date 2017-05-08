@@ -1,4 +1,5 @@
 class Grant < ActiveRecord::Base
+  require_relative '../../lib/assets/beneficiaries.rb'
 
   scope :recent, -> (fund) {
     most_recent_grant = where(state: 'approved', fund_slug: fund).order(:award_date).last
@@ -257,6 +258,37 @@ class Grant < ActiveRecord::Base
     end
   end
 
+  def get_charity_areas(charity = nil)
+    if charity.nil?
+      return
+    end
+
+    countries = []
+    districts = []
+
+    charity.fetch("areaOfOperation", [{}]).each do |aoo|
+      if aoo["aooType"]=="D"
+        countries << @ccareas["#{aoo["aooType"]}#{aoo["aooKey"]}"]["ISO3166-1"]
+      elsif ['A','B','C'].include? aoo["aooType"]
+        countries << 'GB'
+        district_code = @ccareas["#{aoo["aooType"]}#{aoo["aooKey"]}"]["oldCode"]
+        # Old ONS codes are used.
+        # If it's a 2 digit code that means it's a country, which aren't in the database, so instead
+        # we'll check a regex for districts where the first two digits are the country.
+        if district_code.length==2
+          districts.concat @districts.select{ |d| d[:subdivision] =~ /#{district_code}[A-Z]{2}/ && d[:country_id] == gb_id }
+        else
+          districts.concat @districts.select{ |d| d[:subdivision] == district_code && d[:country_id] == gb_id }
+        end
+      end
+    end
+
+    self.countries = @countries.select { |country| country[:alpha2].in?( countries ) }
+    self.districts = districts
+
+  end
+
+
   def get_operating_for(charity = nil)
     if charity.nil?
       self.operating_for = -1
@@ -271,6 +303,119 @@ class Grant < ActiveRecord::Base
 
     operating_for_select(char_reg.to_date)
   end
+
+  # utilities for working out beneficiaries using regexes
+
+  def regex_desc
+    return "#{self.title} #{self.description}"
+  end
+
+  def gender_regex
+    desc = self.regex_desc
+    genders = GENDER_REGEXES.select{|gender, reg| desc =~ reg }.keys.uniq
+    if genders.count==1
+      self.gender = genders[0].to_s
+    else
+      self.gender = GENDERS[0]
+    end
+  end
+
+  def ben_regex
+    desc = self.regex_desc
+    ben_names = BEN_REGEXES.select {|ben, reg| desc =~ reg }.keys
+    # @TODO this replaces any existing beneficiaries (eg those brought in from Charity records)
+    bens = Beneficiary.where(sort: ben_names.uniq)
+    if bens.count > 0
+      self.beneficiaries = bens
+    end
+    self.affect_people    = affect_group?('People')
+    self.affect_other     = affect_group?('Other')
+  end
+
+  def age_regex
+    desc = self.regex_desc
+
+    # get any ages from the description
+    age_groups = []
+    # use a regex to look for age ranges first
+    ages = desc.scan(/\b(age(d|s)? ?(of|betweee?n)?|adults)? ?([0-9]{1,2}) ?(\-|to) ?([0-9]{1,2}) ?\-?(year\'?s?[ -](olds)?|y\.?o\.?)?\b/i)
+    if ages.count > 0
+      ages.each do |age|
+        if (age[0] || age[1] || age[2] || age[6] || age[7] || age[4]=="to")
+          age_groups << [age[3].to_i, age[5].to_i]
+        end
+      end
+    end
+
+    # then look in description for terms using regex
+    ages = AGE_REGEXES.select {|title, age| desc =~ age[:regex]}
+    ages.each do |title, age|
+      age_groups << [age[:age_from], age[:age_to]]
+    end
+
+    age_group_labels = []
+    age_groups.each do |age|
+      age_group_labels.concat AGE_CATEGORIES.select {|age_cat| age[0] <= age_cat[:age_to] && age_cat[:age_from] <= age[1] && age_cat[:label]!= "All ages"}
+    end
+    age_group_labels = age_group_labels.uniq.map{|age| age[:label]}
+
+    # default to All ages
+    if age_group_labels.empty?
+      age_group_labels = ["All ages"]
+    end
+
+    self.age_groups = AgeGroup.where(label: age_group_labels)
+  end
+
+  def get_countries
+
+    countries = []
+
+    # Using regexes
+    @countries.each do |country|
+      # special case for Northern Ireland
+      country_desc = desc.gsub(/\bNorthern Ireland\b/i, '')
+
+      if country_desc =~ /\b#{country[:name]}\b/i
+        countries << country[:alpha2]
+      end
+
+      country[:altnames].each do |altname|
+        if country_desc =~ /\b#{altname}\b/i
+          countries << country[:alpha2]
+        end
+      end
+    end
+
+    if countries.count==0 and grant.countries.count == 0
+      countries = ['GB']
+    end
+
+    # get districts
+    districts = []
+
+    if districts.count==0 and grant.districts.count == 0
+        # use all districts for country
+        countries.each do |c|
+          self.districts.concat @districts.select { |d| d[:country_id] == c[:id] }
+        end
+    end
+
+    if countries.count > 0
+      self.countries = @countries.select { |country| country[:alpha2].in?(grant_values[:countries]) }
+    end
+
+    if self.countries.count > 1
+      self.geographic_scale = 3
+    elsif self.countries.count == 1 && self.districts.count == 0
+      self.geographic_scale = 2
+    elsif self.districts.count > 1
+      self.geographic_scale = 1
+    else
+      self.geographic_scale = 0
+    end
+  end
+
 
   private
 

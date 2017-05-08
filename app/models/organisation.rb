@@ -127,12 +127,39 @@ class Organisation < ActiveRecord::Base
         grant.get_operating_for(charity)
         grant.get_char_financial(charity)
         grant.get_charity_beneficiaries(charity)
-
-        puts "<Grant #{grant.grant_identifier}>", grant.changes
-
+        grant.get_charity_areas(charity)
       end
     end
     return charity
+  end
+
+  def parseCharityNumber(regno)
+    if regno.nil?
+      return nil
+    end
+
+    regno = regno.to_s.strip.upcase
+    regno.sub!('NO.', '')
+    regno.sub!('GB-CHC-', '')
+    regno.sub!('GB-COH-', '')
+    regno.sub!('GB-SC-', 'SC')
+    regno.sub!('SCSC', 'SC')
+    regno.sub!(' ', '')
+    regno.sub!('O', '0')
+
+    if regno.empty?
+      return nil
+    end
+
+    if regno[0..2]!="SC"
+      begin
+        regno = Integer(regno)
+      rescue ArgumentError
+      end
+    end
+
+    return regno
+
   end
 
   private
@@ -249,34 +276,6 @@ class Organisation < ActiveRecord::Base
       end
     end
 
-    def parseCharityNumber(regno)
-      if regno.nil?
-        return nil
-      end
-
-      regno = regno.to_s.strip.upcase
-      regno.sub!('NO.', '')
-      regno.sub!('GB-CHC-', '')
-      regno.sub!('GB-COH-', '')
-      regno.sub!('GB-SC-', 'SC')
-      regno.sub!('SCSC', 'SC')
-      regno.sub!(' ', '')
-      regno.sub!('O', '0')
-
-      if regno.empty?
-        return nil
-      end
-
-      if regno[0..2]!="SC"
-        begin
-          regno = Integer(regno)
-        rescue ArgumentError
-        end
-      end
-
-      return regno
-
-    end
 
     # charity utilities
     def get_charity_and_company( charno, compno, cdb)
