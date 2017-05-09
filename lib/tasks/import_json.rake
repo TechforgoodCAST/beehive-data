@@ -125,7 +125,7 @@ namespace :import do
         postal_code:             doc[:recipientOrganization][0][:postalCode].presence,
         country:                 @countries.select { |country| country[:alpha2] == doc[:recipientOrganization][0].fetch(:country, 'GB') }[0],
         website:                 doc[:recipientOrganization][0][:url].presence,
-        multi_national:          doc[:recipientOrganization][0][:countries].count > 1, # TODO find actual multi_national value
+        state:                   'import',
       }
 
       save(@recipient, recipient_values)
@@ -158,13 +158,14 @@ namespace :import do
         gender:             "All genders",
         license:            doc.fetch(:dataset, {}).fetch(:license, nil),
         source:             doc.fetch(:dataset, {}).fetch(:distribution, [{}])[0].fetch(:accessURL, nil),
+        state:              'import',
+        countries:          [],
       }
-
 
       # using data from the grant
       doc.fetch(:beneficiaryLocation, [{}]).each do |location|
         if location.fetch(:countryCode, nil)
-          grant_values[:countries] << @countries.select { |country| country[:alpha2].in?( location.fetch(:countryCode) ) }
+          grant_values[:countries].concat @countries.select { |country| country[:alpha2].in?( location.fetch(:countryCode) ) }
         end
       end
 

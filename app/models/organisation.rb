@@ -92,7 +92,7 @@ class Organisation < ActiveRecord::Base
     "https://beta.companieshouse.gov.uk/company/#{CGI.escape(company_number)}"
   end
 
-  def get_charitybase(charitybase)
+  def get_charitybase(charitybase, countries = [], districts = [], ccareas = {}, gb_id = nil)
     charity, company =  get_charity_and_company( self.charity_number, self.company_number, charitybase )
     if company
       self.company_number = company.fetch("companyNumber", self.company_number)
@@ -127,7 +127,7 @@ class Organisation < ActiveRecord::Base
         grant.get_operating_for(charity)
         grant.get_char_financial(charity)
         grant.get_charity_beneficiaries(charity)
-        grant.get_charity_areas(charity)
+        grant.get_charity_areas(charity, countries, districts, ccareas, gb_id)
       end
     end
     return charity

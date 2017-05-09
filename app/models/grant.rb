@@ -258,7 +258,7 @@ class Grant < ActiveRecord::Base
     end
   end
 
-  def get_charity_areas(charity = nil)
+  def get_charity_areas(charity = nil, all_countries = [], all_districts = [], ccareas = {}, gb_id = nil)
     if charity.nil?
       return
     end
@@ -268,22 +268,22 @@ class Grant < ActiveRecord::Base
 
     charity.fetch("areaOfOperation", [{}]).each do |aoo|
       if aoo["aooType"]=="D"
-        countries << @ccareas["#{aoo["aooType"]}#{aoo["aooKey"]}"]["ISO3166-1"]
+        countries << ccareas["#{aoo["aooType"]}#{aoo["aooKey"]}"]["ISO3166-1"]
       elsif ['A','B','C'].include? aoo["aooType"]
         countries << 'GB'
-        district_code = @ccareas["#{aoo["aooType"]}#{aoo["aooKey"]}"]["oldCode"]
+        district_code = ccareas["#{aoo["aooType"]}#{aoo["aooKey"]}"]["oldCode"]
         # Old ONS codes are used.
         # If it's a 2 digit code that means it's a country, which aren't in the database, so instead
         # we'll check a regex for districts where the first two digits are the country.
         if district_code.length==2
-          districts.concat @districts.select{ |d| d[:subdivision] =~ /#{district_code}[A-Z]{2}/ && d[:country_id] == gb_id }
+          districts.concat all_districts.select{ |d| d[:subdivision] =~ /#{district_code}[A-Z]{2}/ && d[:country_id] == gb_id }
         else
-          districts.concat @districts.select{ |d| d[:subdivision] == district_code && d[:country_id] == gb_id }
+          districts.concat all_districts.select{ |d| d[:subdivision] == district_code && d[:country_id] == gb_id }
         end
       end
     end
 
-    self.countries = @countries.select { |country| country[:alpha2].in?( countries ) }
+    self.countries = all_countries.select { |country| country[:alpha2].in?( countries ) }
     self.districts = districts
 
   end

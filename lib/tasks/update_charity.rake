@@ -38,6 +38,10 @@ namespace :update do
     CSV.foreach(Rails.root.join('lib', 'assets', 'csv', 'cc-aoo-gss-iso.csv'), headers: true) do |row|
       @ccareas["#{row["aootype"]}#{row["aookey"]}"] = row.to_hash
     end
+    # get district lookups
+    @countries = Country.all.to_a
+    @districts = District.all.to_a
+    gb_id = Country.find_by(alpha2: 'GB')[:id]
 
     # Start updating charity data
 
@@ -59,7 +63,7 @@ namespace :update do
     Organisation.import.includes(grants_as_recipient: :beneficiaries).where("charity_number IS NOT NULL AND scraped_at IS NULL").find_each do |org|
 
       # get the charity information
-      charity = org.get_charitybase(charitybase)
+      charity = org.get_charitybase(charitybase, @countries, @districts, @ccareas, gb_id)
       org.scraped_at = DateTime.now
       org.state = 'approved'
 
