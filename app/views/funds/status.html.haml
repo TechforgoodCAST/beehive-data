@@ -17,7 +17,7 @@
   %tbody
     - @funds.each do |fund|
 
-      - @grants = Grant.recent(fund)
+      - @grants = Grant.recent_all(fund)
       - @allgrants = Grant.where(fund_slug: fund)
       - statuses = @grants.group(:state).count
 
