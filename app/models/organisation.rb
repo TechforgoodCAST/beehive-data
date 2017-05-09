@@ -122,6 +122,20 @@ class Organisation < ActiveRecord::Base
         end
       end
 
+      # check if charity is multi_national
+      country_count = 0
+
+      charity.fetch("areaOfOperation", [{}]).each do |aoo|
+        if aoo["aooType"]=="D"
+          country_count += 1
+        end
+      end
+      if country_count > 1
+        self.multi_national = true
+      else
+        self.multi_national = false
+      end
+
       # amend each grant this organisation received
       self.grants_as_recipient.each do |grant|
         grant.get_operating_for(charity)
