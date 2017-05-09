@@ -1,5 +1,6 @@
 # usage:    bundle exec rake update:areas
 # optional: SAVE=true
+# optional: state = import,review # comma separated list of states to include
 
 namespace :update do
   desc 'Update each grant with details of countries and districts'
@@ -29,8 +30,9 @@ namespace :update do
     @countries = Country.all.to_a
     @districts = District.all.to_a
     gb_id = Country.find_by(alpha2: 'GB')[:id]
+    states = (ENV['state'] || "import,review").split(",")
 
-    Grant.import.includes(:countries, :districts).find_each do |grant|
+    Grant.includes(:countries, :districts).where(state: states).find_each do |grant|
 
       grant.get_countries()
       counts = save(grant, counts)

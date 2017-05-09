@@ -1,5 +1,6 @@
 # usage:    bundle exec rake update:beneficiaries
 # optional: SAVE=true
+# optional: state = import,review # comma separated list of states to include
 
 namespace :update do
   desc 'Update each grant with details of beneficiaries'
@@ -25,15 +26,16 @@ namespace :update do
     end
 
     counts = {saved: 0, invalid: 0, unchanged: 0}
+    states = (ENV['state'] || "import").split(",")
 
-    Grant.import.includes(:recipient, :beneficiaries).find_each do |grant|
+    Grant.where(state: states).includes(:recipient, :beneficiaries).find_each do |grant|
 
       grant.gender_regex()
       grant.ben_regex()
       grant.age_regex()
       counts = save(grant, counts)
       if grant.beneficiaries.count > 0
-        grant.state = 'approved'
+        grant.state = 'review'
         grant.save if ENV['SAVE']
       end
     end
