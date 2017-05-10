@@ -34,7 +34,7 @@ namespace :update do
 
     Grant.includes(:countries, :districts).where(state: states).find_each do |grant|
 
-      grant.get_countries()
+      grant.get_countries(@countries, @districts)
       counts = save(grant, counts)
 
       grant.state = 'approved'

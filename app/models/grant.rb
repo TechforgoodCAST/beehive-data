@@ -378,12 +378,13 @@ class Grant < ActiveRecord::Base
     self.age_groups = AgeGroup.where(label: age_group_labels)
   end
 
-  def get_countries
+  def get_countries(all_countries = [], all_districts = [])
 
     countries = []
+    desc = self.regex_desc
 
     # Using regexes
-    @countries.each do |country|
+    all_countries.each do |country|
       # special case for Northern Ireland
       country_desc = desc.gsub(/\bNorthern Ireland\b/i, '')
 
@@ -398,22 +399,22 @@ class Grant < ActiveRecord::Base
       end
     end
 
-    if countries.count==0 and grant.countries.count == 0
+    if countries.count==0 and self.countries.count == 0
       countries = ['GB']
+    end
+
+    if countries.count > 0
+      self.countries = all_countries.select { |country| country[:alpha2].in?(countries) }
     end
 
     # get districts
     districts = []
 
-    if districts.count==0 and grant.districts.count == 0
+    if districts.count==0 and self.districts.count == 0
         # use all districts for country
-        countries.each do |c|
-          self.districts.concat @districts.select { |d| d[:country_id] == c[:id] }
+        self.countries.each do |c|
+          self.districts.concat all_districts.select { |d| d[:country_id] == c[:id] }
         end
-    end
-
-    if countries.count > 0
-      self.countries = @countries.select { |country| country[:alpha2].in?(grant_values[:countries]) }
     end
 
     if self.countries.count > 1
