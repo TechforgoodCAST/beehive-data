@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170322114723) do
+ActiveRecord::Schema.define(version: 20170509105528) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,9 @@ ActiveRecord::Schema.define(version: 20170322114723) do
     t.integer "age_group_id"
     t.integer "grant_id"
   end
+
+  add_index "ages", ["age_group_id"], name: "index_ages_on_age_group_id", using: :btree
+  add_index "ages", ["grant_id"], name: "index_ages_on_grant_id", using: :btree
 
   create_table "beneficiaries", force: :cascade do |t|
     t.string   "label"
@@ -104,14 +107,20 @@ ActiveRecord::Schema.define(version: 20170322114723) do
     t.string   "source"
   end
 
+  add_index "grants", ["award_date"], name: "index_grants_on_award_date", using: :btree
+  add_index "grants", ["fund_slug"], name: "index_grants_on_fund_slug", using: :btree
   add_index "grants", ["funder_id"], name: "index_grants_on_funder_id", using: :btree
   add_index "grants", ["grant_identifier"], name: "index_grants_on_grant_identifier", using: :btree
   add_index "grants", ["recipient_id"], name: "index_grants_on_recipient_id", using: :btree
+  add_index "grants", ["state"], name: "index_grants_on_state", using: :btree
 
   create_table "locations", force: :cascade do |t|
     t.integer "country_id"
     t.integer "grant_id"
   end
+
+  add_index "locations", ["country_id"], name: "index_locations_on_country_id", using: :btree
+  add_index "locations", ["grant_id"], name: "index_locations_on_grant_id", using: :btree
 
   create_table "moderators", force: :cascade do |t|
     t.integer "approvable_id"
@@ -161,6 +170,9 @@ ActiveRecord::Schema.define(version: 20170322114723) do
     t.integer "district_id"
     t.integer "grant_id"
   end
+
+  add_index "regions", ["district_id"], name: "index_regions_on_district_id", using: :btree
+  add_index "regions", ["grant_id"], name: "index_regions_on_grant_id", using: :btree
 
   create_table "stakeholders", force: :cascade do |t|
     t.integer  "beneficiary_id"
