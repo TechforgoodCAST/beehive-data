@@ -92,6 +92,90 @@ class Organisation < ActiveRecord::Base
     "https://beta.companieshouse.gov.uk/company/#{CGI.escape(company_number)}"
   end
 
+  def get_charitybase(charitybase, countries = [], districts = [], ccareas = {}, gb_id = nil)
+    charity, company =  get_charity_and_company( self.charity_number, self.company_number, charitybase )
+    if company
+      self.company_number = company.fetch("companyNumber", self.company_number)
+    end
+    if charity
+      self.charity_number = charity.fetch("charityNumber", self.charity_number)
+
+      # sort out postcode
+      if self.postal_code.to_s.strip.empty?
+        self.postal_code = charity.fetch("contact", {}).fetch("postcode", "Unknown")
+        if self.postal_code.empty?
+          self.postal_code = "Unknown"
+        end
+      end
+
+      # sort out website
+      if self.website.to_s.strip.empty?
+        self.website = charity.fetch("mainCharity", {}).fetch("website", nil)
+      end
+
+      # check website URL
+      if self.website !~ URI::regexp(%w(http https))
+        if self.website.present? and "http://" + self.website =~ URI::regexp(%w(http https))
+          self.website = "http://" + self.website
+        else
+          self.website = nil
+        end
+      end
+
+      # check if charity is multi_national
+      country_count = 0
+
+      charity.fetch("areaOfOperation", [{}]).each do |aoo|
+        if aoo["aooType"]=="D"
+          country_count += 1
+        end
+      end
+      if country_count > 1
+        self.multi_national = true
+      else
+        self.multi_national = false
+      end
+
+      # amend each grant this organisation received
+      self.grants_as_recipient.each do |grant|
+        grant.get_operating_for(charity)
+        grant.get_char_financial(charity)
+        grant.get_charity_beneficiaries(charity)
+        grant.get_charity_areas(charity, countries, districts, ccareas, gb_id)
+      end
+    end
+    return charity
+  end
+
+  def parseCharityNumber(regno)
+    if regno.nil?
+      return nil
+    end
+
+    regno = regno.to_s.strip.upcase
+    regno.sub!('NO.', '')
+    regno.sub!('GB-CHC-', '')
+    regno.sub!('GB-COH-', '')
+    regno.sub!('GB-SC-', 'SC')
+    regno.sub!('SCSC', 'SC')
+    regno.sub!(' ', '')
+    regno.sub!('O', '0')
+
+    if regno.empty?
+      return nil
+    end
+
+    if regno[0..2]!="SC"
+      begin
+        regno = Integer(regno)
+      rescue ArgumentError
+      end
+    end
+
+    return regno
+
+  end
+
   private
 
     def parse_to_array(response)
@@ -206,6 +290,57 @@ class Organisation < ActiveRecord::Base
       end
     end
 
+
+    # charity utilities
+    def get_charity_and_company( charno, compno, cdb)
+      charity = nil
+      company = nil
+
+      # first check if charty or company exists
+      charity = get_charity( charno, cdb )
+      company = get_company( compno, cdb )
+
+      # if the charity exists but company doesn't check for company based on charity
+      if(charity && company.nil?)
+        company = get_company_from_charity(charity, cdb)
+      end
+
+      # if the company exists but the charity doesn't check for charity based on company
+      if(charity.nil? && company)
+        charity = get_charity_from_company(company, cdb)
+      end
+
+      return [charity, company]
+    end
+
+
+
+    def get_charity( charno, cdb )
+      charno = parseCharityNumber(charno)
+      if charno
+        return cdb[:charities].find({"charityNumber" => { :$in => [charno, charno.to_s]}, "subNumber" => 0 } ).limit(1).first
+      end
+    end
+
+    def get_company( compno, cdb )
+      # TODO: proper company parsing
+      compno = parseCharityNumber(compno)
+      if compno
+        return {"companyNumber" => compno}
+      end
+    end
+
+    def get_charity_from_company( company, cdb )
+      companyNumber = parseCharityNumber(company[:companyNumber])
+      if companyNumber
+        return cdb[:charities].find({"mainCharity.companyNumber" => companyNumber}).first
+      end
+    end
+
+    def get_company_from_charity( charity, cdb )
+      return get_company(charity.fetch("mainCharity", {}).fetch("companyNumber", nil), cdb)
+    end
+
     def generate_slug(n=1)
       return nil unless self.name
       candidate = self.name.parameterize
@@ -215,6 +350,18 @@ class Organisation < ActiveRecord::Base
     end
 
     def set_org_type
+
+      # Big lottery fund individuals
+      if self.name.start_with?( "This is a programme for individual veterans" )
+        self.org_type = -1
+      elsif /\b(school|college|university|council|academy|borough)\b/i.match(self.name) && (!self.charity_number? && !self.company_number?)
+        self.org_type = 4
+      end
+
+      if self.org_type == -1
+        self.name = nil
+      end
+
       unless self.org_type.to_i > 3 || self.org_type.to_i < 0
         if self.charity_number? && self.company_number?
           self.org_type = 3
@@ -228,6 +375,7 @@ class Organisation < ActiveRecord::Base
           self.org_type = 0
         end
       end
+      return true
     end
 
     def set_registered
@@ -243,6 +391,7 @@ class Organisation < ActiveRecord::Base
         self.company_number = nil
         self.organisation_number = nil
       end
+      return true
     end
 
 end
