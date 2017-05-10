@@ -1,28 +1,6 @@
 class Grant < ActiveRecord::Base
   require_relative '../../lib/assets/beneficiaries.rb'
 
-  scope :recent, -> (fund) {
-    most_recent_grant = where(state: 'approved', fund_slug: fund).order(:award_date).last
-    if most_recent_grant
-      earliest_award_date = most_recent_grant.award_date - 365
-    else
-      earliest_award_date = 365.days.ago
-    end
-    where(state: 'approved', fund_slug: fund)
-      .where('award_date >= ?', earliest_award_date)
-  }
-
-  scope :recent_all, -> (fund) {
-    most_recent_grant = where(fund_slug: fund).order(:award_date).last
-    if most_recent_grant
-      earliest_award_date = most_recent_grant.award_date - 365
-    else
-      earliest_award_date = 365.days.ago
-    end
-    where(fund_slug: fund)
-      .where('award_date >= ?', earliest_award_date)
-  }
-
   scope :newest,   -> { order(updated_at: :desc) }
   scope :import,   -> { where(state: 'import') }
   scope :review,   -> { where(state: 'review') }
@@ -34,6 +12,16 @@ class Grant < ActiveRecord::Base
       WHERE (grants.state = 'import' AND organisations.state = 'approved')
       ORDER BY updated_at DESC
     ") }
+  scope :recent, -> (fund) {
+    most_recent_grant = where(fund_slug: fund).order(:award_date).last
+    if most_recent_grant
+      earliest_award_date = most_recent_grant.award_date - 365
+    else
+      earliest_award_date = 365.days.ago
+    end
+    where(fund_slug: fund)
+      .where('award_date >= ?', earliest_award_date)
+  }
 
   VALID_YEARS = (Date.today.year-10..Date.today.year).to_a
   GENDERS = ['All genders', 'Female', 'Male', 'Transgender', 'Other']

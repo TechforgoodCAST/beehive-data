@@ -1,11 +1,11 @@
 %table.ui.celled.table
   %thead
     %tr
-      %th{ rowspan: 2} Fund slug
-      %th{ rowspan: 2} Last Grant
-      %th{ colspan: 2} Period
-      %th{ colspan: 4} Number of grants in period
-      %th{ rowspan: 2} Total grants
+      %th{ rowspan: 2 } Fund slug
+      %th{ rowspan: 2 } Last Grant
+      %th{ colspan: 2 } Period
+      %th{ colspan: 4 } Number of grants in period
+      %th{ rowspan: 2 } Total grants
     %tr
       %th Start
       %th End
@@ -17,22 +17,20 @@
   %tbody
     - @funds.each do |fund|
 
-      - @grants = Grant.recent_all(fund)
-      - @allgrants = Grant.where(fund_slug: fund)
-      - statuses = @grants.group(:state).count
+      - @grants = Grant.recent(fund)
 
       %tr
         %td.selectable= link_to fund, v1_fund_summary_path(fund), target: '_blank'
         %td
-          = time_ago_in_words @allgrants.order(:award_date).last.award_date
+          = time_ago_in_words Grant.where(fund_slug: fund).order(:award_date).last.award_date
           ago
         %td= period_start
         %td= period_end
-        %td= statuses['import'] || 0
-        %td= statuses['review'] || 0
-        %td= statuses['approved'] || 0
+        %td= @state_count[[fund, 'import']] || 0
+        %td= @state_count[[fund, 'review']] || 0
+        %td= @state_count[[fund, 'approved']] || 0
         %td= @grants.count
-        %td= @allgrants.count
+        %td= @all_grants_count[fund]
 
     %tfoot
       %tr

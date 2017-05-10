@@ -5,7 +5,8 @@ module V1
 
     def beneficiaries
       @grants = Grant.includes(:recipient)
-        .recent(Grant.approved.pluck(:fund_slug).uniq)
+                     .approved
+                     .recent(Grant.approved.pluck(:fund_slug).uniq)
     end
 
     def amounts
@@ -17,7 +18,7 @@ module V1
     end
 
     def fund_summary
-      @grants = Grant.recent(params[:fund_slug])
+      @grants = Grant.approved.recent(params[:fund_slug])
     end
 
     protected
