@@ -174,6 +174,7 @@ module IntegrationsHelper
         result << {
           position: i + 1,
           label: const[unknown ? arr[0] : arr[0] + 1][0],
+          count: arr[1].to_f,
           percent: arr[1].to_f / data.values.sum
         }
       end
@@ -187,6 +188,7 @@ module IntegrationsHelper
           result << {
             position: result.size + 1,
             label: i,
+            count: 0,
             percent: 0.0
           }
         end

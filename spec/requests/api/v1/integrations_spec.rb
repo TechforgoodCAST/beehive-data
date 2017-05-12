@@ -49,10 +49,10 @@ describe 'Integration' do
         expect(json.length).to eq 3
       end
 
-      it 'returns a only approved grants' do
+      it 'returns all grants' do
         @grants.first.update_attribute(:state, 'import')
         auth_request(@beneficiaries, @admin)
-        expect(json.length).to eq 2
+        expect(json.length).to eq 3
       end
 
       it 'correct structure' do
