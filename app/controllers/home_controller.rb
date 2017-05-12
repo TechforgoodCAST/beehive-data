@@ -1,7 +1,7 @@
 class HomeController < ApplicationController
 
   def examples
-    @data = HTTParty.get("http://#{request.host_with_port}/v1/demo/grants/2015")
+    @data = HTTParty.get(v1_examples_by_year_url('2015'), timeout: 1)
   end
 
 end
