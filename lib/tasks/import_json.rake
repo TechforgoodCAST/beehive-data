@@ -2,6 +2,8 @@
 # optional: SAVE=true
 # optional: SAMPLE=0
 # optional: FILE=grantnav.json
+# optional: SOURCE="http://www.example.com/source"
+# optional: LICENSE="https://creativecommons.org/licenses/by/4.0/"
 
 namespace :import do
   desc 'Import grants data from 360 Giving JSON file'
@@ -107,10 +109,7 @@ namespace :import do
       end
 
       @recipient = Organisation.where(
-        "organisation_identifier = ? or charity_number = ? or company_number = ?",
-        doc[:recipientOrganization][0][:id],
-        doc[:recipientOrganization][0][:charityNumber].presence,
-        doc[:recipientOrganization][0][:companyNumber].presence
+        organisation_identifier: doc[:recipientOrganization][0][:id]
       ).first_or_initialize
 
       recipient_values = {
@@ -156,8 +155,8 @@ namespace :import do
         planned_end_date:   doc.fetch(:plannedDates, [{}])[0].fetch(:endDate, nil),
         open_call:          doc[:fromOpenCall]=="Yes",
         gender:             "All genders",
-        license:            doc.fetch(:dataset, {}).fetch(:license, nil),
-        source:             doc.fetch(:dataset, {}).fetch(:distribution, [{}])[0].fetch(:accessURL, nil),
+        license:            doc.fetch(:dataset, {}).fetch(:license, ENV['LICENSE']),
+        source:             doc.fetch(:dataset, {}).fetch(:distribution, [{}])[0].fetch(:accessURL, ENV['SOURCE']),
         state:              'import',
         countries:          [],
       }
@@ -176,10 +175,6 @@ namespace :import do
     puts "\n\n"
     puts "Skipped: #{@counters[:skipped_year]} grants due to the year"
     puts "Skipped: #{@counters[:skipped_individual]} grants as to individuals"
-    puts "Default: #{@counters[:default_age]} grants given default age \"All ages\""
-    puts "Default: #{@counters[:default_gender]} grants given default gender \"All genders\""
-    puts "Default: #{@counters[:default_country]} grants given default country \"GB\""
-    puts "Default: #{@counters[:default_beneficiaries]} grants given default beneficaries (#{@counters[:wider_beneficiaries]} would be captured with wider categories)"
 
     log(@recipient)
     log(@grant)
