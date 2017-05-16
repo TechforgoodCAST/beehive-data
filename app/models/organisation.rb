@@ -23,9 +23,9 @@ class Organisation < ActiveRecord::Base
   has_many :users, through: :moderators
 
   validates :organisation_identifier, :slug, uniqueness: true, presence: true
-  validates :charity_number, uniqueness: true, if: :charity_number?
-  validates :company_number, uniqueness: true, if: :company_number?
-  validates :organisation_number, uniqueness: true, if: :organisation_number?
+  #validates :charity_number, uniqueness: true, if: :charity_number?
+  #validates :company_number, uniqueness: true, if: :company_number?
+  #validates :organisation_number, uniqueness: true, if: :organisation_number?
   validates :name, :country_id, :org_type, :state, presence: true
 
   validates :publisher, :multi_national, :registered,
