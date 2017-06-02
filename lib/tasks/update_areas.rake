@@ -1,6 +1,7 @@
 # usage:    bundle exec rake update:areas
 # optional: SAVE=true
 # optional: state = import,review # comma separated list of states to include
+# optional: FUND='fund-slug' # to limit to a particular fund
 
 namespace :update do
   desc 'Update each grant with details of countries and districts'
@@ -30,9 +31,13 @@ namespace :update do
     @countries = Country.all.to_a
     @districts = District.all.to_a
     gb_id = Country.find_by(alpha2: 'GB')[:id]
-    states = (ENV['state'] || "import,review").split(",")
+    states = (ENV['state'] || "import").split(",")
+    where_clause = {state: states}
+    if ENV['FUND']
+      where_clause[:fund_slug] = ENV['FUND']
+    end
 
-    Grant.includes(:countries, :districts).where(state: states).find_each do |grant|
+    Grant.includes(:countries, :districts).where(where_clause).find_each do |grant|
 
       grant.get_countries(@countries, @districts)
       counts = save(grant, counts)

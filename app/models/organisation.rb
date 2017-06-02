@@ -89,7 +89,7 @@ class Organisation < ActiveRecord::Base
     "https://beta.companieshouse.gov.uk/company/#{CGI.escape(company_number)}"
   end
 
-  def get_charitybase(charitybase, countries = [], districts = [], ccareas = {}, gb_id = nil)
+  def get_charitybase(charitybase, countries = [], districts = [], ccareas = {}, gb_id = nil, where_clause={})
     charity, company =  get_charity_and_company( self.charity_number, self.company_number, charitybase )
     if company
       self.company_number = company.fetch("companyNumber", self.company_number)
@@ -134,7 +134,7 @@ class Organisation < ActiveRecord::Base
       end
 
       # amend each grant this organisation received
-      self.grants_as_recipient.each do |grant|
+      self.grants_as_recipient.where(where_clause).each do |grant|
         grant.get_operating_for(charity)
         grant.get_char_financial(charity)
         grant.get_charity_beneficiaries(charity)

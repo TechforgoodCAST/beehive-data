@@ -1,6 +1,8 @@
 # usage:    bundle exec rake update:charity
 # optional: CHARITY_BASE_DB_URL=0.tcp.ngrok.io:12345
 # optional: SAVE=true
+# optional: state = import,review # comma separated list of states to include
+# optional: FUND='fund-slug' # to limit to a particular fund
 
 namespace :update do
   desc 'Update organisation data to include charity'
@@ -58,12 +60,20 @@ namespace :update do
     puts "#{counts[:invalid]} charity numbers not added from organisation_identifier (charity number already exists)"
     puts "#{counts[:unchanged]} charity numbers unchanged"
 
+    states = (ENV['state'] || "import").split(",")
+    where_clause = {state: states}
+
+    grants_where = {}
+    if ENV['FUND']
+      grants_where[:fund_slug] = ENV['FUND']
+    end
+
     # Then go through all the organisations with charity numbers (and amend their grants)
     counts = {org: {saved: 0, invalid: 0, unchanged: 0}, grant: {saved: 0, invalid: 0, unchanged: 0}}
-    Organisation.import.includes(grants_as_recipient: :beneficiaries).where("charity_number IS NOT NULL AND scraped_at IS NULL").find_each do |org|
+    Organisation.includes(grants_as_recipient: :beneficiaries).where("charity_number IS NOT NULL").find_each do |org|
 
       # get the charity information
-      charity = org.get_charitybase(charitybase, @countries, @districts, @ccareas, gb_id)
+      charity = org.get_charitybase(charitybase, @countries, @districts, @ccareas, gb_id, where_clause)
       org.scraped_at = DateTime.now
       org.state = 'approved'
 
@@ -73,11 +83,11 @@ namespace :update do
         end
       end
 
-      counts[:org] = save(org, counts[:org])
-
-      org.grants_as_recipient.import.each do |grant|
+      org.grants_as_recipient.where(grants_where).each do |grant|
         counts[:grant] = save(grant, counts[:grant])
       end
+
+      counts[:org] = save(org, counts[:org])
 
     end
     puts "\n"

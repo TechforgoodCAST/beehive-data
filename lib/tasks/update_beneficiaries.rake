@@ -1,6 +1,7 @@
 # usage:    bundle exec rake update:beneficiaries
 # optional: SAVE=true
 # optional: state = import,review # comma separated list of states to include
+# optional: FUND='fund-slug' # to limit to a particular fund
 
 namespace :update do
   desc 'Update each grant with details of beneficiaries'
@@ -27,8 +28,12 @@ namespace :update do
 
     counts = {saved: 0, invalid: 0, unchanged: 0}
     states = (ENV['state'] || "import").split(",")
+    where_clause = {state: states}
+    if ENV['FUND']
+      where_clause[:fund_slug] = ENV['FUND']
+    end
 
-    Grant.where(state: states).includes(:recipient, :beneficiaries).find_each do |grant|
+    Grant.where(where_clause).includes(:recipient, :beneficiaries).find_each do |grant|
 
       grant.gender_regex()
       grant.ben_regex()
