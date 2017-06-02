@@ -40,29 +40,6 @@ describe Organisation do
     expect(duplicate_org).not_to be_valid
   end
 
-  it 'has unique charity number' do
-    duplicate_org = build(:recipient,
-                          charity_number: @recipient.charity_number,
-                          country: @countries.first)
-    expect(duplicate_org).not_to be_valid
-  end
-
-  it 'has unique company number' do
-    duplicate_org = build(:recipient,
-                          company_number: @recipient.company_number,
-                          country: @countries.first)
-    expect(duplicate_org).not_to be_valid
-  end
-
-  it 'has unique organisation number' do
-    @recipient.organisation_number = 'ABC123'
-    @recipient.save
-    duplicate_org = build(:recipient,
-                          organisation_number: @recipient.organisation_number,
-                          country: @countries.first)
-    expect(duplicate_org).not_to be_valid
-  end
-
   it 'sets registered as truthy if organisational numbers present' do
     expect(@recipient.registered).to eq true
     expect(@funder.registered).to    eq true
