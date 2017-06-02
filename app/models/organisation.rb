@@ -58,7 +58,6 @@ class Organisation < ActiveRecord::Base
       earliest_award_date = 365.days.ago
     end
     self.grants_as_funder
-      .where(state: 'approved')
       .where('award_date >= ?', earliest_award_date)
   end
 
