@@ -159,6 +159,11 @@ namespace :import do
         source:             doc.fetch(:dataset, {}).fetch(:distribution, [{}])[0].fetch(:accessURL, ENV['SOURCE']),
         state:              'import',
         countries:          [],
+        operating_for:      -1,
+        income:             -1,
+        spending:           -1,
+        employees:          -1,
+        volunteers:         -1
       }
 
       # using data from the grant
