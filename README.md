@@ -70,13 +70,11 @@ previous 3 steps.
 
 The `state` variable for a grant tells you how far it is through the import process.
 
-|----------|---------------|--------------------|---------------------|-------------|
 | State    | Grant created | Charity data added | Beneficiaries added | Areas added |
 |----------|---------------|--------------------|---------------------|-------------|
 | import   | Yes           | Yes                |                     |             |
 | review   | Yes           | Yes                | Yes                 |             |
 | approved | Yes           | Yes                | Yes                 | Yes         |
-|----------|---------------|--------------------|---------------------|-------------|
 
 ## Running tests
 
