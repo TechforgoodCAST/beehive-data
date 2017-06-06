@@ -62,6 +62,20 @@ module IntegrationsHelper
     )
   end
 
+  def grant_examples
+    result = []
+    @grants.sample(5).each do |grant|
+      result << {
+        title: grant.title,
+        recipient: grant.recipient.name,
+        amount: grant.amount_awarded,
+        currency: grant.currency,
+        award_date: grant.award_date
+      }
+    end
+    result
+  end
+
   def gender_distribution(data: @grants.group(:gender).count)
     result = []
     data.sort_by { |k,v| v }.reverse.each_with_index do |(k,v), i|
