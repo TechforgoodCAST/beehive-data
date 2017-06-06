@@ -155,7 +155,7 @@ describe 'Integration' do
           employees_distribution volunteers_distribution gender_distribution
           age_group_distribution beneficiary_distribution
           geographic_scale_distribution country_distribution
-          district_distribution
+          district_distribution grant_examples
         ].each do |f|
           expect(json).to have_key(f)
         end
