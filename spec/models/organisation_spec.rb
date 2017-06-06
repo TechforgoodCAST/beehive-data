@@ -128,9 +128,7 @@ describe Organisation do
 
   it 'sets identifier if none present'
 
-  it 'with recent_grants_as_funder returns approved grants' do
-    expect(@funder.recent_grants_as_funder.count).to eq 0
-    @grants.each { |g| g.update_column(:state, 'approved') }
+  it 'with recent_grants_as_funder returns all grants' do
     expect(@funder.recent_grants_as_funder.count).to eq 2
   end
 
