@@ -27,6 +27,7 @@ gem 'httparty'
 gem 'groupdate'
 gem 'active_median'
 gem 'mongo'
+gem 'forest_liana'
 
 gem 'rails_12factor', group: :production
 # Use jquery as the JavaScript library
