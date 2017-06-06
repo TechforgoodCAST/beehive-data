@@ -38,6 +38,9 @@ json.income_distribution income_distribution
 json.employees_distribution employees_distribution
 json.volunteers_distribution volunteers_distribution
 
+# examples
+json.grant_examples grant_examples
+
 # Beneficiary
 json.gender_distribution gender_distribution
 json.age_group_distribution age_group_distribution
