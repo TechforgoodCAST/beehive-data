@@ -1,6 +1,6 @@
 # Beehive Data
 
-[![CircleCI](https://circleci.com/gh/TechforgoodCAST/beehive-data.svg?style=svg)](https://circleci.com/gh/TechforgoodCAST/beehive-data)
+[![CircleCI](https://circleci.com/gh/TechforgoodCAST/beehive-data.svg?style=svg&circle-token=9257350e2edae45ad5e7fe35d0926338e610574f)](https://circleci.com/gh/TechforgoodCAST/beehive-data)
 
 ## Setup
 

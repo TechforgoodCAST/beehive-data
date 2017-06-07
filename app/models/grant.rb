@@ -171,7 +171,7 @@ class Grant < ActiveRecord::Base
 
   def ages
     if self.age_groups
-      return self.age_groups.limit(1) if self.age_groups.include?(AgeGroup.first)
+      return [AgeGroup.first] if self.age_groups.include?(AgeGroup.first)
       return self.age_groups
     end
   end
