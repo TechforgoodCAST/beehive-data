@@ -70,7 +70,8 @@ module IntegrationsHelper
         recipient: grant.recipient.name,
         amount: grant.amount_awarded,
         currency: grant.currency,
-        award_date: grant.award_date
+        award_date: grant.award_date,
+        id: grant.grant_identifier
       }
     end
     result
