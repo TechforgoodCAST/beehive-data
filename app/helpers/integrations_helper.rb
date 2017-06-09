@@ -100,15 +100,20 @@ module IntegrationsHelper
   end
 
   def amount_awarded_distribution(data: @grants.pluck(:amount_awarded), range: 5000)
+    buckets = [0, 50, 300, 750, 1500, 3500, 7500, 12500, 17500, 27500, 35000, 45000, 75000, 300000, 5250000]
     result = []
-    grouped = data.map { |amount| amount.to_i }.group_by { |amount| amount / range }
-    grouped.each do |k,v|
-      k = k.to_i
+    # grouping amounts to reduce # of inputs
+    # ordering amounts to determine bucket limits
+    grouped = data.map { |amount| amount.to_i }.group_by do |amount|
+      buckets.find_index { |range| range > amount } - 1
+    end
+    buckets.each_with_index do |v, i|
       result << {
-        segment: k,
-        start: range * k,
-        end: range * k + range - 1,
-        count: v.count
+        start: v,
+        end: buckets.fetch(i+1, 9007199254740992) - 1,
+        segment: i,
+        percent: grouped.fetch(i, []).length / data.length,
+        count: grouped.fetch(i, []).length,
       }
     end
     result

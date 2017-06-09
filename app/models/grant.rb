@@ -86,6 +86,7 @@ class Grant < ActiveRecord::Base
             :fund_slug, :title, :description, :currency, :funding_programme,
             :amount_awarded, :award_date,
               presence: true
+  validates :amount_awarded, numericality: { greater_than_or_equal_to: 0 }
   validates :award_year, inclusion: { in: VALID_YEARS }
   validates :duration_funded_months, presence: true, if: 'planned_start_date? && planned_end_date?'
   validate :planned_start_date_before_planned_end_date
