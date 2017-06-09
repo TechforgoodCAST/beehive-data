@@ -112,7 +112,7 @@ module IntegrationsHelper
         start: v,
         end: buckets.fetch(i+1, 9007199254740992) - 1,
         segment: i,
-        percent: grouped.fetch(i, []).length / data.length,
+        percent: grouped.fetch(i, []).length.to_f / data.length.to_f,
         count: grouped.fetch(i, []).length,
       }
     end
