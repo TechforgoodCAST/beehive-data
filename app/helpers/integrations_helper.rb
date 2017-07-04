@@ -211,6 +211,7 @@ module IntegrationsHelper
 
     def sort_append(const, data, unknown: false)
       result = []
+      data = data.select{ |k,v| k != nil }
       sort(data, const, result, unknown: unknown)
       append(const, result)
       result
